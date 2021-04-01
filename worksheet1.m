@@ -9,6 +9,15 @@ d_i = square(2*pi/2/T_s*t);
 stem(t,d_i)% 'or')
 ylim([-2 2])
 
+output_str = 'rürürürürü';
+
+bistream = [0 1 0 0 1 1 1 0 0 1 1 1 1 0 0 0 0 1 1 1];
+bitstream = (bistream - 0.5) * 2
+sps = T_s / T_a
+s_start_stop = 1.5 * sps
+%%
+
+
 num_integ = [0,1];
 den_integ = [1, -1];
 Phi_iT = filter(num_integ, den_integ, d_i);
