@@ -39,7 +39,10 @@ fvec = 1/T_a*(0:(length(cpfsk_sig))-1)/length(cpfsk_sig);
 spec_sig = abs(fft(cpfsk_sig));
 
 figure(2)
+subplot(2,1,1)
 stem(fvec, spec_sig.*spec_sig);
+subplot(2,1,2)
+plot(fvec, db(spec_sig.*spec_sig));
 %pspectrum(cpfsk_sig)
 %plot(n*T_a,cpfsk_sig )
 
