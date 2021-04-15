@@ -146,12 +146,20 @@ plot(t, f)
 %%
 
 figure(8)
-subplot(3,1,1)
+subplot(3,2,1)
 plot(bb_f_vec, db(abs(fft(l))))
 ylim([-60,60]) 
-subplot(3,1,2)
+subplot(3,2,2)
 plot(bb_f_vec, db(abs(fft(bb))))
 ylim([-60,60])
+subplot(3,2,3)
+[h, w] = freqz([1 0 0 0 0 0 1],[1],f_a_low);
+[i, x] = freqz([1 0 0 1],[1],f_a_low);
+[j, y] = freqz([1 0 0 0 0 0 1],[1],f_a_low);
+[k, z] = freqz([1 0 0 0 0 0 1],[1],f_a_low);
+plot(w/pi/T_a_low,db(h), x/pi/T_a_low, db(i), y/pi/T_a_low, db(j), z/pi/T_a_low, db(k))
+subplot(3,2,4)
+plot(bb_f_vec,db(abs(fft(bb))./abs(fft(l)))) 
 
 binarized = f < -0.5;
 
