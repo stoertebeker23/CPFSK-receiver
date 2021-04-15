@@ -57,12 +57,12 @@ delta_F = 225;
 phi_0 = pi;
 amp = 0.5;
 
-modulation_factor = delta_F * 2 * T_a;
-n = 1:1:0.1/T_a;
-cpfsk_sig = amp * sin(2 * pi * fT * n * T_a + modulation_factor * pi * Phi_iT(n) + phi_0);
-ylim([-1.5 1.5])
-fvec = 1/T_a*(0:(length(cpfsk_sig))-1)/length(cpfsk_sig);
-spec_sig = abs(fft(cpfsk_sig));
+%modulation_factor = delta_F * 2 * T_a;
+%n = 1:1:0.1/T_a;
+%cpfsk_sig = amp * sin(2 * pi * fT * n * T_a + modulation_factor * pi * Phi_iT(n) + phi_0);
+%ylim([-1.5 1.5])
+%fvec = 1/T_a*(0:(length(cpfsk_sig))-1)/length(cpfsk_sig);
+%spec_sig = abs(fft(cpfsk_sig));
 
 bandpass_signal = dlmread('y_cpfsk_sig.mat');
 figure(4)
@@ -121,10 +121,11 @@ bb = bb';
 l = bb;
 delayed = bb(4:1:end);
 delayed = [delayed 0 0 0];
+% second com filter
+%delayed_b = bb(5:1:end);
+%delayed_b = [delayed_b 0 0 0 0];
 
-
-
-bb = bb + delayed;
+bb = bb + delayed; %elayed_b;
 analytic_bb = hilbert(bb);
 
 a = max(analytic_bb);
