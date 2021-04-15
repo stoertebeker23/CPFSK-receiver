@@ -48,7 +48,7 @@ T_a_high = 1/f_a_high;
 
 
 filtered_bp = bandpass(bandpass_signal,[3800 5800],f_a_high);
-bp_f_vec_1 = 1/T_a_new*(0:(length(filtered_bp))-1)/length(filtered_bp);
+bp_f_vec_1 = 1/T_a_high*(0:(length(filtered_bp))-1)/length(filtered_bp);
 filtered_fft = abs(fft(filtered_bp));
 
 
@@ -64,29 +64,37 @@ bb_fft = abs(fft(bb));
 figure(1)
 
 subplot(2,3,1)
-stem(fvec, (bandpass_fft.*bandpass_fft));
+stem(bp_f_vec, (bandpass_fft.*bandpass_fft));
 subplot(2,3,4)
-plot(fvec, db(bandpass_fft.*bandpass_fft));
+plot(bp_f_vec, db(bandpass_fft.*bandpass_fft));
 
 subplot(2,3,2)
-stem(fvec_n, (filtered_fft.*filtered_fft));
+stem(bp_f_vec_1, (filtered_fft.*filtered_fft));
 subplot(2,3,5)
-plot(fvec_n, db(filtered_fft.*filtered_fft));
+plot(bp_f_vec_1, db(filtered_fft.*filtered_fft));
 subplot(2,3,3)
-stem(f_vec_bla, (bb_fft.*bb_fft));
+stem(bb_f_vec, (bb_fft.*bb_fft));
 subplot(2,3,6)
-plot(f_vec_bla, db(bb_fft.*bb_fft));
+plot(bb_f_vec, db(bb_fft.*bb_fft));
 
 figure(2)
 t = 1:1:length(bb);
 plot(t, bb)
 
+%% 
 
 bb = bb';
+l = bb;
+delayed = bb(4:1:end);
+delayed = [delayed 0 0 0];
 
+
+
+bb = bb + delayed;
 analytic_bb = hilbert(bb);
 
-
+a = max(analytic_bb);
+analytic_bb = analytic_bb ./ a;
 %fm demod
 
 re = real(analytic_bb);
@@ -101,5 +109,21 @@ im_de = [im_de 0];
 
 f = asin(-(im_de .* re) + re_de .* im);
 plot(t, f)
+
+
+figure(8)
+subplot(3,1,1)
+plot(bb_f_vec, db(abs(fft(l))))
+ylim([-60,60]) 
+subplot(3,1,2)
+plot(bb_f_vec, db(abs(fft(bb))))
+ylim([-60,60])
+
+binarized = f < -0.5;
+
+binarized = binarized(1:
+figure(5)
+plot(T_a_low*t, binarized)
+ylim([-0.2, 1.2])
 
 
