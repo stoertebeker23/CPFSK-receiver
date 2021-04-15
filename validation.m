@@ -30,43 +30,76 @@ ylim([-1.5 1.5])
 fvec = 1/T_a*(0:(length(cpfsk_sig))-1)/length(cpfsk_sig);
 spec_sig = abs(fft(cpfsk_sig));
 
-
+bandpass_signal = dlmread('y_cpfsk_sig.mat');
+figure(4)
+plot(bandpass_signal)
+bp_f_vec = 2019200*(0:(length(bandpass_signal))-1)/length(bandpass_signal);
+bandpass_fft = abs(fft(bandpass_signal));
 subplot(2,1,1)
-stem(fvec, (spec_sig.*spec_sig));
+stem(bp_f_vec, (bandpass_fft .* bandpass_fft));
 subplot(2,1,2)
-plot(fvec, db(spec_sig.*spec_sig));
-
-f_a_neu = 2019200;
-T_a_neu = 1/f_a_neu;
-
-neu = cpfsk_sig(1:T_a_neu/T_a:0.1/T_a);
-x = bandpass(neu,[3800 5800],f_a_neu);
-fvec_n = 1/T_a_neu*(0:(length(x))-1)/length(x);
-spec_sig_n = abs(fft(x));
+plot(bandpass_signal);
 
 
+f_a_high = 2019200;
+T_a_high = 1/f_a_high;
 
-fa_f = 3832;
-ta_f = 1 / fa_f;
+%neu = cpfsk_sig(1:T_a_neu/T_a:0.1/T_a);
 
-echt_neu = x(1:round(ta_f/T_a_neu):0.1/T_a_neu);
-f_vec_bla =  1/ta_f*(0:(length(echt_neu))-1)/length(echt_neu) ;
-spec_sig_f = abs(fft(echt_neu));
 
+filtered_bp = bandpass(bandpass_signal,[3800 5800],f_a_high);
+bp_f_vec_1 = 1/T_a_new*(0:(length(filtered_bp))-1)/length(filtered_bp);
+filtered_fft = abs(fft(filtered_bp));
+
+
+
+f_a_low = 3832;
+T_a_low = 1 / f_a_low;
+
+bb = filtered_bp(1:round(T_a_low/T_a_high):end);
+bb_f_vec =  1/T_a_low*(0:(length(bb))-1)/length(bb) ;
+bb_fft = abs(fft(bb));
+
+%%% Plotting
 figure(1)
 
 subplot(2,3,1)
-stem(fvec, (spec_sig.*spec_sig));
+stem(fvec, (bandpass_fft.*bandpass_fft));
 subplot(2,3,4)
-plot(fvec, db(spec_sig.*spec_sig));
-
+plot(fvec, db(bandpass_fft.*bandpass_fft));
 
 subplot(2,3,2)
-stem(fvec_n, (spec_sig_n.*spec_sig_n));
+stem(fvec_n, (filtered_fft.*filtered_fft));
 subplot(2,3,5)
-plot(fvec_n, db(spec_sig_n.*spec_sig_n));
+plot(fvec_n, db(filtered_fft.*filtered_fft));
 subplot(2,3,3)
-stem(f_vec_bla, (spec_sig_f.*spec_sig_f));
+stem(f_vec_bla, (bb_fft.*bb_fft));
 subplot(2,3,6)
-plot(f_vec_bla, db(spec_sig_f.*spec_sig_f));
+plot(f_vec_bla, db(bb_fft.*bb_fft));
+
+figure(2)
+t = 1:1:length(bb);
+plot(t, bb)
+
+
+bb = bb';
+
+analytic_bb = hilbert(bb);
+
+
+%fm demod
+
+re = real(analytic_bb);
+im = imag(analytic_bb);
+
+re_de = re(2:1:length(analytic_bb));
+re_de = [re_de 0];
+
+im_de = im(2:1:length(analytic_bb));
+im_de = [im_de 0];
+
+
+f = asin(-(im_de .* re) + re_de .* im);
+plot(t, f)
+
 
