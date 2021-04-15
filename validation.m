@@ -1,5 +1,39 @@
 clear
 close all
+% 
+% lut = [[0 0 0 1 1] 'A';
+%        [1 1 0 0 1] 'B';
+%        [0 1 1 1 0] 'C';
+%        [0 1 0 0 1] 'D';
+%        [0 0 0 0 1] 'E';
+%        [0 1 1 0 1] 'F';
+%        [1 1 0 1 0] 'G';
+%        [1 0 1 0 0] 'H';
+%        [0 0 1 1 0] 'I';
+%        [0 1 0 1 1] 'J';
+%        [0 1 1 1 1] 'K';
+%        [1 0 0 1 0] 'L';
+%        [1 1 1 0 0] 'M';
+%        [0 1 1 0 0] 'N';
+%        [1 1 0 0 0] 'O';
+%        [1 0 1 1 0] 'P';
+%        [1 0 1 1 1] 'Q';
+%        [0 1 0 1 0] 'R';
+%        [0 0 1 0 1] 'S';
+%        [1 0 0 0 0] 'T';
+%        [0 0 1 1 1] 'U';
+%        [1 1 1 1 0] 'V';
+%        [1 0 0 1 1] 'W';
+%        [1 1 1 0 1] 'X';
+%        [1 0 1 0 1] 'Y';
+%        [1 0 0 0 1] 'Z';
+%        [0 1 0 0 0] 'Wagenrücklauf';
+%        [0 0 0 1 0] 'Zeilenvorschub';
+%        [0 0 1 0 0] 'Zwischenraum';
+%        [1 1 1 1 1] 'Umschaltung Buchstaben';
+%        [1 1 0 1 1] 'Umschaltung Ziffern/Zeichen';
+%        [0 0 0 0 0] 'unbenutzt'];
+%    
 pi = 3.14159;
 T_s = 0.02;
 
@@ -109,7 +143,7 @@ im_de = [im_de 0];
 
 f = asin(-(im_de .* re) + re_de .* im);
 plot(t, f)
-
+%%
 
 figure(8)
 subplot(3,1,1)
@@ -121,9 +155,16 @@ ylim([-60,60])
 
 binarized = f < -0.5;
 
-binarized = binarized(1:
+binarized = binarized(1:0.01/T_a_low:end);
 figure(5)
-plot(T_a_low*t, binarized)
+stem(binarized)
 ylim([-0.2, 1.2])
-
-
+%%
+for r = 1:length(binarized)-4
+   temp = binarized(r:1:r+4);
+   if temp == [1 1 1 0 0] 
+      if r > 13
+          search = fliplr(binarized(r-10:2:r-1))
+      end
+   end
+end
