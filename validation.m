@@ -1,39 +1,7 @@
 clear
 close all
-% 
-% lut = [[0 0 0 1 1] 'A';
-%        [1 1 0 0 1] 'B';
-%        [0 1 1 1 0] 'C';
-%        [0 1 0 0 1] 'D';
-%        [0 0 0 0 1] 'E';
-%        [0 1 1 0 1] 'F';
-%        [1 1 0 1 0] 'G';
-%        [1 0 1 0 0] 'H';
-%        [0 0 1 1 0] 'I';
-%        [0 1 0 1 1] 'J';
-%        [0 1 1 1 1] 'K';
-%        [1 0 0 1 0] 'L';
-%        [1 1 1 0 0] 'M';
-%        [0 1 1 0 0] 'N';
-%        [1 1 0 0 0] 'O';
-%        [1 0 1 1 0] 'P';
-%        [1 0 1 1 1] 'Q';
-%        [0 1 0 1 0] 'R';
-%        [0 0 1 0 1] 'S';
-%        [1 0 0 0 0] 'T';
-%        [0 0 1 1 1] 'U';
-%        [1 1 1 1 0] 'V';
-%        [1 0 0 1 1] 'W';
-%        [1 1 1 0 1] 'X';
-%        [1 0 1 0 1] 'Y';
-%        [1 0 0 0 1] 'Z';
-%        [0 1 0 0 0] 'Wagenrücklauf';
-%        [0 0 0 1 0] 'Zeilenvorschub';
-%        [0 0 1 0 0] 'Zwischenraum';
-%        [1 1 1 1 1] 'Umschaltung Buchstaben';
-%        [1 1 0 1 1] 'Umschaltung Ziffern/Zeichen';
-%        [0 0 0 0 0] 'unbenutzt'];
-%    
+
+   
 pi = 3.14159;
 T_s = 0.02;
 
@@ -169,11 +137,102 @@ figure(5)
 stem(binarized)
 ylim([-0.2, 1.2])
 %%
+
+   
+
+let = [
+    'E';
+    '§';
+    'A';
+    '{';
+    'S';
+    'I';
+    'U';
+    '$';
+    'D';
+    'R';
+    'J';
+    'N';
+    'F';
+    'C';
+    'K';
+    'T';
+    'Z';
+    'L';
+    'W';
+    'H';
+    'Y';
+    '}';
+    'Q';
+    'O';
+    'B';
+    'G';
+    '#';
+    'M';
+    'X';
+    'V';
+    '%';
+    ];
+
+num = [
+    '3';
+    '§';
+    '-';
+    '{';
+    '"';
+    '8';
+    '7';
+    '$';
+    'Ä';
+    '4';
+    'Ü';
+    ',';
+    '$';
+    ':';
+    '(';
+    '5';
+    '+';
+    ')';
+    '2';
+    '§';
+    '6';
+    '}';
+    '1';
+    '9';
+    '?';
+    '§';
+    '#';
+    '.';
+    '/';
+    '=';
+    '%';
+    ];
+
+y = [];
+
+prev_r = -10;
 for r = 1:length(binarized)-4
    temp = binarized(r:1:r+4);
+
    if temp == [1 1 1 0 0] 
-      if r > 13
-          search = fliplr(binarized(r-10:2:r-1))
+      if r > 12
+          if r > prev_r +14 
+              prev_r = r;
+              search = fliplr(binarized(r-10:2:r-1));
+              ja = num2str(search);
+              ja(isspace(ja)) = '';
+
+              umsch = lut2(bin2dec(ja));
+              if umsch == '%'
+                  lut2 = let;
+                  continue
+              elseif umsch == '#'
+                  lut2 = num;
+                  continue
+              end
+              y = [y lut2(bin2dec(ja))];
+          end
       end
    end
 end
+y
