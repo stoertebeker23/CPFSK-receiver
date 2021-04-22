@@ -84,14 +84,16 @@ plot(bb_f_vec, db(bb_fft.*bb_fft));
 figure(2)
 t = 1:1:length(bb);
 plot(t, bb)
-
+c = bb
 %% 
 
-bb = bb';
+bb = c';
 l = bb;
 delayed = bb(4:1:end);
 delayed = [delayed 0 0 0];
 
+bb = bb + delayed; % delayed_b;
+analytic_bb = hil(bb')';
 
 bb = bb + delayed; %elayed_b;
 
@@ -100,6 +102,7 @@ t = 1:1:length(bb);
 plot(t, bb, t, l)
 
 analytic_bb = hilbert(bb);
+
 
 
 a = max(analytic_bb);
