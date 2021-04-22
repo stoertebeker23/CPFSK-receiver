@@ -32,7 +32,9 @@ amp = 0.5;
 %fvec = 1/T_a*(0:(length(cpfsk_sig))-1)/length(cpfsk_sig);
 %spec_sig = abs(fft(cpfsk_sig));
 
-bandpass_signal = dlmread('y_cpfsk_sig.mat');
+%bandpass_signal = dlmread('y_cpfsk_sig.mat');
+%[bandpass_signal, fswav] = audioread('CPFSK_modulate_text_ADDA8M12_20Apr21_Bec_Fra.wav');
+[bandpass_signal, fswav] = audioread('CPFSK_modulate_text_ADDA8M12.wav');
 figure(4)
 plot(bandpass_signal)
 bp_f_vec = 2019200*(0:(length(bandpass_signal))-1)/length(bandpass_signal);
@@ -89,9 +91,7 @@ bb = bb';
 l = bb;
 delayed = bb(4:1:end);
 delayed = [delayed 0 0 0];
-% second com filter
-%delayed_b = bb(5:1:end);
-%delayed_b = [delayed_b 0 0 0 0];
+
 
 bb = bb + delayed; %elayed_b;
 analytic_bb = hilbert(bb);
@@ -209,7 +209,7 @@ num = [
     ];
 
 y = [];
-
+lut2 = let;
 prev_r = -10;
 for r = 1:length(binarized)-4
    temp = binarized(r:1:r+4);
