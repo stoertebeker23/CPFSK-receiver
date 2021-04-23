@@ -1,99 +1,81 @@
 clear
 close all
 
-   
-pi = 3.14159;
-T_s = 0.02;
+[bandpass_2M, fswav] = audioread('CPFSK_modulate_text_ADDA8M12.wav');
 
-f_a = 2.1*11100800;
-f_t = 10100800;
+bp2M_f_vec = 2019200*(0:(length(bandpass_2M))-1)/length(bandpass_2M);
+bandpass_2M_fft = abs(fft(bandpass_2M));
 
-T_a = 1/f_a;
-t = 0 : T_a : 0.1;
-d_i = square(2*pi/2/T_s*t);
-ylim([-2 2])
-
-
-num_integ = [0,1];
-den_integ = [1, -1];
-Phi_iT = filter(num_integ, den_integ, d_i);
- 
-plot (Phi_iT)
-
-fT = f_t;
-delta_F = 225;
-phi_0 = pi;
-amp = 0.5;
-
-%modulation_factor = delta_F * 2 * T_a;
-%n = 1:1:0.1/T_a;
-%cpfsk_sig = amp * sin(2 * pi * fT * n * T_a + modulation_factor * pi * Phi_iT(n) + phi_0);
-%ylim([-1.5 1.5])
-%fvec = 1/T_a*(0:(length(cpfsk_sig))-1)/length(cpfsk_sig);
-%spec_sig = abs(fft(cpfsk_sig));
-
-%bandpass_signal = dlmread('y_cpfsk_sig.mat');
-%[bandpass_signal, fswav] = audioread('CPFSK_modulate_text_ADDA8M12_20Apr21_Bec_Fra.wav');
-[bandpass_signal, fswav] = audioread('CPFSK_modulate_text_ADDA8M12.wav');
-figure(4)
-plot(bandpass_signal)
-bp_f_vec = 2019200*(0:(length(bandpass_signal))-1)/length(bandpass_signal);
-bandpass_fft = abs(fft(bandpass_signal));
+figure(1)
 subplot(2,1,1)
-stem(bp_f_vec, (bandpass_fft .* bandpass_fft));
+stem(bp2M_f_vec, (bandpass_2M_fft .* bandpass_2M_fft));
+title('CPFSK Spektrum')
+xlabel('f[Hz]')
+ylabel('|P|')
+grid on
 subplot(2,1,2)
-plot(bandpass_signal);
+plot(bandpass_2M);
+title('CPFSK Signal')
+% xlabel('t[s]')
+grid on
 
+%% carrier band signal
 
-f_a_high = 2019200;
+% 'red' sample frequency
+f_a_high = 2019200; 
 T_a_high = 1/f_a_high;
 
-%neu = cpfsk_sig(1:T_a_neu/T_a:0.1/T_a);
+bandpass_2k = bandpass(bandpass_2M,[3800 5800],f_a_high);
+bp2k_f_vec = 1/T_a_high*(0:(length(bandpass_2k))-1)/length(bandpass_2k);
+bandpass_2k_fft = abs(fft(bandpass_2k));
 
+%% primary signal
 
-filtered_bp = bandpass(bandpass_signal,[3800 5800],f_a_high);
-bp_f_vec_1 = 1/T_a_high*(0:(length(filtered_bp))-1)/length(filtered_bp);
-filtered_fft = abs(fft(filtered_bp));
-
-
-
+% 'green' sample frequency
 f_a_low = 3832;
 T_a_low = 1 / f_a_low;
 
-bb = filtered_bp(1:round(T_a_low/T_a_high):end);
-bb_f_vec =  1/T_a_low*(0:(length(bb))-1)/length(bb) ;
-bb_fft = abs(fft(bb));
+baseband = bandpass_2k(1:round(T_a_low/T_a_high):end);
+bb_f_vec =  1/T_a_low*(0:(length(baseband))-1)/length(baseband);
+baseband_fft = abs(fft(baseband));
 
-%%% Plotting
-figure(1)
+% Plotting
+figure(2)
 
 subplot(2,3,1)
-stem(bp_f_vec, (bandpass_fft.*bandpass_fft));
+stem(bp2M_f_vec, (bandpass_2M_fft.^2));
+title('CPFSK 1MHz Bandleistung')
 subplot(2,3,4)
-plot(bp_f_vec, db(bandpass_fft.*bandpass_fft));
+plot(bp2M_f_vec, db(bandpass_2M_fft.^2));
+title('CPFSK 1MHz Bandleistung [dB]')
 
 subplot(2,3,2)
-stem(bp_f_vec_1, (filtered_fft.*filtered_fft));
+stem(bp2k_f_vec, (bandpass_2k_fft.^2));
+title('CPFSK 2KHz Bandleistung')
 subplot(2,3,5)
-plot(bp_f_vec_1, db(filtered_fft.*filtered_fft));
+plot(bp2k_f_vec, db(bandpass_2k_fft.^2));
+title('CPFSK 2KHz Bandleistung [dB]')
 subplot(2,3,3)
-stem(bb_f_vec, (bb_fft.*bb_fft));
+stem(bb_f_vec, (baseband_fft.^2));
+title('CPFSK Basisbandleistung')
 subplot(2,3,6)
-plot(bb_f_vec, db(bb_fft.*bb_fft));
+plot(bb_f_vec, db(baseband_fft.^2));
+title('CPFSK Basisbandleistung [dB]')
 
-figure(2)
-t = 1:1:length(bb);
-plot(t, bb)
-c = bb
+figure(3)
+t = 1:1:length(baseband);
+plot(t, baseband)
+title('Basisband')
+tmp = baseband
 %% 
 
-bb = c';
-l = bb;
-delayed = bb(4:1:end);
+baseband = tmp';
+l = baseband;
+delayed = baseband(4:1:end);
 delayed = [delayed 0 0 0];
 
-bb = bb + delayed; % delayed_b;
-analytic_bb = hil(bb')';
+baseband = baseband + delayed; % delayed_b;
+analytic_bb = hil(baseband')';
 
 
 a = max(analytic_bb);
@@ -119,7 +101,7 @@ subplot(3,2,1)
 plot(bb_f_vec, db(abs(fft(l))))
 ylim([-60,60]) 
 subplot(3,2,2)
-plot(bb_f_vec, db(abs(fft(bb))))
+plot(bb_f_vec, db(abs(fft(baseband))))
 ylim([-60,60])
 subplot(3,2,3)
 [h, w] = freqz([1 0 0 0 0 0 1],[1],f_a_low);
@@ -128,7 +110,7 @@ subplot(3,2,3)
 [k, z] = freqz([1 0 0 0 0 0 1],[1],f_a_low);
 plot(w/pi/T_a_low,db(h), x/pi/T_a_low, db(i), y/pi/T_a_low, db(j), z/pi/T_a_low, db(k))
 subplot(3,2,4)
-plot(bb_f_vec,db(abs(fft(bb))./abs(fft(l)))) 
+plot(bb_f_vec,db(abs(fft(baseband))./abs(fft(l)))) 
 
 binarized = f < -0.5;
 
