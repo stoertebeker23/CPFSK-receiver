@@ -22,10 +22,10 @@ grid on
 %% carrier band signal
 
 % 'red' sample frequency
-f_a_high = 2019200; 
+f_a_high = 2019200;
 T_a_high = 1/f_a_high;
 
-bandpass_2k = bandpass(bandpass_2M,[3800 5800],f_a_high);
+[bandpass_2k, coeff, fo] = band(3800, 5800, bandpass_2M, f_a_high);
 bp2k_f_vec = 1/T_a_high*(0:(length(bandpass_2k))-1)/length(bandpass_2k);
 bandpass_2k_fft = abs(fft(bandpass_2k));
 
@@ -44,31 +44,30 @@ figure(2)
 
 subplot(2,3,1)
 stem(bp2M_f_vec, (bandpass_2M_fft.^2));
-title('CPFSK 1MHz Bandleistung')
+title('CPFSK 1MHz Spektralleistung')
 subplot(2,3,4)
 plot(bp2M_f_vec, db(bandpass_2M_fft.^2));
-title('CPFSK 1MHz Bandleistung [dB]')
+title('CPFSK 1MHz Spektralleistung [dB]')
 
 subplot(2,3,2)
 stem(bp2k_f_vec, (bandpass_2k_fft.^2));
-title('CPFSK 2KHz Bandleistung')
+title('CPFSK 2KHz Spektralleistung')
 subplot(2,3,5)
 plot(bp2k_f_vec, db(bandpass_2k_fft.^2));
-title('CPFSK 2KHz Bandleistung [dB]')
+title('CPFSK 2KHz Spektralleistung [dB]')
 subplot(2,3,3)
 stem(bb_f_vec, (baseband_fft.^2));
-title('CPFSK Basisbandleistung')
+title('CPFSK Basisband Spektralleistung')
 subplot(2,3,6)
 plot(bb_f_vec, db(baseband_fft.^2));
-title('CPFSK Basisbandleistung [dB]')
+title('CPFSK Basisband Spektralleistung [dB]')
 
 figure(3)
 t = 1:1:length(baseband);
 plot(t, baseband)
 title('Basisband')
-tmp = baseband
+tmp = baseband;
 %% 
-
 baseband = tmp';
 l = baseband;
 delayed = baseband(4:1:end);
