@@ -84,17 +84,26 @@ plot(bb_f_vec, db(bb_fft.*bb_fft));
 figure(2)
 t = 1:1:length(bb);
 plot(t, bb)
-
+c = bb
 %% 
 
-bb = bb';
+bb = c';
 l = bb;
 delayed = bb(4:1:end);
 delayed = [delayed 0 0 0];
 
+bb = bb + delayed; % delayed_b;
+analytic_bb = hil(bb')';
 
 bb = bb + delayed; %elayed_b;
+
+figure(9)
+t = 1:1:length(bb);
+plot(t, bb, t, l)
+
 analytic_bb = hilbert(bb);
+
+
 
 a = max(analytic_bb);
 analytic_bb = analytic_bb ./ a;
@@ -102,6 +111,8 @@ analytic_bb = analytic_bb ./ a;
 
 re = real(analytic_bb);
 im = imag(analytic_bb);
+figure(15)
+plot(1:1:length(re), re, 1:1:length(im), im)
 
 re_de = re(2:1:length(analytic_bb));
 re_de = [re_de 0];
@@ -109,7 +120,7 @@ re_de = [re_de 0];
 im_de = im(2:1:length(analytic_bb));
 im_de = [im_de 0];
 
-
+figure(10)
 f = asin(-(im_de .* re) + re_de .* im);
 plot(t, f)
 %%
@@ -117,10 +128,10 @@ plot(t, f)
 figure(8)
 subplot(3,2,1)
 plot(bb_f_vec, db(abs(fft(l))))
-ylim([-60,60]) 
+ylim([-80,80]) 
 subplot(3,2,2)
 plot(bb_f_vec, db(abs(fft(bb))))
-ylim([-60,60])
+ylim([-80,80])
 subplot(3,2,3)
 [h, w] = freqz([1 0 0 0 0 0 1],[1],f_a_low);
 [i, x] = freqz([1 0 0 1],[1],f_a_low);
