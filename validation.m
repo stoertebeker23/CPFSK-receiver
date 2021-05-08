@@ -29,6 +29,14 @@ T_a_high = 1/f_a_high;
 bp2k_f_vec = 1/T_a_high*(0:(length(bandpass_2k))-1)/length(bandpass_2k);
 bandpass_2k_fft = abs(fft(bandpass_2k));
 
+%% write fir bandpass coeff
+
+filename = 'FIR_bandpass.h';
+file_ID = fopen(filename, 'w');
+
+write_coeff(file_ID, 'FIR_bandpass', coeff, length(coeff));
+fclose(file_ID);
+
 %% primary signal
 
 % 'green' sample frequency
@@ -57,7 +65,7 @@ plot(bp2k_f_vec, db(bandpass_2k_fft.^2));
 title('CPFSK 2KHz Spektralleistung [dB]')
 subplot(2,3,3)
 stem(bb_f_vec, (baseband_fft.^2));
-title('CPFSK Basisband Spektralleistung')
+title('CPFSK Basisbandleistung')
 subplot(2,3,6)
 plot(bb_f_vec, db(baseband_fft.^2));
 title('CPFSK Basisband Spektralleistung [dB]')
