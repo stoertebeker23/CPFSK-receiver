@@ -28,6 +28,8 @@
 \usepackage{amsmath} % Required for some math elements 
 \usepackage{svg} % .svg support
 \usepackage[nolist]{acronym}
+\usepackage{minted}
+\definecolor{bg}{rgb}{0.95,0.95,0.95}
 
 \graphicspath{{img/}}
 
@@ -53,8 +55,8 @@
 
 \begin{center}
 \begin{tabular}{l r}
-Date Performed: \today \\ % Date the experiment was performed
-Partners: Lukas Becker & Tobias Frahm \\ % Partner names
+Date Performed: & \today \\ % Date the experiment was performed
+Partners: & Lukas Becker, Tobias Frahm \\ % Partner names
 Instructor: & Prof. Dr. Sauvergerd \\% Instructor/supervisor
 University: & University of Applied Science 
 \end{tabular}
@@ -95,9 +97,9 @@ In dem folgenden Kapitel wird zunächst ein Rechteckimpuls auf eine Trägerfrequ
 
 \subsection{CPFSK Modulation}
 Die \ac{CPFSK} Modulation ist eine Methode um digitale Signale mithilfe einer Trägerfrequenze analog zu Übertragen.
-Beim der \ac{CPFSK} Modulation handelt es sich um eine Frequenzmodulation ohne Sprünge im Phasenübergang. In Abb.~\ref{fsk}
+Bei der \ac{CPFSK} Modulation handelt es sich um eine Frequenzmodulation ohne Sprünge im Phasenübergang. In Abb.~\ref{fsk}
 ist im oberen Bereich das binäre Signale, im mittleren Bild die Trägerfrequenze und unten das binäre Signal auf die Trägerfrequenze
-moduliert zu sehen. Der Phasenübergäng ohne Sprung ist notwendig, da Sprünge ein theoretisch unendliches breites band benötigen
+moduliert zu sehen. Der Phasenübergäng ohne Sprung ist notwendig, da Sprünge ein theoretisch unendliches breites Band benötigen
 somit die Nachbarkanäle stören würde.
 \begin{figure}[!h]
     \centering
@@ -108,8 +110,50 @@ somit die Nachbarkanäle stören würde.
     Information. Die Phasenübergänge sind ohne Sprung. Quelle:~\cite{wiki:fsk}}
     \label{fsk}
 \end{figure}
+\subsection{Rechteckimpuls $d(i)$}
+Mit Angabe der Symboldauer $T = 20ms$ lässt sich auf die minimale Abtastfrequenz nach Nyquist-Shannon schließen.
+Die minimale Abtastfrequenz $fA$ muss mehr als doppelt so groß wie die höhste abzutastende Frequenz sein.
 
 
+Aus
+\begin{center}
+ $
+fA > 2*f_{max}
+$
+\end{center}
+
+mit 
+\begin{center} $f_{max} = \frac{1}{T_{max}} ; T_{max} = T = 20ms$  \end{center}
+
+ergibt sich
+
+\begin{center}
+$
+fA > 2*\frac{1}{T}
+$
+\end{center}
+
+Eingesetzt:
+\begin{center}
+$fA > 2*\frac{1}{20ms}$
+\end{center}
+\begin{center}
+$fA > 100Hz$   
+\end{center}
+\begin{minted}[linenos, bgcolor=bg]{Matlab}
+    % Signallänge 10s
+    t = 0:T_sample/400:10;
+    w_symbol = 2*pi*f_symbol;
+    d_i = square(w_symbol*t);
+    figure(1)
+    plot(t, d_i)
+    title('Rechteckimpuls: d(i)')
+    grid on
+    ylim([-2 2])
+    xlim([0 0.25])
+    xlabel('[s]')
+    ylabel(['Amplitude'])
+\end{minted}
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------

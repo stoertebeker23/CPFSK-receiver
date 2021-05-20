@@ -224,4 +224,3 @@ for r = 1:length(binarized)-4
       end
    end
 end
-y
