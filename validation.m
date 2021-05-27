@@ -30,11 +30,30 @@ bp2k_f_vec = 1/T_a_high*(0:(length(bandpass_2k))-1)/length(bandpass_2k);
 bandpass_2k_fft = abs(fft(bandpass_2k));
 
 %% write fir bandpass coeff
+a = coeff
+filename = 'FIR_bandpass11.h';
+file_ID = fopen(filename, 'a');
+step = 527;
+for i = 1:step 
+    tmp = [];
+    for y = i:step:length(a)
+        if y == i
+            % first one
+            tmp = a(y);
+        elseif (y) <= (length(a))
+            % second, third, fourth
+            tmp = [tmp, a(y)];          
+        end
+    end
+    if length(tmp) < 4
+        while length(tmp) < 4
+            tmp = [tmp, 0.];
+        end 
+    end
+    write_coeff(file_ID, 'FIR_bandpass', i, tmp, length(tmp));
+    clear tmp
+end
 
-filename = 'FIR_bandpass.h';
-file_ID = fopen(filename, 'w');
-
-write_coeff(file_ID, 'FIR_bandpass', coeff, length(coeff));
 fclose(file_ID);
 
 %% primary signal
