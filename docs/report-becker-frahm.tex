@@ -110,15 +110,15 @@ somit die Nachbarkanäle stören würde.
     Information. Die Phasenübergänge sind ohne Sprung. Quelle:~\cite{wiki:fsk}}
     \label{fsk}
 \end{figure}
-\subsection{Rechteckimpuls $d(i)$}
+\subsection{Rechteckimpuls $d(i)$}\label{sec:rechteck}
 Mit Angabe der Symboldauer $T = 20ms$ lässt sich auf die minimale Abtastfrequenz nach Nyquist-Shannon schließen.
-Die minimale Abtastfrequenz $fA$ muss mehr als doppelt so groß wie die höhste abzutastende Frequenz sein.
+Die minimale Abtastfrequenz $f_A$ muss mehr als doppelt so groß wie die höhste abzutastende Frequenz sein.
 
 
 Aus
 \begin{center}
  $
-fA > 2*f_{max}
+f_A > 2*f_{max}
 $
 \end{center}
 
@@ -129,37 +129,95 @@ ergibt sich
 
 \begin{center}
 $
-fA > 2*\frac{1}{T}
+f_A > 2*\frac{1}{T}
 $
 \end{center}
 
 Eingesetzt:
 \begin{center}
-$fA > 2*\frac{1}{20ms}$
+$f_A > 2*\frac{1}{20ms}$
 \end{center}
 \begin{center}
-$fA > 100Hz$   
+$f_A > 100Hz$   
 \end{center}
-\begin{minted}[linenos, bgcolor=bg]{Matlab}
-    % Signallänge 10s
-    t = 0:T_sample/400:10;
-    w_symbol = 2*pi*f_symbol;
-    d_i = square(w_symbol*t);
-    figure(1)
-    plot(t, d_i)
-    title('Rechteckimpuls: d(i)')
-    grid on
-    ylim([-2 2])
-    xlim([0 0.25])
-    xlabel('[s]')
-    ylabel(['Amplitude'])
+\begin{figure}[!h]
+    \centering
+    \def\svgscale{0.3}
+    \def\svgwidth{\columnwidth}
+    \input{img/rechteck.pdf_tex}
+    \caption{Recheckimpuls zur \ac{CPFSK} Simulation in Matlab}
+\end{figure}
+
+\subsection{Anfangsphase $\phi(iT)$}
+
+Gegeben ist die ein Integrator (IIR Filter 1.Ordnung) mit der Übertragnungsfunktion:
+$$
+H_I(z)=\frac{z^{-1}}{1-z^{-1}}
+$$
+Dieser kann hier anstelle der Summenbildung der komplexen Einhüllenden eingesetzt werden, 
+da die Integration einer Aufsummierung diskreter Flächenelemte unter der Kurve entspricht.
+
+\begin{figure}[!h]
+    \centering
+    \def\svgscale{0.3}
+    \includegraphics{img/sig_IIR.png}
+    \caption{Signalflussdiagramm des Integrators 1.Ordnung}
+\end{figure}
+
+\subsection{CPFSK Signal}
+Das in Abschnitt~\ref{sec:rechteck} generierte Reckecksignal wird nun CPFSK Modeliert.
+Dafür wir die Formel aus Worksheet 1 verwendet:
+
+$$CPFSK_{sig} = amp \cdot  sin(2  pi \cdot f_T \cdot n \cdot T_A + 2 pi \cdot \varDelta{F} \cdot \frac{\phi (iT)}{f_A} + \varphi{0}) $$
+
+Zur bestimmung des Spektrums des Signals, wird in Matlab FFT verwendet.
+\begin{figure}[!h]
+    \centering
+    \def\svgscale{0.3}
+    \def\svgwidth{\columnwidth}
+    \input{img/spektrum.pdf_tex}
+    \caption{Betragspektrum des CPFSK-Modulierten Rechteckimpulses.}
+\end{figure}
+Bei einem $\varDelta(F) = 225Hz$ wird hier eine Bandbreite von ca. $B > 450Hz = 2\cdot \varDelta(F) $ erwartet.
+
+Zur Bandbreitenbestimmung wird das Parsevalsche Theorem genutz, die Bandbreite des CPFSK Signals ist derjenige Bereich,
+in den 99\% der Signalenergie von $0...\frac{f_A}{2}$ Fallen.
+
+$$
+\sum_{n = 0}^{N - 1}\left\lvert x(n)^2\right\rvert =  \frac{1}{N} \sum_{k = 1}^{N-1}  \left\lvert X(k)^2\right\rvert 
+$$
+
+\begin{minted}{matlab}
+% Die Bandbreite wird durch den Breich beschrieben, in den 99% der
+% Signalenergie fallen.
+
+total_power = 0;
+current_power = 0;
+idx = 0;
+idx_max = round(length(spectrum_sig)/2);
+idx_start = idx_max/2; % fA/4
+
+for i = 1:length(spectrum_sig)/2 - 1
+    total_power = total_power + abs(spectrum_sig(i))^2 / length(spectrum_sig);
+end
+
+N = length(spectrum_sig);
+
+while current_power/total_power < 0.99
+    current_power = current_power + abs(spectrum_sig(idx_start - idx))^2 / N;
+    current_power = current_power + abs(spectrum_sig(idx_start + idx))^2 / N;
+    idx = idx + 1;
+end
+
+fprintf("Bandbreite: %dHz\n", ((idx_start + idx) - (idx_start - idx)))
 \end{minted}
-%----------------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
 
 \bibliographystyle{apalike}
-
 \bibliography{lib}
 
 %----------------------------------------------------------------------------------------
