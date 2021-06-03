@@ -6,9 +6,9 @@
 #include <math.h>	// for sin/cos
 #include <stdlib.h>
 #include <string.h>
-
-#include "fir_filter_sc.h"
-#include "FIR__poly_bandpass.h"
+#include "fir_filter_fl.h"
+//#include "fir_filter_sc.h"
+#include "FIR_poly_bandpass.h"
 #include "highpass.h"
 #include "processor.h"
 
@@ -16,16 +16,19 @@
 #define DEMOD "demodulator.csv"
 #define HIGHP "hochpass.csv"
 #define DECBP "dec_bandpass.csv"
-short H_filt_remez_dec[527][N_delays_FIR_poly]; 
+
 short cntr = DECIMATION - 1;
-short subcntr = 0;
-short out[DECIMATION];
-long int result = 0;
-short hp_result= 0;
+
+
+//long int result = 0;
+float result;
+float hp_result = 0;
+//short hp_result= 0;
 short result_short = 0;
 int cntrlol = 0;
 int cntrlel = 0;
-short delayed_sample = 0;
+//short delayed_sample = 0;
+float delayed_sample = 0;
 short i = 0;
 
 complex Q_sig = 0;
@@ -34,7 +37,8 @@ complex del_Q_sig = 0;
 complex del_I_sig = 0;
 complex output_y = 0;
 
-short * bp_filter[] = {
+//short * bp_filter[] = {
+float * bp_filter[] = {
 	FIR_BANDPASS_1, FIR_BANDPASS_2, FIR_BANDPASS_3, FIR_BANDPASS_4, FIR_BANDPASS_5, FIR_BANDPASS_6, 
 	FIR_BANDPASS_7, FIR_BANDPASS_8, FIR_BANDPASS_9, FIR_BANDPASS_10, FIR_BANDPASS_11, FIR_BANDPASS_12, 
 	FIR_BANDPASS_13, FIR_BANDPASS_14, FIR_BANDPASS_15, FIR_BANDPASS_16, FIR_BANDPASS_17, FIR_BANDPASS_18, 
@@ -128,7 +132,7 @@ short delay_line[4];
 short *rotating_rw = delay_line;
 
 FILE *fid_OUT, *fid_OUT2, *fid_OUT1, *fid_OUT3;
-extern short FIR_filter_sc(short FIR_delays[], short FIR_coe[], short int N_delays, short x_n, int shift);
+//extern short FIR_filter_sc(short FIR_delays[], short FIR_coe[], short int N_delays, short x_n, int shift);
 
 void debug_init() {
 
@@ -140,14 +144,15 @@ void debug_init() {
 
 void output_sample()
 {
-	result = 0;
-	for(i = 0; i < DECIMATION; i++) {
-		result += out[i];
-	}
-	result_short = result << 1;
 
-	hp_result = FIR_filter_sc(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result_short, 13);
+	//result_short = result << 1;
+	result = result/527;
+	//result_short = result >> 1;
 
+	//hp_result = FIR_filter_sc(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result_short, 15);
+	hp_result = FIR_filter_fl(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result);
+	printf("hp lol %f\n", result);
+	printf("hp lol %f\n", hp_result);
 	if (rotating_rw == delay_line + 4)
 		rotating_rw = delay_line;
 	
@@ -157,12 +162,13 @@ void output_sample()
 
 	// printf("Deleeline: %d, %d\n", result_short, delayed_sample);
 	
-	I_sig = hp_result + 0.1719*delayed_sample;
+	I_sig = hp_result + 0.1719* delayed_sample;
 
 	Q_sig = 0.985* I *delayed_sample;
 
 
-	printf("%d --- %d\n", hp_result, delayed_sample);
+	//printf("%d --- %d\n", hp_result, delayed_sample);
+	printf("%f --- %f\n", hp_result, delayed_sample);
 	printf("Qadratur %fi + %f\n", cimag(Q_sig),creal(Q_sig));
 	printf("Inphase %fi + %f\n", cimag(I_sig),creal(I_sig));
 	printf("del Qadratur %fi + %f\n", cimag(del_Q_sig),creal(del_Q_sig));
@@ -185,30 +191,38 @@ void output_sample()
 	// decodieren
 	fprintf(fid_OUT, "%f %fj\n", creal(I_sig), cimag(Q_sig));
 	fprintf(fid_OUT1, "%f\n", cimag(output_y));
-	fprintf(fid_OUT2, "%hd\n", hp_result);
-	fprintf(fid_OUT3, "%d\n", result_short);
+	//fprintf(fid_OUT2, "%hd\n", hp_result);
+	fprintf(fid_OUT2, "%f\n", hp_result);
+	//fprintf(fid_OUT3, "%d\n", result_short);
+	fprintf(fid_OUT3, "%f\n", result);
 	//printf("%d", result_short);
 
 }
 
 void process_sample(short value) {
-	cntrlel += 1;
+
+	result += FIR_filter_fl(H_filt_remez_dec[cntr], bp_filter[cntr], N_delays_FIR_poly, (float) value);
+	cntr += 1;
+	if (cntr == DECIMATION ) {
+		cntr = 0;
+		output_sample();
+		result=0;
+	}
+	//printf("%f yolo\n", result);
+	//printf("%d\n", cntr);
+    /*
     cntr += 1;
     if (cntr == DECIMATION) {
     	cntr = 0;
-    	//printf("\n%d\n", subcntr);
-    	subcntr += 1;
+    	//result = 0;
+
+    } else if (cntr == DECIMATION - 1) {
     	
     	output_sample();
-    		
-    	memset(out, 0, sizeof(out));
-    } else {
-    	//out[cntr] += bp_filter[cntr][subcntr] * ADDA8M12_adc[ADDA8M12_bufferReady][indx]
+    	result = 0;
 
-    	out[cntr] += FIR_filter_sc(H_filt_remez_dec[cntr], bp_filter[cntr], N_delays_FIR_poly, value, 13);
-    }
+	}*/
+
 	
-
-	exit(0);
 }
 
