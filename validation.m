@@ -31,7 +31,7 @@ bandpass_2k_fft = abs(fft(bandpass_2k));
 
 %% write fir bandpass coeff
 a = coeff
-filename = 'FIR_bandpass11.h';
+filename = 'FIR_bandpass.c';
 file_ID = fopen(filename, 'a');
 step = 527;
 for i = 1:step 
