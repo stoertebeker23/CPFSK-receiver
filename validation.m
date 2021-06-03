@@ -26,6 +26,7 @@ amp = 0.5;
 %[bandpass_signal, fswav] = audioread('CPFSK_modulate_text_ADDA8M12_20Apr21_Bec_Fra.wav');
 [bandpass_signal, fswav] = audioread('CPFSK_modulate_text_ADDA8M12.wav');
 
+
 bp_f_vec = 2019200*(0:(length(bandpass_signal))-1)/length(bandpass_signal);
 bandpass_fft = abs(fft(bandpass_signal));
 
@@ -62,11 +63,13 @@ plot(bb_f_vec, db(bb_fft.*bb_fft));
 
 %% 
 
-bb = bb';
-delayed = bb(5:1:end);
-del = [delayed 0 0 0 0];
-del_compl = (0.1719 + 0.985j).*del;
-bb_compl = bb + del_compl;
+bb_ = bb';
+
+del = [0 0 0 0 bb_(1:1:end-4)];
+
+   
+del_compl = (0.3417 + 0.9398j).*del;
+bb_compl = bb_ + del_compl;
 
 y0 = fftshift(fft(bb_compl)); 
 n = length(bb_compl);
@@ -87,6 +90,8 @@ im_de = [im_de 0];
 
 
 f = asin(-(im_de .* re) + re_de .* im);
+figure(50)
+plot(f)
 
 %%
 binarized = f > 0;
