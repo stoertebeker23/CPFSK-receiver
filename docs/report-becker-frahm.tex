@@ -181,7 +181,7 @@ Zur bestimmung des Spektrums des Signals, wird in Matlab FFT verwendet.
 Bei einem $\varDelta(F) = 225Hz$ wird hier eine Bandbreite von ca. $B > 450Hz = 2\cdot \varDelta(F) $ erwartet.
 
 Zur Bandbreitenbestimmung wird das Parsevalsche Theorem genutz, die Bandbreite des CPFSK Signals ist derjenige Bereich,
-in den 99\% der Signalenergie von $0...\frac{f_A}{2}$ Fallen.
+in den 99\% der Signalenergie von $0...\frac{f_A}{2}$ Fallen. Es ergibt sich hierbei eine Bandbreite von $536Hz$
 
 $$
 \sum_{n = 0}^{N - 1}\left\lvert x(n)^2\right\rvert =  \frac{1}{N} \sum_{k = 1}^{N-1}  \left\lvert X(k)^2\right\rvert 
@@ -212,8 +212,11 @@ end
 fprintf("Bandbreite: %dHz\n", ((idx_start + idx) - (idx_start - idx)))
 \end{minted}
 
-
----------------------------------------------------------------------------
+Das Weglassen der Start- und Stoppbits spielt bei der bestimmung der Bandbreite keine rolle.
+Es werden nur binäre Daten übertragen $D = \{0, 1\}$. die Frequenzen $ f_1 = f_T \pm \varDelta F $ repräsentieren. 
+Da auch die Start/Stopbits durch $D$ dargestellt werden, würde sich hier im Frequenzbereich
+nur eine veränderung im maximum der Amplitude ergeben, die repräsentierenden Frequenzen selbst bleiben unverändert.
+% ---------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
 
