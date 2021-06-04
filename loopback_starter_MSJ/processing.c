@@ -19,7 +19,6 @@
 
 short cntr = DECIMATION - 1;
 
-
 //long int result = 0;
 float result;
 float hp_result = 0;
@@ -127,9 +126,10 @@ float * bp_filter[] = {
 	FIR_BANDPASS_511, FIR_BANDPASS_512, FIR_BANDPASS_513, FIR_BANDPASS_514, FIR_BANDPASS_515, FIR_BANDPASS_516, 
 	FIR_BANDPASS_517, FIR_BANDPASS_518, FIR_BANDPASS_519, FIR_BANDPASS_520, FIR_BANDPASS_521, FIR_BANDPASS_522, 
 	FIR_BANDPASS_523, FIR_BANDPASS_524, FIR_BANDPASS_525, FIR_BANDPASS_526, FIR_BANDPASS_527 }; 
-short *delay_iter = NULL;
-short delay_line[4];
-short *rotating_rw = delay_line;
+
+float *delay_iter = NULL;
+float delay_line[4];
+float *rotating_rw = delay_line;
 
 FILE *fid_OUT, *fid_OUT2, *fid_OUT1, *fid_OUT3;
 //extern short FIR_filter_sc(short FIR_delays[], short FIR_coe[], short int N_delays, short x_n, int shift);
@@ -146,7 +146,13 @@ void output_sample()
 {
 
 	//result_short = result << 1;
-	result = result/527;
+	/*result = result/527;
+	if (result < -20) {
+		result = -1;
+	}
+	else if (result > 20) {
+		result = 1;
+	}*/
 	//result_short = result >> 1;
 
 	//hp_result = FIR_filter_sc(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result_short, 15);
@@ -162,9 +168,9 @@ void output_sample()
 
 	// printf("Deleeline: %d, %d\n", result_short, delayed_sample);
 	
-	I_sig = hp_result + 0.1719* delayed_sample;
+	I_sig = hp_result + 0.1719 * delayed_sample;
 
-	Q_sig = 0.985* I *delayed_sample;
+	Q_sig = 0.985 * I * delayed_sample;
 
 
 	//printf("%d --- %d\n", hp_result, delayed_sample);
@@ -199,15 +205,18 @@ void output_sample()
 
 }
 
-void process_sample(short value) {
+void process_sample(float value) {
+	printf("sample: %d = %f filter: %d\n", cntrlel, value, cntr);
 
-	result += FIR_filter_fl(H_filt_remez_dec[cntr], bp_filter[cntr], N_delays_FIR_poly, (float) value);
-	cntr += 1;
-	if (cntr == DECIMATION ) {
-		cntr = 0;
+	result += FIR_filter_fl(H_filt_remez_dec[cntr], bp_filter[cntr], N_delays_FIR_poly, value);
+	cntr -= 1;
+	if (cntr < 0 ) {
+		cntr = DECIMATION - 1;
 		output_sample();
 		result=0;
 	}
+	
+	cntrlel += 1;
 	//printf("%f yolo\n", result);
 	//printf("%d\n", cntr);
     /*
