@@ -1,6 +1,22 @@
+*.csv
+loopback_starter_MSJ.c
+*.mat
+*.gel
+.ccsproject
+.csproject
+.launches/
+.project
+.cproject
+.settings/
+processor.h
+*.bin
+*.asm
+*.ccxmls
 *.wav
-*.zip
 *.pdf
+*.zip
+*.svgz
 *.png
 *.jpg
-y_cpfsk_sig (1).mat
+*.out
+loopback_start_MSJ_ANSI_C/

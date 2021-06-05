@@ -527,4 +527,5 @@ float FIR_BANDPASS_524[4] = { 0.00028652, 0.0028992, -0.00010258, 0, };
 float FIR_BANDPASS_525[4] = { 0.00029809, 0.0028843, -0.0001083, 0, };
 float FIR_BANDPASS_526[4] = { 0.00031006, 0.0028684, -0.00011335, 0, };
 float FIR_BANDPASS_527[4] = { 0.0003218, 0.0028522, -0.00011862, 0, };
- float H_filt_remez_dec[527][4];
+
+float H_filt_remez_dec[527][4];

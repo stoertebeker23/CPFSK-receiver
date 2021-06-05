@@ -1,4 +1,3 @@
- // control whether we have ANSI_C or HARDWARE_ADDA12M8_C6747 version
 #define DECIMATION 527
 
 #include <complex.h>
@@ -9,7 +8,7 @@
 #include "fir_filter_fl.h"
 //#include "fir_filter_sc.h"
 #include "FIR_poly_bandpass.h"
-#include "highpass.h"
+#include "FIR_highpass.h"
 #include "processor.h"
 
 #define COMBF "kammfilter.csv"
@@ -132,7 +131,6 @@ float delay_line[4];
 float *rotating_rw = delay_line;
 
 FILE *fid_OUT, *fid_OUT2, *fid_OUT1, *fid_OUT3;
-//extern short FIR_filter_sc(short FIR_delays[], short FIR_coe[], short int N_delays, short x_n, int shift);
 
 void debug_init() {
 
@@ -142,59 +140,38 @@ void debug_init() {
     fid_OUT3 = fopen(DECBP, "w");
 }
 
-void output_sample()
-{
-
-	//result_short = result << 1;
-	/*result = result/527;
-	if (result < -20) {
-		result = -1;
-	}
-	else if (result > 20) {
-		result = 1;
-	}*/
+void output_sample() {
+	// Short scaling
 	//result_short = result >> 1;
 
+
+	// Highpass filter damping DC parts of the signal
 	//hp_result = FIR_filter_sc(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result_short, 15);
 	hp_result = FIR_filter_fl(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result);
-	printf("hp lol %f\n", result);
-	printf("hp lol %f\n", hp_result);
+
+	// Delayline counter overflow management
 	if (rotating_rw == delay_line + 4)
 		rotating_rw = delay_line;
 	
+	// Rotating delayed sample storage
 	delayed_sample = *rotating_rw;
 	*rotating_rw = hp_result;
 	rotating_rw += 1;
-
-	// printf("Deleeline: %d, %d\n", result_short, delayed_sample);
 	
+	// Complex comb filter with 4 delays
 	I_sig = hp_result + 0.1719 * delayed_sample;
-
 	Q_sig = 0.985 * I * delayed_sample;
 
 
-	//printf("%d --- %d\n", hp_result, delayed_sample);
-	printf("%f --- %f\n", hp_result, delayed_sample);
-	printf("Qadratur %fi + %f\n", cimag(Q_sig),creal(Q_sig));
-	printf("Inphase %fi + %f\n", cimag(I_sig),creal(I_sig));
-	printf("del Qadratur %fi + %f\n", cimag(del_Q_sig),creal(del_Q_sig));
-	printf("del Inphase %fi + %f\n", cimag(del_I_sig),creal(del_I_sig));
 
 	output_y = -(del_Q_sig * I_sig) + del_I_sig * Q_sig;
 
-	printf("%f + i%f\n", creal(output_y), cimag(output_y));
 	del_Q_sig = Q_sig;
 	del_I_sig = I_sig;
-	//complex = complex;
-	//ok abfahrt -> delay für complex und realteil?
-
-	// illlustre Demodulation ?
-
-	// normieren vll lol
-
-	// pattern matching
 
 	// decodieren
+
+	// Multiple debug infos
 	fprintf(fid_OUT, "%f %fj\n", creal(I_sig), cimag(Q_sig));
 	fprintf(fid_OUT1, "%f\n", cimag(output_y));
 	//fprintf(fid_OUT2, "%hd\n", hp_result);
@@ -206,32 +183,14 @@ void output_sample()
 }
 
 void process_sample(float value) {
-	printf("sample: %d = %f filter: %d\n", cntrlel, value, cntr);
 
+	// Polyphase bandpass filtering
 	result += FIR_filter_fl(H_filt_remez_dec[cntr], bp_filter[cntr], N_delays_FIR_poly, value);
 	cntr -= 1;
 	if (cntr < 0 ) {
 		cntr = DECIMATION - 1;
 		output_sample();
-		result=0;
-	}
-	
-	cntrlel += 1;
-	//printf("%f yolo\n", result);
-	//printf("%d\n", cntr);
-    /*
-    cntr += 1;
-    if (cntr == DECIMATION) {
-    	cntr = 0;
-    	//result = 0;
-
-    } else if (cntr == DECIMATION - 1) {
-    	
-    	output_sample();
-    	result = 0;
-
-	}*/
-
-	
+		result = 0;
+	}	
 }
 

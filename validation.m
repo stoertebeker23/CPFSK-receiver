@@ -24,8 +24,15 @@ phi_0 = pi;
 amp = 0.5;
 
 %[bandpass_signal, fswav] = audioread('CPFSK_modulate_text_ADDA8M12_20Apr21_Bec_Fra.wav');
-[bandpass_signal, fswav] = audioread('CPFSK_modulate_text_ADDA8M12.wav');
+%[bandpass_signal, fswav] = audioread('CPFSK_modulate_text_ADDA8M12.wav');
+%FileData = load('y_cpfsk_sig.mat');
+bandpass_signal = readmatrix('loopback_starter_MSJ/y_cpfsk.csv');
+%bandpass_signal = FileData.Ax_DC_filtered;
 
+low = 4000;
+high = 5400;
+low_stop = low - 1500;
+high_stop = high + 1500;
 
 bp_f_vec = 2019200*(0:(length(bandpass_signal))-1)/length(bandpass_signal);
 bandpass_fft = abs(fft(bandpass_signal));
@@ -33,7 +40,11 @@ bandpass_fft = abs(fft(bandpass_signal));
 f_a_high = 2019200;
 T_a_high = 1/f_a_high;
 
-filtered_bp = bandpass(bandpass_signal,[3800 5800],f_a_high);
+[N_FIR,fo,mo,w] = firpmord([low_stop low high high_stop], [0 1 0], [0.05, 0.01, 0.05],  2019200 );
+
+b_FIR = firpm(N_FIR,fo,mo,w);
+filtered_bp = filter(b_FIR,[ 1 ],bandpass_signal);
+%filtered_bp = bandpass(bandpass_signal,[3800 5800],f_a_high);
 bp_f_vec_1 = 1/T_a_high*(0:(length(filtered_bp))-1)/length(filtered_bp);
 filtered_fft = abs(fft(filtered_bp));
 
@@ -41,6 +52,8 @@ f_a_low = 3832;
 T_a_low = 1 / f_a_low;
 
 bb = filtered_bp(1:round(T_a_low/T_a_high):end);
+figure(52)
+plot(bb)
 bb_f_vec =  1/T_a_low*(0:(length(bb))-1)/length(bb) ;
 bb_fft = abs(fft(bb));
 
