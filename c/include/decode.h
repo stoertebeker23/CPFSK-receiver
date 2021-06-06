@@ -5,49 +5,49 @@
 #ifndef C_DECODE_H
 #define C_DECODE_H
 
-void _decode(const unsigned char *bits);
-void decode(unsigned char bit);
-void circ_buff_push(circ_buff_t *c, short data);
-
-unsigned char const NUM_CHAR[5] = {1, 0, 1, 1, 1};
-unsigned char const LET[5] = {1, 1, 1, 1, 1};
-
-unsigned char const A[5] = {0, 0, 0, 1, 1};
-unsigned char const B[5] = {1, 1, 0, 0, 1};
-unsigned char const C[5] = {0, 1, 1, 1, 0};
-unsigned char const D[5] = {0, 1, 0, 0, 1};
-unsigned char const E[5] = {0, 0, 0, 0, 1};
-unsigned char const F[5] = {0, 1, 1, 0, 1};
-unsigned char const G[5] = {1, 1, 0, 1, 0};
-unsigned char const H[5] = {1, 0, 1, 0, 0};
-unsigned char const I[5] = {0, 0, 1, 1, 0};
-unsigned char const J[5] = {0, 1, 0, 1, 1};
-unsigned char const K[5] = {0, 1, 1, 1, 1};
-unsigned char const L[5] = {1, 0, 0, 1, 0};
-unsigned char const M[5] = {1, 1, 1, 0, 0};
-unsigned char const N[5] = {0, 1, 1, 0, 0};
-unsigned char const O[5] = {1, 1, 0, 0, 0};
-unsigned char const P[5] = {1, 0, 1, 1, 0};
-unsigned char const Q[5] = {1, 0, 1, 1, 1};
-unsigned char const R[5] = {0, 1, 0, 1, 0};
-unsigned char const S[5] = {0, 0, 1, 0, 1};
-unsigned char const T[5] = {1, 0, 0, 0, 0};
-unsigned char const U[5] = {0, 0, 1, 1, 1};
-unsigned char const V[5] = {1, 1, 1, 1, 0};
-unsigned char const W[5] = {1, 0, 0, 1, 1};
-unsigned char const X[5] = {1, 1, 1, 0, 1};
-unsigned char const Y[5] = {1, 0, 1, 0, 1};
-unsigned char const Z[5] = {1, 0, 0, 0, 1};
-unsigned char const CR[5] = {0, 1, 0, 0, 0};
-unsigned char const TAB[5] = {0, 0, 0, 1, 0};
-unsigned char const SPACE[5] = {0, 0, 1, 0, 0};
-
 typedef struct {
-    unsigned char *const buffer;
+    unsigned short *const buffer;
     short head;
     short tail;
-    const short maxlen;
+    const short maxidx;
 } circ_buff_t;
+
+void _decode(const unsigned short *bits);
+void decode(unsigned short bit);
+void circ_buff_push(circ_buff_t *c, unsigned short data);
+
+unsigned short const NUM_CHAR[5] = {1, 0, 1, 1, 1};
+unsigned short const LET[5] = {1, 1, 1, 1, 1};
+
+unsigned short const A[5] = {0, 0, 0, 1, 1};
+unsigned short const B[5] = {1, 1, 0, 0, 1};
+unsigned short const C[5] = {0, 1, 1, 1, 0};
+unsigned short const D[5] = {0, 1, 0, 0, 1};
+unsigned short const E[5] = {0, 0, 0, 0, 1};
+unsigned short const F[5] = {0, 1, 1, 0, 1};
+unsigned short const G[5] = {1, 1, 0, 1, 0};
+unsigned short const H[5] = {1, 0, 1, 0, 0};
+unsigned short const I[5] = {0, 0, 1, 1, 0};
+unsigned short const J[5] = {0, 1, 0, 1, 1};
+unsigned short const K[5] = {0, 1, 1, 1, 1};
+unsigned short const L[5] = {1, 0, 0, 1, 0};
+unsigned short const M[5] = {1, 1, 1, 0, 0};
+unsigned short const N[5] = {0, 1, 1, 0, 0};
+unsigned short const O[5] = {1, 1, 0, 0, 0};
+unsigned short const P[5] = {1, 0, 1, 1, 0};
+unsigned short const Q[5] = {1, 0, 1, 1, 1};
+unsigned short const R[5] = {0, 1, 0, 1, 0};
+unsigned short const S[5] = {0, 0, 1, 0, 1};
+unsigned short const T[5] = {1, 0, 0, 0, 0};
+unsigned short const U[5] = {0, 0, 1, 1, 1};
+unsigned short const V[5] = {1, 1, 1, 1, 0};
+unsigned short const W[5] = {1, 0, 0, 1, 1};
+unsigned short const X[5] = {1, 1, 1, 0, 1};
+unsigned short const Y[5] = {1, 0, 1, 0, 1};
+unsigned short const Z[5] = {1, 0, 0, 0, 1};
+unsigned short const CR[5] = {0, 1, 0, 0, 0};
+unsigned short const TAB[5] = {0, 0, 0, 1, 0};
+unsigned short const SPACE[5] = {0, 0, 1, 0, 0};
 
 
 #endif //C_DECODE_H
