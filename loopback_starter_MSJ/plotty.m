@@ -9,6 +9,8 @@ data3 = readmatrix('demodulator.csv');
 data1 = readmatrix('hochpass.csv');
 data = readmatrix('kammfilter.csv');
 
+data_time = readmatrix('times.csv');
+
 data2 = complex(data(:,1),imag(data(:,2)));
 
 y0 = fftshift(fft(data2)); 
@@ -94,4 +96,6 @@ b = lol < 0;
 plot(b)
 ylim([-0.2, 1.2])
 
-d = b.*16384
+
+figure(23)
+plot(data_time)
