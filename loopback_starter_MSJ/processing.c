@@ -162,11 +162,13 @@ void debug_init() {
 #endif
 void process_comb_and_demod() {
 
-	I_sig = hp_result + 0.1719 * delayed_sample;
-	Q_sig = 0.985 * I * delayed_sample;
+	I_sig = hp_result + 0.17502 * delayed_sample;
+	Q_sig = 0.9846  * I * delayed_sample;
 
-	output_y = -(del_Q_sig * I_sig) + del_I_sig * Q_sig;
-
+	//output_y = atan2(cimag(-(del_Q_sig * I_sig) + del_I_sig * Q_sig),1);
+	output_y = cimag(-(del_Q_sig * I_sig) + del_I_sig * Q_sig);
+	//printf("%f %fj\n", creal(output_y), cimag(output_y));
+	//printf()
 	del_Q_sig = Q_sig;
 	del_I_sig = I_sig;
 }
@@ -195,13 +197,13 @@ void output_sample() {
 
 	
 	// Complex comb filter with 4 delays
-	I_sig = hp_result + 0.1719 * delayed_sample;
-	Q_sig = 0.985 * I * delayed_sample;
+	//I_sig = hp_result + 0.17502 * delayed_sample;
+	//Q_sig = 0.9846 * I * delayed_sample;
 
-	output_y = -(del_Q_sig * I_sig) + del_I_sig * Q_sig;
+	//output_y = -(del_Q_sig * I_sig) + del_I_sig * Q_sig;
 
-	del_Q_sig = Q_sig;
-	del_I_sig = I_sig;
+	//del_Q_sig = Q_sig;
+	//del_I_sig = I_sig;
 
 	// decodieren
 //    if (cnt > 77){
@@ -213,7 +215,7 @@ void output_sample() {
 #ifdef USE_MSVC_ANSI_C_SIM
 	// Multiple debug infos
 	fprintf(fid_OUT, "%f %fj\n", creal(I_sig), cimag(Q_sig));
-	fprintf(fid_OUT1, "%f\n", cimag(output_y));
+	fprintf(fid_OUT1, "%f\n", creal(output_y));
 	//fprintf(fid_OUT2, "%hd\n", hp_result);
 	fprintf(fid_OUT2, "%f\n", hp_result);
 	//fprintf(fid_OUT3, "%d\n", result_short);
