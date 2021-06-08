@@ -1,4 +1,5 @@
 #define DECIMATION 527
+//#define DECODE_FREQ 3832/50
 
 #include <complex.h>
 #include <stdio.h>	// for printf
@@ -13,6 +14,7 @@
 #include "FIR_poly_bandpass.h"
 #include "FIR_highpass.h"
 #include "processor.h"
+//#include "../c/include/decode.h"
 
 #ifdef USE_MSVC_ANSI_C_SIM
 
@@ -24,10 +26,11 @@
 
 struct timespec start, end;
 long time_diff;
-
 int exec_times[527];
 
 #endif
+
+
 short cntr = DECIMATION - 1;
 short runs = 1;
 
@@ -170,7 +173,7 @@ void process_comb_and_demod() {
 void output_sample() {
 	// Short scaling
 	//result_short = result >> 1;
-
+    static int cnt = 0;
 
 	// Highpass filter damping DC parts of the signal
 	//hp_result = FIR_filter_sc(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result_short, 15);
@@ -185,11 +188,28 @@ void output_sample() {
 	*rotating_rw = hp_result;
 	rotating_rw += 1;
 
+
 #ifdef USE_MSVC_ANSI_C_SIM
 	clock_gettime(CLOCK_MONOTONIC, &end);
 #endif
 
+	
+	// Complex comb filter with 4 delays
+	I_sig = hp_result + 0.1719 * delayed_sample;
+	Q_sig = 0.985 * I * delayed_sample;
+
+	output_y = -(del_Q_sig * I_sig) + del_I_sig * Q_sig;
+
+	del_Q_sig = Q_sig;
+	del_I_sig = I_sig;
+
 	// decodieren
+//    if (cnt > 77){
+//        if (cimag(output_y) > 0)
+//            decode(1);
+//        else
+//            decode(0);
+//    }
 #ifdef USE_MSVC_ANSI_C_SIM
 	// Multiple debug infos
 	fprintf(fid_OUT, "%f %fj\n", creal(I_sig), cimag(Q_sig));
@@ -200,6 +220,8 @@ void output_sample() {
 	fprintf(fid_OUT3, "%f\n", result);
 	//printf("%d", result_short);
 #endif
+    cnt++;
+
 }
 
 void process_sample(float value) {
