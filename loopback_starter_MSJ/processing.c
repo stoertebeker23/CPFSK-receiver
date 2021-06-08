@@ -11,11 +11,14 @@
 #include "FIR_highpass.h"
 #include "processor.h"
 
+#ifdef USE_MSVC_ANSI_C_SIM
+
 #define COMBF "kammfilter.csv"
 #define DEMOD "demodulator.csv"
 #define HIGHP "hochpass.csv"
 #define DECBP "dec_bandpass.csv"
 
+#endif
 short cntr = DECIMATION - 1;
 
 //long int result = 0;
@@ -23,8 +26,6 @@ float result;
 float hp_result = 0;
 //short hp_result= 0;
 short result_short = 0;
-int cntrlol = 0;
-int cntrlel = 0;
 //short delayed_sample = 0;
 float delayed_sample = 0;
 short i = 0;
@@ -130,7 +131,11 @@ float *delay_iter = NULL;
 float delay_line[4];
 float *rotating_rw = delay_line;
 
+#ifdef USE_MSVC_ANSI_C_SIM
+
 FILE *fid_OUT, *fid_OUT2, *fid_OUT1, *fid_OUT3;
+
+
 
 void debug_init() {
 
@@ -139,6 +144,8 @@ void debug_init() {
     fid_OUT2 = fopen(HIGHP, "w");
     fid_OUT3 = fopen(DECBP, "w");
 }
+
+#endif
 
 void output_sample() {
 	// Short scaling
@@ -162,15 +169,12 @@ void output_sample() {
 	I_sig = hp_result + 0.1719 * delayed_sample;
 	Q_sig = 0.985 * I * delayed_sample;
 
-
-
 	output_y = -(del_Q_sig * I_sig) + del_I_sig * Q_sig;
 
 	del_Q_sig = Q_sig;
 	del_I_sig = I_sig;
-
 	// decodieren
-
+#ifdef USE_MSVC_ANSI_C_SIM
 	// Multiple debug infos
 	fprintf(fid_OUT, "%f %fj\n", creal(I_sig), cimag(Q_sig));
 	fprintf(fid_OUT1, "%f\n", cimag(output_y));
@@ -179,7 +183,7 @@ void output_sample() {
 	//fprintf(fid_OUT3, "%d\n", result_short);
 	fprintf(fid_OUT3, "%f\n", result);
 	//printf("%d", result_short);
-
+#endif
 }
 
 void process_sample(float value) {
