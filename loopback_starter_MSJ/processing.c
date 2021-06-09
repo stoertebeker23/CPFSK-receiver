@@ -1,32 +1,44 @@
 #define DECIMATION 527
+//#define DECODE_FREQ 3832/50
 
 #include <complex.h>
 #include <stdio.h>	// for printf
 #include <math.h>	// for sin/cos
 #include <stdlib.h>
 #include <string.h>
+
+#include <time.h>
+
 #include "fir_filter_fl.h"
 //#include "fir_filter_sc.h"
 #include "FIR_poly_bandpass.h"
 #include "FIR_highpass.h"
 #include "processor.h"
-#include "../c/include/decode.h"
+//#include "../c/include/decode.h"
+
+#ifdef USE_MSVC_ANSI_C_SIM
 
 #define COMBF "kammfilter.csv"
 #define DEMOD "demodulator.csv"
 #define HIGHP "hochpass.csv"
 #define DECBP "dec_bandpass.csv"
-#define DECODE_FREQ 3832/50
+#define EXEC_DATA "times.csv"
+
+struct timespec start, end;
+long time_diff;
+int exec_times[527];
+
+#endif
+
 
 short cntr = DECIMATION - 1;
+short runs = 1;
 
 //long int result = 0;
 float result;
 float hp_result = 0;
 //short hp_result= 0;
 short result_short = 0;
-int cntrlol = 0;
-int cntrlel = 0;
 //short delayed_sample = 0;
 float delayed_sample = 0;
 short i = 0;
@@ -132,7 +144,11 @@ float *delay_iter = NULL;
 float delay_line[4];
 float *rotating_rw = delay_line;
 
-FILE *fid_OUT, *fid_OUT2, *fid_OUT1, *fid_OUT3;
+#ifdef USE_MSVC_ANSI_C_SIM
+
+FILE *fid_OUT, *fid_OUT2, *fid_OUT1, *fid_OUT3, *EXEC_time_data;
+
+
 
 void debug_init() {
 
@@ -140,8 +156,22 @@ void debug_init() {
     fid_OUT1 = fopen(DEMOD, "w");
     fid_OUT2 = fopen(HIGHP, "w");
     fid_OUT3 = fopen(DECBP, "w");
+    EXEC_time_data = fopen(EXEC_DATA, "w");
 }
 
+#endif
+void process_comb_and_demod() {
+
+	I_sig = hp_result + 0.17502 * delayed_sample;
+	Q_sig = 0.9846  * I * delayed_sample;
+
+	//output_y = atan2(cimag(-(del_Q_sig * I_sig) + del_I_sig * Q_sig),1);
+	output_y = cimag(-(del_Q_sig * I_sig) + del_I_sig * Q_sig);
+	//printf("%f %fj\n", creal(output_y), cimag(output_y));
+	//printf()
+	del_Q_sig = Q_sig;
+	del_I_sig = I_sig;
+}
 void output_sample() {
 	// Short scaling
 	//result_short = result >> 1;
@@ -159,36 +189,47 @@ void output_sample() {
 	delayed_sample = *rotating_rw;
 	*rotating_rw = hp_result;
 	rotating_rw += 1;
+
+
+#ifdef USE_MSVC_ANSI_C_SIM
+	clock_gettime(CLOCK_MONOTONIC, &end);
+#endif
+
 	
 	// Complex comb filter with 4 delays
-	I_sig = hp_result + 0.1719 * delayed_sample;
-	Q_sig = 0.985 * I * delayed_sample;
+	//I_sig = hp_result + 0.17502 * delayed_sample;
+	//Q_sig = 0.9846 * I * delayed_sample;
 
-	output_y = -(del_Q_sig * I_sig) + del_I_sig * Q_sig;
+	//output_y = -(del_Q_sig * I_sig) + del_I_sig * Q_sig;
 
-	del_Q_sig = Q_sig;
-	del_I_sig = I_sig;
+	//del_Q_sig = Q_sig;
+	//del_I_sig = I_sig;
 
 	// decodieren
-    if (cnt > int(DECODE_FREQ)){
-        if (output_y > 0)
-            decode(1);
-        else
-            decode(0);
-    }
+//    if (cnt > 77){
+//        if (cimag(output_y) > 0)
+//            decode(1);
+//        else
+//            decode(0);
+//    }
+#ifdef USE_MSVC_ANSI_C_SIM
 	// Multiple debug infos
 	fprintf(fid_OUT, "%f %fj\n", creal(I_sig), cimag(Q_sig));
-	fprintf(fid_OUT1, "%f\n", cimag(output_y));
+	fprintf(fid_OUT1, "%f\n", creal(output_y));
 	//fprintf(fid_OUT2, "%hd\n", hp_result);
 	fprintf(fid_OUT2, "%f\n", hp_result);
 	//fprintf(fid_OUT3, "%d\n", result_short);
 	fprintf(fid_OUT3, "%f\n", result);
 	//printf("%d", result_short);
+#endif
     cnt++;
+
 }
 
 void process_sample(float value) {
-
+#ifdef USE_MSVC_ANSI_C_SIM
+	clock_gettime(CLOCK_MONOTONIC, &start);
+#endif
 	// Polyphase bandpass filtering
 	result += FIR_filter_fl(H_filt_remez_dec[cntr], bp_filter[cntr], N_delays_FIR_poly, value);
 	cntr -= 1;
@@ -196,6 +237,26 @@ void process_sample(float value) {
 		cntr = DECIMATION - 1;
 		output_sample();
 		result = 0;
-	}	
+		runs += 1;
+	} else if (cntr == 250){
+
+		process_comb_and_demod();
+#ifdef USE_MSVC_ANSI_C_SIM
+	clock_gettime(CLOCK_MONOTONIC, &end);
+#endif
+	} else {
+#ifdef USE_MSVC_ANSI_C_SIM
+			clock_gettime(CLOCK_MONOTONIC, &end);
+#endif
+	}
+#ifdef USE_MSVC_ANSI_C_SIM
+
+	exec_times[cntr] = (int)(end.tv_nsec - start.tv_nsec + (runs - 1) * exec_times[cntr])/runs;
+#endif
 }
 
+void publish_execution_time_data() {
+	for (int j = 0; j < 527; j++) {
+    	fprintf(EXEC_time_data, "%d\n", exec_times[j]);
+    }
+}
