@@ -15,6 +15,10 @@ Fc = .389;                              % Desired frequency shift
 
 %blol = b(1)*exp(j*Fc*pi*0)
 %blal = b(N+1)*exp(j*Fc*pi*N / N)
-fvtool(b,a,b_compl,a)
+%fvtool(b,a,b_compl,a)
 
 %freqz(b_compl,1, 20000, 3832, 'whole')
+freq = (-999:999)/2000;
+
+hz = freqz(b_compl,1, 2*pi*freq);
+plot(freq*3832, abs(hz))

@@ -42,7 +42,18 @@ T_a_high = 1/f_a_high;
 
 [N_FIR,fo,mo,w] = firpmord([low_stop low high high_stop], [0 1 0], [0.05, 0.01, 0.05],  2019200 );
 
+
+
+
 b_FIR = firpm(N_FIR,fo,mo,w);
+
+freq_bp = (-99999:99999)/200000;
+
+hz_bp = freqz(b_FIR,1, 2*pi*freq_bp);
+figure(92)
+plot(freq_bp*f_a_high, abs(hz_bp))
+
+
 filtered_bp = filter(b_FIR,[ 1 ],bandpass_signal);
 %filtered_bp = bandpass(bandpass_signal,[3800 5800],f_a_high);
 bp_f_vec_1 = 1/T_a_high*(0:(length(filtered_bp))-1)/length(filtered_bp);
