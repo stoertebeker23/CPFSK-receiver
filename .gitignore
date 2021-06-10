@@ -11,6 +11,7 @@ loopback_starter_MSJ.c
 processor.h
 *.bin
 *.asm
+loopback_starter_MSJ/.idea
 *.ccxmls
 *.wav
 *.pdf
