@@ -2,9 +2,10 @@
 #include <string.h>
 #include <stdbool.h>
 #include <include/decode.h>
+#include <include/lookup.h>
 
 #define BUFF_LEN 5
-
+#define OFFSET 6
 
 void circ_buff_push(circ_buff_t *c, unsigned short data) {
     short next_elm;
@@ -31,12 +32,68 @@ void decode(unsigned short bit) {
             transfer = 1;
         } else if (transfer) {
             transfer = 0;
-            _decode(cbuff.buffer);
+            _decode_lookup(cbuff.buffer);
         }
         cnt = 0;
     }
 }
 
+short shortFromBits(unsigned const short *bits, short len) {
+    short res = 0;
+    for (int i = (len - 1); i >= 0; --i) {
+        if (bits[i] == 1) {
+            res |= 1 << (i);
+        }
+    }
+    return res;
+}
+
+void _decode_lookup(const unsigned short *bits) {
+
+    static unsigned char *lookup = NULL;
+    if (lookup == NULL) {
+        lookup = lookup_char;
+    }
+    static bool NUM = false;
+    static short cnt = 1;
+    short idx = shortFromBits(bits, 5); // get index
+    short _idx = 0; // tmp idx
+    if (idx == 31) {
+        // Letters
+        NUM = false;
+        lookup = lookup_char;
+    } else if (idx == 27) {
+        // Numbers
+        NUM = true;
+        lookup = lookup_num;
+    } else if (NUM) {
+        if (idx == 9 || idx == 11) {
+            for (int i = (idx + (cnt - 1) * OFFSET); i <= (idx + cnt * OFFSET); ++i) {
+                printf("%c", *(lookup + (i - 1)));
+            }
+            printf("\n");
+            cnt++;
+        } else if (idx > 9) {
+            _idx = (idx + OFFSET);
+            if (idx > 11) {
+                _idx += OFFSET;
+                if (idx > 12) {
+                    _idx -= 1;
+                    if (idx > 20) {
+                        _idx -= 1;
+                    }
+                }
+                printf("%c", *(lookup + (_idx)));
+            } else {
+                printf("%c", *(lookup + (_idx - 1)));
+            }
+        } else {
+            printf("%c", *(lookup + (idx - 1)));
+        }
+    } else {
+        printf("%c", *(lookup + (idx - 1)));
+    }
+}
 
 void _decode(const unsigned short bits[5]) {
     static bool let_num = 0; // default are letters
@@ -205,22 +262,31 @@ void _decode(const unsigned short bits[5]) {
 /*
 int main() {
 
-    unsigned short array[60] = {0, 0, 1, 1, 1, // stop start (ss)
-                                0, 1, 1, 1, 1, // K
+    unsigned short array[110] = {0, 0, 1, 1, 1, // stop start (ss)
+                                1, 1, 0, 1, 1, // num
                                 0, 0, 1, 1, 1, // ss
-                                0, 0, 0, 1, 1, // A
+                                1, 0, 0, 0, 0, // 3
+                                0, 0, 1, 1, 1,
+                                0, 0, 0, 1, 0, // \n
                                 0, 0, 1, 1, 1, // ss
-                                0, 1, 0, 0, 0, // cr
+                                1, 0, 0, 1, 0, // wer da
+                                0, 0, 1, 1, 1,
+                                0, 0, 0, 1, 0, // \n
                                 0, 0, 1, 1, 1, // ss
-                                1, 0, 1, 1, 1, // NUM
+                                0, 1, 1, 1, 1,
+                                0, 0, 1, 1, 1,
+                                0, 0, 0, 1, 0, // \n
                                 0, 0, 1, 1, 1, // ss
-                                0, 0, 1, 0, 0, // space
+                                1, 1, 0, 1, 0,
                                 0, 0, 1, 1, 1, // ss
-                                1, 0, 0, 0, 1  // Z
-    };
+                                1, 1, 1, 1, 1, // switch
+                                0, 0, 1, 1, 1, // ss
+                                1, 0, 0, 0, 0, // E
+    }; //=
 
 
-    for (int loop = 0; loop < 60; loop++) {
+
+    for (int loop = 0; loop < 110; loop++) {
         decode(array[loop]);
     }
 

@@ -12,12 +12,15 @@ typedef struct {
     const short maxidx;
 } circ_buff_t;
 
+
+short shortFromBits(unsigned const short* bits, short len);
+void _decode_lookup(const unsigned short *bits);
 void _decode(const unsigned short *bits);
 void decode(unsigned short bit);
 void circ_buff_push(circ_buff_t *c, unsigned short data);
 
-unsigned short const NUM_CHAR[5] = {1, 0, 1, 1, 1};
-unsigned short const LET[5] = {1, 1, 1, 1, 1};
+unsigned short NUM_CHAR[5] = {1, 1, 0, 1, 1};
+unsigned short LET[5] = {1, 1, 1, 1, 1};
 
 unsigned short const A[5] = {0, 0, 0, 1, 1};
 unsigned short const B[5] = {1, 1, 0, 0, 1};
@@ -45,6 +48,7 @@ unsigned short const W[5] = {1, 0, 0, 1, 1};
 unsigned short const X[5] = {1, 1, 1, 0, 1};
 unsigned short const Y[5] = {1, 0, 1, 0, 1};
 unsigned short const Z[5] = {1, 0, 0, 0, 1};
+
 unsigned short const CR[5] = {0, 1, 0, 0, 0};
 unsigned short const TAB[5] = {0, 0, 0, 1, 0};
 unsigned short const SPACE[5] = {0, 0, 1, 0, 0};
