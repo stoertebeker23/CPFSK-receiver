@@ -20,3 +20,7 @@ processor.h
 *.jpg
 *.out
 loopback_start_MSJ_ANSI_C/
+docs/*
+!*.tex
+!*.bib
+
