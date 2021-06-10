@@ -30,7 +30,6 @@ int exec_times[527];
 
 #endif
 
-
 short cntr = DECIMATION - 1;
 short runs = 1;
 
@@ -167,6 +166,9 @@ void process_comb_and_demod() {
 
 	//output_y = atan2(cimag(-(del_Q_sig * I_sig) + del_I_sig * Q_sig),1);
 	output_y = cimag(-(del_Q_sig * I_sig) + del_I_sig * Q_sig);
+	
+	
+	//output_y = creal((I_sig + Q_sig) * (del_I_sig + (-1) * del_Q_sig));
 	//printf("%f %fj\n", creal(output_y), cimag(output_y));
 	//printf()
 	del_Q_sig = Q_sig;
@@ -179,8 +181,8 @@ void output_sample() {
 
 	// Highpass filter damping DC parts of the signal
 	//hp_result = FIR_filter_sc(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result_short, 15);
-	hp_result = FIR_filter_fl(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result);
-
+	//hp_result = FIR_filter_fl(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result);
+    hp_result = result;
 	// Delayline counter overflow management
 	if (rotating_rw == delay_line + 4)
 		rotating_rw = delay_line;

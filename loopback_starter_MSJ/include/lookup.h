@@ -2,7 +2,7 @@
 #define C_LOOKUP_H
 
 
-unsigned char *lookup_char =
+char *lookup_char =
         "E" // 00001
         "\t" // 00010
         "A" // 00011
@@ -35,7 +35,7 @@ unsigned char *lookup_char =
         "V" // 11110
 ;
 
-unsigned char *lookup_num =
+char *lookup_num =
         "3" // 00001
         "\t" // 00010
         "-" // 00011

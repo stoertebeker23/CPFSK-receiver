@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-#include <include/decode.h>
-#include <include/lookup.h>
+#include "include/decode.h"
+#include "include/lookup.h"
 
 #define BUFF_LEN 5
 #define OFFSET 6
@@ -50,7 +50,7 @@ short shortFromBits(unsigned const short *bits, short len) {
 
 void _decode_lookup(const unsigned short *bits) {
 
-    static unsigned char *lookup = NULL;
+    static char *lookup = NULL;
     if (lookup == NULL) {
         lookup = lookup_char;
     }
