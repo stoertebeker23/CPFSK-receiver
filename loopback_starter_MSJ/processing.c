@@ -14,6 +14,7 @@
 #include "FIR_poly_bandpass.h"
 #include "FIR_highpass.h"
 #include "processor.h"
+#include "include/decode.h"
 //#include "../c/include/decode.h"
 
 #ifdef USE_MSVC_ANSI_C_SIM
@@ -41,6 +42,9 @@ short result_short = 0;
 //short delayed_sample = 0;
 float delayed_sample = 0;
 short i = 0;
+short correction = 0;
+short cnt = 0;
+short subcnt = 0;
 
 complex Q_sig = 0;
 complex I_sig = 0;
@@ -166,8 +170,23 @@ void process_comb_and_demod() {
 
 	//output_y = atan2(cimag(-(del_Q_sig * I_sig) + del_I_sig * Q_sig),1);
 	output_y = cimag(-(del_Q_sig * I_sig) + del_I_sig * Q_sig);
-	
-	
+	double outt = creal(output_y);
+
+	if (cnt > 37 + correction){
+        //decode();
+        //else
+        //    decode(0);
+        decode(outt < 0);
+        if ( subcnt == 2 ) {
+        	correction = 1;
+        	subcnt = 0;
+        } else {
+        	correction = 0;
+        	subcnt +=1;
+        }
+
+        cnt = 0;
+    }
 	//output_y = creal((I_sig + Q_sig) * (del_I_sig + (-1) * del_Q_sig));
 	//printf("%f %fj\n", creal(output_y), cimag(output_y));
 	//printf()
@@ -177,8 +196,8 @@ void process_comb_and_demod() {
 void output_sample() {
 	// Short scaling
 	//result_short = result >> 1;
-    static int cnt = 0;
 
+    //printf("%d / %d\n", cnt, subcnt);
 	// Highpass filter damping DC parts of the signal
 	//hp_result = FIR_filter_sc(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result_short, 15);
 	//hp_result = FIR_filter_fl(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result);

@@ -6,7 +6,7 @@
 
 #define BUFF_LEN 5
 #define OFFSET 6
-
+short buffcnt = 0;
 void circ_buff_push(circ_buff_t *c, unsigned short data) {
     short next_elm;
     next_elm = c->head + 1;         // next_elm is where head will point to after this write.
@@ -20,21 +20,25 @@ void circ_buff_push(circ_buff_t *c, unsigned short data) {
 
 
 void decode(unsigned short bit) {
-    unsigned short const start_stop[BUFF_LEN] = {0, 0, 1, 1, 1};
+
+    unsigned short const start_stop[BUFF_LEN] = {0, 0, 1, 1, 1}; 
     static unsigned short buff[BUFF_LEN] = {9, 9, 9, 9, 9};
-    static short cnt = 0;
+    //static short cnt = 0;
     static bool transfer = 0;
     static circ_buff_t cbuff = {.buffer = buff, .head = 0, .tail = 0, .maxidx = 4};
-    cnt++;
+
+    printf("%d BUFFER: %d %d %d %d %d \n", bit, cbuff.buffer[cbuff.head], cbuff.buffer[cbuff.head+1], cbuff.buffer[cbuff.head+2], cbuff.buffer[cbuff.head+3], cbuff.buffer[cbuff.head+4]);
     circ_buff_push(&cbuff, bit);
-    if (cnt == 5) { // wait until buffer is full
+    if (buffcnt == 5) { // wait until buffer is full
+
         if (memcmp(cbuff.buffer, start_stop, sizeof(start_stop)) == 0 && !transfer) {
             transfer = 1;
         } else if (transfer) {
             transfer = 0;
+            printf("Found sth\n");
             _decode_lookup(cbuff.buffer);
         }
-        cnt = 0;
+        buffcnt = 0;
     }
 }
 
@@ -94,7 +98,7 @@ void _decode_lookup(const unsigned short *bits) {
         printf("%c", *(lookup + (idx - 1)));
     }
 }
-
+/*
 void _decode(const unsigned short bits[5]) {
     static bool let_num = 0; // default are letters
     if (memcmp(bits, NUM_CHAR, 5) == 0 || memcmp(bits, LET, 5) == 0) {
@@ -137,7 +141,7 @@ void _decode(const unsigned short bits[5]) {
         printf("G");
     } else if (memcmp(bits, H, sizeof(H)) == 0) {
         printf("H");
-    } else if (memcmp(bits, I, 5) == sizeof(I)) {
+    } else if (memcmp(bits, II, 5) == sizeof(II)) {
         if (!let_num) {
             printf("I");
         } else {
@@ -258,7 +262,7 @@ void _decode(const unsigned short bits[5]) {
         printf("\n pattern not recognized");
     }
 }
-
+*/
 /*
 int main() {
 
