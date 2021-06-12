@@ -171,12 +171,10 @@ void process_comb_and_demod() {
 	//output_y = atan2(cimag(-(del_Q_sig * I_sig) + del_I_sig * Q_sig),1);
 	output_y = cimag(-(del_Q_sig * I_sig) + del_I_sig * Q_sig);
 	double outt = creal(output_y);
-
+	// error every 66.6 seconds -> shit goes sideways after 41 Minutes for fixed window length
 	if (cnt > 37 + correction){
-        //decode();
-        //else
-        //    decode(0);
-        decode(outt < 0);
+
+        decode(outt > 0);
         if ( subcnt == 2 ) {
         	correction = 1;
         	subcnt = 0;
@@ -187,9 +185,7 @@ void process_comb_and_demod() {
 
         cnt = 0;
     }
-	//output_y = creal((I_sig + Q_sig) * (del_I_sig + (-1) * del_Q_sig));
-	//printf("%f %fj\n", creal(output_y), cimag(output_y));
-	//printf()
+
 	del_Q_sig = Q_sig;
 	del_I_sig = I_sig;
 }
@@ -216,23 +212,6 @@ void output_sample() {
 	clock_gettime(CLOCK_MONOTONIC, &end);
 #endif
 
-	
-	// Complex comb filter with 4 delays
-	//I_sig = hp_result + 0.17502 * delayed_sample;
-	//Q_sig = 0.9846 * I * delayed_sample;
-
-	//output_y = -(del_Q_sig * I_sig) + del_I_sig * Q_sig;
-
-	//del_Q_sig = Q_sig;
-	//del_I_sig = I_sig;
-
-	// decodieren
-//    if (cnt > 77){
-//        if (cimag(output_y) > 0)
-//            decode(1);
-//        else
-//            decode(0);
-//    }
 #ifdef USE_MSVC_ANSI_C_SIM
 	// Multiple debug infos
 	fprintf(fid_OUT, "%f %fj\n", creal(I_sig), cimag(Q_sig));

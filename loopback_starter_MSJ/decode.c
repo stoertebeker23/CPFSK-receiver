@@ -6,7 +6,14 @@
 
 #define BUFF_LEN 5
 #define OFFSET 6
-short buffcnt = 0;
+
+char * current_lut = NULL;
+short buffer = 0;
+short startstop = 0;
+short indexo = 0;
+short real_index = 0;
+short distance;
+const short start_stop[2] = {1,0};
 void circ_buff_push(circ_buff_t *c, unsigned short data) {
     short next_elm;
     next_elm = c->head + 1;         // next_elm is where head will point to after this write.
@@ -20,25 +27,23 @@ void circ_buff_push(circ_buff_t *c, unsigned short data) {
 
 
 void decode(unsigned short bit) {
-
-    unsigned short const start_stop[BUFF_LEN] = {0, 0, 1, 1, 1}; 
-    static unsigned short buff[BUFF_LEN] = {9, 9, 9, 9, 9};
-    //static short cnt = 0;
-    static bool transfer = 0;
-    static circ_buff_t cbuff = {.buffer = buff, .head = 0, .tail = 0, .maxidx = 4};
-
-    printf("%d BUFFER: %d %d %d %d %d \n", bit, cbuff.buffer[cbuff.head], cbuff.buffer[cbuff.head+1], cbuff.buffer[cbuff.head+2], cbuff.buffer[cbuff.head+3], cbuff.buffer[cbuff.head+4]);
-    circ_buff_push(&cbuff, bit);
-    if (buffcnt == 5) { // wait until buffer is full
-
-        if (memcmp(cbuff.buffer, start_stop, sizeof(start_stop)) == 0 && !transfer) {
-            transfer = 1;
-        } else if (transfer) {
-            transfer = 0;
-            printf("Found sth\n");
-            _decode_lookup(cbuff.buffer);
+    if (!current_lut) 
+        current_lut = lookup_num;
+    buffer = buffer << 1;
+    buffer = buffer | bit;
+    startstop = buffer & 0x001F;
+    distance -= 1;
+    if (startstop == 28 && distance < 0) {
+        distance = 10;
+        indexo = (buffer >> 5) & 0x03FF;
+        real_index = (((indexo >> 0) & 0x0001) << 4) | (((indexo >> 2) & 0x0001) << 3) | (((indexo >> 4) & 0x0001) << 2) | (((indexo >> 6) & 0x0001) << 1) | (((indexo >> 8) & 0x0001) << 0);
+        if (real_index == 31) {
+            current_lut = lookup_char;
+        } else if (real_index == 27) {
+            current_lut = lookup_num;
+        } else {
+            printf(" >> %c <<\n",current_lut[real_index-1]);
         }
-        buffcnt = 0;
     }
 }
 
