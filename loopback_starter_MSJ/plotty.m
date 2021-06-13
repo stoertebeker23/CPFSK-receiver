@@ -72,14 +72,7 @@ plot(lol1)
 subplot(1,2,2)
 plot(fdroelf, db(powerdroelf))
 
-f_a_low = 3832;
-T_a_low = 1 / f_a_low;
-bb_f_vec =  1/T_a_low*(0:(length(data))-1)/length(data);
 
-[n,fo,ao,w] = firpmord([0 700],[0 1],[0.033 0.1],3832);
-b = firpm(n,fo,ao,w);
-figure(5)
-freqz(b,1,1024,3832)
 b1 = 1/30*[ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]
 lol = filter(b1, [1], data3);
 figure(1)

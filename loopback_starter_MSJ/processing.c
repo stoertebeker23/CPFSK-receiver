@@ -24,7 +24,8 @@
 #define HIGHP "hochpass.csv"
 #define DECBP "dec_bandpass.csv"
 #define EXEC_DATA "times.csv"
-
+//#define TESTSIGNAL //
+#define REALSIGNAL
 struct timespec start, end;
 long time_diff;
 int exec_times[527];
@@ -50,7 +51,7 @@ complex Q_sig = 0;
 complex I_sig = 0;
 complex del_Q_sig = 0;
 complex del_I_sig = 0;
-complex output_y = 0;
+float output_y = 0;
 
 //short * bp_filter[] = {
 float * bp_filter[] = {
@@ -168,23 +169,9 @@ void process_comb_and_demod() {
 	I_sig = hp_result + 0.17502 * delayed_sample;
 	Q_sig = 0.9846  * I * delayed_sample;
 
-	//output_y = atan2(cimag(-(del_Q_sig * I_sig) + del_I_sig * Q_sig),1);
 	output_y = cimag(-(del_Q_sig * I_sig) + del_I_sig * Q_sig);
-	double outt = creal(output_y);
-	// error every 66.6 seconds -> shit goes sideways after 41 Minutes for fixed window length
-	if (cnt > 37 + correction){
 
-        decode(outt > 0);
-        if ( subcnt == 2 ) {
-        	correction = 1;
-        	subcnt = 0;
-        } else {
-        	correction = 0;
-        	subcnt +=1;
-        }
 
-        cnt = 0;
-    }
 
 	del_Q_sig = Q_sig;
 	del_I_sig = I_sig;
@@ -244,9 +231,35 @@ void process_sample(float value) {
 #ifdef USE_MSVC_ANSI_C_SIM
 	clock_gettime(CLOCK_MONOTONIC, &end);
 #endif
+	} else if(cntr == 300) {
+		// error every 66.6 seconds -> shit goes sideways after 41 Minutes for fixed window length
+		// this means, that a normal bit will be interpreted as half a bit. This will mess up the start stop detection for at least one symbol
+		if (cnt > 37 + correction){
+
+			#ifdef TESTSIGNAL
+	        	decode(output_y > 0);
+	        #endif
+
+	        #ifdef REALSIGNAL
+	        	decode(output_y < 0);
+	        #endif
+	        // Correction as the symbol frequency is 38,31 hz
+	        if ( subcnt == 2 ) {
+	        	correction = 1;
+	        	subcnt = 0;
+	        } else {
+	        	correction = 0;
+	        	subcnt +=1;
+	        }
+
+	        cnt = 0;
+	    }
+#ifdef USE_MSVC_ANSI_C_SIM
+	clock_gettime(CLOCK_MONOTONIC, &end);
+#endif
 	} else {
 #ifdef USE_MSVC_ANSI_C_SIM
-			clock_gettime(CLOCK_MONOTONIC, &end);
+	clock_gettime(CLOCK_MONOTONIC, &end);
 #endif
 	}
 #ifdef USE_MSVC_ANSI_C_SIM
