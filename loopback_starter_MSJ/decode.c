@@ -1,11 +1,9 @@
 
 #include <stdio.h>
-#include <string.h>
 #include <stdint.h>
-#include <stdbool.h>
 #include "include/decode.h"
 #include "include/lookup.h"
-
+#include "include/processor.h"
 #define STOP_SEQUENCE 0x001C
 #define SWITCH_TO_CHAR 0x1F
 #define SWITCH_TO_NUM 0x1B
@@ -50,7 +48,9 @@ void decode(unsigned short bit) {
         } else if (real_index == SWITCH_TO_NUM) {      // Change to numbers
             current_lut = lookup_num;
         } else {
+#ifdef USE_MSVC_ANSI_C_SIM
             printf(" >> %c <<\n",current_lut[real_index-1]); // Everything else is a valid character
+#endif
         }
     }
 }

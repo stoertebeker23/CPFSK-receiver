@@ -8,17 +8,17 @@
 
 #include <time.h>
 
-#include "fir_filter_sc.h"
-#include "FIR_poly_bandpass.h"
-#include "processor.h"
+#include "include/fir_filter_sc.h"
+#include "include/FIR_poly_bandpass.h"
+#include "include/processor.h"
 #include "include/decode.h"
 
 #ifdef USE_MSVC_ANSI_C_SIM
 
-#define COMBF "kammfilter.csv"
-#define DEMOD "demodulator.csv"
-#define DECBP "dec_bandpass.csv"
-#define EXEC_DATA "times.csv"
+#define COMBF "results/combfilter.csv"
+#define DEMOD "results/demodulator.csv"
+#define DECBP "results/dec_bandpass.csv"
+#define EXEC_DATA "results/times.csv"
 #define TESTSIGNAL //
 //#define REALSIGNAL
 struct timespec start, end;

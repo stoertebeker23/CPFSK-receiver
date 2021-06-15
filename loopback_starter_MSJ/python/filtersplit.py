@@ -1,5 +1,5 @@
 import csv
-with open('filter.csv', newline='') as csvfile:
+with open('../matlab/filter.csv', newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
     for row in spamreader:
        values = row[0].split(",")

@@ -1,15 +1,14 @@
 clear
 close all
 
-lol1 = readmatrix('y_cpfsk.csv');
+lol1 = readmatrix('../testsignals/y_cpfsk.csv');
 figure(100)
 plot(lol1)
-data0 = readmatrix('dec_bandpass.csv');
-data3 = readmatrix('demodulator.csv');
-data1 = readmatrix('hochpass.csv');
-data = readmatrix('kammfilter.csv');
+data0 = readmatrix('../results/dec_bandpass.csv');
+data3 = readmatrix('../results/demodulator.csv');
+data = readmatrix('../results/combfilter.csv');
 
-data_time = readmatrix('times.csv');
+data_time = readmatrix('../results/times.csv');
 
 data2 = complex(data(:,1),imag(data(:,2)));
 
@@ -17,11 +16,6 @@ y0 = fftshift(fft(data2));
 n = length(data2);
 power0 = abs(y0).^2/n;  
 f0 = (-n/2:n/2-1)*(3832/n);
-
-y1 = fftshift(fft(data1)); 
-n1 = length(data1);
-power1 = abs(y1).^2/n1;  
-f1 = (-n1/2:n1/2-1)*(3832/n1);
 
 y2 = fftshift(fft(data0)); 
 n2 = length(data0);
@@ -34,21 +28,13 @@ powerdroelf = abs(ydroelf).^2/ndroelf;
 fdroelf = (-ndroelf/2:ndroelf/2-1)*(2019200/ndroelf);
 
 figure(3)
-subplot(4,2,1)
+subplot(3,2,1)
 plot(data0)
 title("Ausgang Dezimationsstufe")
 
-subplot(4,2,2)
+subplot(3,2,2)
 plot(f2, db(power2))
 title("Spectrum Dezimationsstufe")
-
-subplot(4,2,3)
-plot(data1)
-title("Ausgang Hochpass")
-
-subplot(4,2,4)
-plot(f1, db(power1))
-title("Spektrum Hochpass")
 
 subplot(4,2,5)
 plot(data2)
