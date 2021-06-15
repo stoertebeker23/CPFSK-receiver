@@ -216,6 +216,83 @@ Das Weglassen der Start- und Stoppbits spielt bei der bestimmung der Bandbreite 
 Es werden nur binäre Daten übertragen $D = \{0, 1\}$. die Frequenzen $ f_1 = f_T \pm \varDelta F $ repräsentieren. 
 Da auch die Start/Stopbits durch $D$ dargestellt werden, würde sich hier im Frequenzbereich
 nur eine veränderung im maximum der Amplitude ergeben, die repräsentierenden Frequenzen selbst bleiben unverändert.
+
+\subsection{Kammfilter}
+Um das Signal demodulieren zu können, muss es zunächst aufbereitet werden. 
+Aufgrund des geringen Frequenzhubs der CPFSK Modulation, laufen durch Störungen im Signal die Frequenzen 
+für $D = \{1, 0\}$ zu Teil ineinander. Dadurch ist eine saubere demodulation und anschließende decodierung
+nicht mehr möglich. Um die Frequenzen besser von einander differenziern zu können, ist ein möglicher Ansatz 
+das Verwenden eines Kammfilters, realisiert durch $N$ Verzögerer.
+Das Kammfilter muss so dimensioniert werden, dass eine Nullstellen bei $f_1 = f_T + \varDelta F$ liegt und 
+gleichzeitig keine, oder eine nur geringe Dämpfung bei $f_2 = f_T - \varDelta F$ vorliegt.
+Aufgrund der Symmetrie des Signals liegt $-f_1$ auf der nagativen Frquenzachse nun im durchlassbereich, wohingegen 
+$-f_2$ gedämpft wird. Damit wächst der Frequenzhub von $2 \cdot \varDelta F$ auf $2*f_A$. Die Frequenzen sind damit deutlich unterscheidbar
+und können im nächsten Schritt, der Demodulation eindeutig zugewiesen werden.
+
+Ausgehend von der Übertragnungsfunktion 
+$$H(z) = z^{-N} + j$$ 
+mit 
+$$ z = e^{j\omega} $$
+ergibt sich
+
+$$H(j\omega) = e^{-j\omega} + e^{j\cdot \frac{\pi}{2}} | j = e^{j\cdot \frac{\pi}{2}}$$
+
+$$
+H(e^{j\omega}) = 
+e^{-j\omega N \frac{1}{2}} \cdot e^{j\cdot \frac{\pi}{2} \frac{1}{2}} 
+(e^{-j\omega N \frac{1}{2}} \cdot e^{-j\cdot \frac{\pi}{2} \frac{1}{2}} + 
+e^{j\omega N \frac{1}{2}} \cdot e^{j\cdot \frac{\pi}{2} \frac{1}{2}}) 
+$$
+zusammengefasst:
+$$ H(e^{j\omega}) = e^{-j\omega N \frac{1}{2}} \cdot e^{j\cdot \frac{\pi}{2} \frac{1}{2}}  
+(e^{-j(\omega \frac{N}{2} + \frac{\pi}{4})} + e^{j(\omega \frac{N}{2} + \frac{\pi}{4})}) 
+$$
+
+$$
+H(e^{j\omega}) = e^{-j\omega N \frac{1}{2}} \cdot e^{j\cdot \frac{\pi}{2} \frac{1}{2}} \cdot 2cos(\frac{N\omega}{2} + \frac{\pi}{4})
+$$
+Die normierten Nullstellen ergeben sich bei:
+$$2cos(\frac{N\omega}{2} + \frac{\pi}{4}) = 0 $$
+Der Cosinus wird zu Null wenn:
+$$
+\frac{N\omega}{2} + \frac{\pi}{4} = k\cdot\pi + \frac{\pi}{2} =>  \frac{N\omega}{2} = k \cdot \pi + \frac{\pi}{4} => \omega = \frac{2}{N} \cdot (k \cdot \pi + \frac{\pi}{4})
+$$
+Der Faktor N bestimmt die Anzahl der benötigten Verzögerer, damit $\omega$ im idealfall genau so auf $\omega_{mark}$ oder $\omega_{space}$ liegen dass eine der beiden 
+Frequenzen im positiven Frequenzbereich gedämpft wird und die andere im Negativen. In diesem Fall liefert $N=6$ das gewünschte Ergebnis, siehe Abb.~\ref{fig:comb}, Latexcode \ref{code:comb}
+\begin{center}
+    \label{code:comb}
+\begin{minted}{matlab}
+    N = 4
+    fA_green = 3832;
+    freq_comb= (-fA_green:fA_green)/fA_green;
+    
+    H_comb = freqz([zeros(1,N), 1], 1, 2*pi*freq_comb)+i*freqz(1,1,2*pi*freq_comb);
+    
+    figure(4);
+    plot(freq_comb, abs(H_comb), 'b-')
+    hold on;
+    stem(-732/fA_green, 2, 'k');
+    stem(-1187/fA_green, 2, 'r');
+    stem(732/fA_green, 2, 'k');
+    stem(1187/fA_green, 2, 'r');
+    grid on
+    hold off;
+    xlabel(['normierte Frequenz'])
+    ylabel(['Amplitude'])
+    title('Amplitudengang Kammfilter');
+\end{minted}
+\end{center}
+
+\begin{figure}[!h]
+    \label{fig:comb}
+    \centering
+    \def\svgscale{0.3}
+    \def\svgwidth{\columnwidth}
+    \input{img/comb_6n.pdf_tex}
+    \caption{Kammfiter mit den deiden Frequenzen $\omega_{mark}$ und $\omega_{space}$, das Kammfilter lässt jeweils eine der beiden Frequenzen passieren.}
+\end{figure}
+
+
 % ---------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
