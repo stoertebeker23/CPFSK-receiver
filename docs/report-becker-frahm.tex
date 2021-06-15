@@ -92,6 +92,50 @@ als Grundlage für das Matlab Modell genutzt zurückgegriffen werden.
 Sobald das Matlab Modell steht, wird die Simulation in C-Code überführt und anschließend 
 auf einem DSP implementiert.
 
+\section{Signalfluss Empfänger}
+
+Abb.~\ref{fig:signal} zeigt den Aufbau des Softwareradios. Das $~11MhZ$ Signal wird empfangen, es findet eine erste Unterabtastung durch den ADC statt.
+Hierbei wird das Band auf ca. $2Mhz$ geschmälter. Das erste Filter, ein FIR-Polyphasen Bandpassfilter, Kapitel~\ref{sec:FIR}, mischt das Signal ein weiteres mal durch unterabtastung in einen Frequnzbereich
+von wenigen kilo Herz. In dem so runtergemischten Band tritt nun entwederdie Mark (logisch 1), oder die Space (logisch 0) auf. Um hier differenzieren zu können,
+muss können unterschiedliche methoden Angewandt werden, in dieser Arbeit wurde zunächst ein Ansatz über einen Hilberfilter, Kapitel~\ref{sec:hilbert}, verfolgt. Später hat sich jedoch das Kammfilter
+als Sinnvollere alternative herausgestellt. Das Kammfilter in Kapitel~\ref{sec:comb} sogt dafür, dass die Frequenzen deutlich von einander zu differenzierne sind. Sobald das Signal durch das Kammfilter
+aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungs Demodulator \ref{sec:fm-demod} mit anschließender Decodierung erfolgen.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/signalfluss.png}
+    \caption{Beispielhaftes \ac{CPFSK} moduliertes Trägersignal einer binären 
+    Information. Die Phasenübergänge sind ohne Sprung. Quelle:~\cite{wiki:fsk}}
+    \label{fsk}
+\end{figure}
+\section{FIR-Polyphasen Bandpass}\label{sec:FIR}
+Super Bandpass! Ganz tolle Frequenzen. 
+
+\subsection{Theorie}
+
+\subsection{Matlab}
+
+\subsection{C}
+
+\section{Hilber Transformator}\label{sec:hilbert}
+Super Filter, leider nicht tauglich, Warum?
+
+\section{Matlab}
+
+\section{Komplexes Kammfilter}\label{sec:comb}
+Super Kammfilter\dots
+\subsection{Theorie}
+
+\subsection{Matlab}
+
+\subsection{C}
+
+\section{FM-Verzögerungsdemoulator}
+Warum gehts denn doch? Ausführlich, weshalb sollte es eigentlich nicht gehen, was machen wir anders?
+\subsection{Matlab}
+
+\subsection{C}
+
 \section{Simulation: Matlab}
 In dem folgenden Kapitel wird zunächst ein Rechteckimpuls auf eine Trägerfrequenze mithilfe der \ac{CPFSK} moduliert.
 
