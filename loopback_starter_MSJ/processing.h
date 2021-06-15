@@ -10,7 +10,7 @@ extern int cntrlel;
 extern short delayed_sample;
 extern short i;
 
-extern short * bp_filter[]; 
+extern const short * bp_filter[]; 
 
 extern short *delay_iter;
 extern short * delay_line;
@@ -18,7 +18,8 @@ extern short *rotating_rw;
 
 extern FILE *fid_OUT, *fid_OUT2, *fid_OUT1, *fid_OUT3;
 
-void process_sample(float value);
+//void process_sample(float value);
+void process_sample(short value);
 extern void output_sample();
 void debug_init();
 

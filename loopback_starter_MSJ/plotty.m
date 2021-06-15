@@ -73,7 +73,7 @@ subplot(1,2,2)
 plot(fdroelf, db(powerdroelf))
 
 
-b1 = 1/30*[ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]
+b1 = 1/30*[ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1];
 lol = filter(b1, [1], data3);
 figure(1)
 subplot(2,2,1)
@@ -91,4 +91,7 @@ ylim([-0.2, 1.2])
 
 
 figure(23)
-plot(data_time)
+subplot(1,2,1)
+plot(data_time(1:1:527))
+subplot(1,2,2)
+plot(data_time(528:1:end))

@@ -1,7 +1,6 @@
 #define DECIMATION 527
 //#define DECODE_FREQ 3832/50
 
-#include <complex.h>
 #include <stdio.h>	// for printf
 #include <math.h>	// for sin/cos
 #include <stdlib.h>
@@ -9,52 +8,44 @@
 
 #include <time.h>
 
-#include "fir_filter_fl.h"
-//#include "fir_filter_sc.h"
+#include "fir_filter_sc.h"
 #include "FIR_poly_bandpass.h"
-#include "FIR_highpass.h"
 #include "processor.h"
 #include "include/decode.h"
-//#include "../c/include/decode.h"
 
 #ifdef USE_MSVC_ANSI_C_SIM
 
 #define COMBF "kammfilter.csv"
 #define DEMOD "demodulator.csv"
-#define HIGHP "hochpass.csv"
 #define DECBP "dec_bandpass.csv"
 #define EXEC_DATA "times.csv"
-//#define TESTSIGNAL //
-#define REALSIGNAL
+#define TESTSIGNAL //
+//#define REALSIGNAL
 struct timespec start, end;
-long time_diff;
 int exec_times[527];
-
+int exec_times_max[527];
+long time_delta;
 #endif
 
 short cntr = DECIMATION - 1;
 short runs = 1;
 
-//long int result = 0;
-float result;
-float hp_result = 0;
-//short hp_result= 0;
-short result_short = 0;
-//short delayed_sample = 0;
-float delayed_sample = 0;
+int dec_out = 0;
+
+short dec_out_short = 0;
+short delayed_sample = 0;
 short i = 0;
 short correction = 0;
 short cnt = 0;
 short subcnt = 0;
 
-complex Q_sig = 0;
-complex I_sig = 0;
-complex del_Q_sig = 0;
-complex del_I_sig = 0;
-float output_y = 0;
+long int Q_sig = 0;
+long int I_sig = 0;
+long int del_Q_sig = 0;
+long int del_I_sig = 0;
 
-//short * bp_filter[] = {
-float * bp_filter[] = {
+long int output_y = 0;
+const short * bp_filter[] = {
 	FIR_BANDPASS_1, FIR_BANDPASS_2, FIR_BANDPASS_3, FIR_BANDPASS_4, FIR_BANDPASS_5, FIR_BANDPASS_6, 
 	FIR_BANDPASS_7, FIR_BANDPASS_8, FIR_BANDPASS_9, FIR_BANDPASS_10, FIR_BANDPASS_11, FIR_BANDPASS_12, 
 	FIR_BANDPASS_13, FIR_BANDPASS_14, FIR_BANDPASS_15, FIR_BANDPASS_16, FIR_BANDPASS_17, FIR_BANDPASS_18, 
@@ -144,92 +135,85 @@ float * bp_filter[] = {
 	FIR_BANDPASS_517, FIR_BANDPASS_518, FIR_BANDPASS_519, FIR_BANDPASS_520, FIR_BANDPASS_521, FIR_BANDPASS_522, 
 	FIR_BANDPASS_523, FIR_BANDPASS_524, FIR_BANDPASS_525, FIR_BANDPASS_526, FIR_BANDPASS_527 }; 
 
-float *delay_iter = NULL;
-float delay_line[4];
-float *rotating_rw = delay_line;
+
+short *delay_iter = NULL;
+short delay_line[4];
+short *rotating_rw = delay_line;
 
 #ifdef USE_MSVC_ANSI_C_SIM
 
-FILE *fid_OUT, *fid_OUT2, *fid_OUT1, *fid_OUT3, *EXEC_time_data;
-
-
+FILE *fid_OUT, *fid_OUT1, *fid_OUT3, *EXEC_time_data;
 
 void debug_init() {
 
     fid_OUT = fopen(COMBF, "w");
     fid_OUT1 = fopen(DEMOD, "w");
-    fid_OUT2 = fopen(HIGHP, "w");
     fid_OUT3 = fopen(DECBP, "w");
     EXEC_time_data = fopen(EXEC_DATA, "w");
+
+    memset(exec_times, 0, 527 * sizeof(int));
+    memset(exec_times_max, 0, 527 * sizeof(int));  
 }
 
 #endif
 void process_comb_and_demod() {
 
-	I_sig = hp_result + 0.17502 * delayed_sample;
-	Q_sig = 0.9846  * I * delayed_sample;
+	I_sig = dec_out_short+ 175 * delayed_sample;
+	Q_sig = 984 * delayed_sample;
 
-	output_y = cimag(-(del_Q_sig * I_sig) + del_I_sig * Q_sig);
-
-
+	output_y = (-(del_Q_sig * I_sig) + del_I_sig * Q_sig) >> 8;
 
 	del_Q_sig = Q_sig;
 	del_I_sig = I_sig;
 }
 void output_sample() {
-	// Short scaling
-	//result_short = result >> 1;
 
-    //printf("%d / %d\n", cnt, subcnt);
-	// Highpass filter damping DC parts of the signal
-	//hp_result = FIR_filter_sc(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result_short, 15);
-	//hp_result = FIR_filter_fl(H_filt_remez_hp, FIR_highpass, N_delays_FIR_hp, result);
-    hp_result = result;
+    dec_out_short = dec_out >> 5;
+
 	// Delayline counter overflow management
 	if (rotating_rw == delay_line + 4)
 		rotating_rw = delay_line;
 	
 	// Rotating delayed sample storage
 	delayed_sample = *rotating_rw;
-	*rotating_rw = hp_result;
+	*rotating_rw = dec_out_short;
 	rotating_rw += 1;
 
-
-#ifdef USE_MSVC_ANSI_C_SIM
-	clock_gettime(CLOCK_MONOTONIC, &end);
-#endif
-
-#ifdef USE_MSVC_ANSI_C_SIM
-	// Multiple debug infos
-	fprintf(fid_OUT, "%f %fj\n", creal(I_sig), cimag(Q_sig));
-	fprintf(fid_OUT1, "%f\n", creal(output_y));
-	//fprintf(fid_OUT2, "%hd\n", hp_result);
-	fprintf(fid_OUT2, "%f\n", hp_result);
-	//fprintf(fid_OUT3, "%d\n", result_short);
-	fprintf(fid_OUT3, "%f\n", result);
-	//printf("%d", result_short);
-#endif
     cnt++;
 
 }
 
-void process_sample(float value) {
+static void write_results() {
+
+#ifdef USE_MSVC_ANSI_C_SIM
+	// Multiple debug infos
+	fprintf(fid_OUT, "%ld %ldj\n", I_sig, Q_sig);
+	fprintf(fid_OUT1, "%ld\n", output_y);
+	fprintf(fid_OUT3, "%d\n", dec_out);
+
+#endif	
+}
+void process_sample(short value) {
 #ifdef USE_MSVC_ANSI_C_SIM
 	clock_gettime(CLOCK_MONOTONIC, &start);
 #endif
 	// Polyphase bandpass filtering
-	result += FIR_filter_fl(H_filt_remez_dec[cntr], bp_filter[cntr], N_delays_FIR_poly, value);
+	dec_out += FIR_filter_sc(H_filt_remez_dec[cntr], bp_filter[cntr], N_delays_FIR_poly, value, 13);
 	cntr -= 1;
 	if (cntr < 0 ) {
 		cntr = DECIMATION - 1;
 		output_sample();
-		result = 0;
+#ifdef USE_MSVC_ANSI_C_SIM
+		clock_gettime(CLOCK_MONOTONIC, &end);
+#endif
+		write_results();
+		dec_out = 0;
 		runs += 1;
 	} else if (cntr == 250){
 
 		process_comb_and_demod();
 #ifdef USE_MSVC_ANSI_C_SIM
-	clock_gettime(CLOCK_MONOTONIC, &end);
+		clock_gettime(CLOCK_MONOTONIC, &end);
 #endif
 	} else if(cntr == 300) {
 		// error every 66.6 seconds -> shit goes sideways after 41 Minutes for fixed window length
@@ -255,21 +239,28 @@ void process_sample(float value) {
 	        cnt = 0;
 	    }
 #ifdef USE_MSVC_ANSI_C_SIM
-	clock_gettime(CLOCK_MONOTONIC, &end);
+		clock_gettime(CLOCK_MONOTONIC, &end);
 #endif
 	} else {
 #ifdef USE_MSVC_ANSI_C_SIM
-	clock_gettime(CLOCK_MONOTONIC, &end);
+		clock_gettime(CLOCK_MONOTONIC, &end);
 #endif
 	}
-#ifdef USE_MSVC_ANSI_C_SIM
 
-	exec_times[cntr] = (int)(end.tv_nsec - start.tv_nsec + (runs - 1) * exec_times[cntr])/runs;
+#ifdef USE_MSVC_ANSI_C_SIM
+	time_delta = end.tv_nsec - start.tv_nsec;
+	exec_times[cntr] = (int)(time_delta + (runs - 1) * exec_times[cntr])/runs;
+	exec_times_max[cntr] =  time_delta > exec_times_max[cntr] ?  time_delta : exec_times_max[cntr]; 
 #endif
 }
 
+#ifdef USE_MSVC_ANSI_C_SIM
 void publish_execution_time_data() {
 	for (int j = 0; j < 527; j++) {
     	fprintf(EXEC_time_data, "%d\n", exec_times[j]);
     }
+    for (int j = 0; j < 527; j++) {
+    	fprintf(EXEC_time_data, "%d\n", exec_times_max[j]);
+    }
 }
+#endif
