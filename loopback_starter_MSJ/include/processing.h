@@ -19,4 +19,5 @@ extern short *rotating_rw;
 extern FILE *fid_OUT, *fid_OUT2, *fid_OUT1, *fid_OUT3;
 
 void process_sample(short value);
+void publish_execution_time_data();
 void debug_init();

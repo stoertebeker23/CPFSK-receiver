@@ -156,7 +156,7 @@ void debug_init() {
 }
 
 #endif
-void process_comb_and_demod() {
+static void process_comb_and_demod() {
 
 	I_sig = dec_out_short+ 175 * delayed_sample;
 	Q_sig = 984 * delayed_sample;
@@ -166,7 +166,7 @@ void process_comb_and_demod() {
 	del_Q_sig = Q_sig;
 	del_I_sig = I_sig;
 }
-void output_sample() {
+static void output_sample() {
 
     dec_out_short = dec_out >> 5;
 
