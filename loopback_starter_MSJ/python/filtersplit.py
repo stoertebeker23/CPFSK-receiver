@@ -1,5 +1,5 @@
 import csv
-with open('filter.csv', newline='') as csvfile:
+with open('../matlab/filter.csv', newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
     for row in spamreader:
        values = row[0].split(",")
@@ -17,7 +17,7 @@ with open('filter.csv', newline='') as csvfile:
     print(lol)
 
     for i in range (0,526+1):
-    	print("float FIR_BANDPASS_" + str(i+1) + "[4] = {", end = " ")
+    	print("const short FIR_BANDPASS_" + str(i+1) + "[4] = {", end = " ")
     	for elem in lol[i]:
     		print(str(elem), end = ", ")
     	print("};")
