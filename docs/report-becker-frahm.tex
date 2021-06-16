@@ -94,22 +94,26 @@ auf einem DSP implementiert.
 
 \section{Signalfluss Empfänger}
 
-Abb.~\ref{fig:signal} zeigt den Aufbau des Softwareradios. Das $~11MhZ$ Signal wird empfangen, es findet eine erste Unterabtastung durch den ADC statt.
+Abb.~\ref{fig:signal} zeigt den Aufbau des Softwareradios. Das $~11MhZ$ Signal wird empfangen, es findet eine erste Unterabtastung durch den ADC auf dem DSP statt.
 Hierbei wird das Band auf ca. $2Mhz$ geschmälter. Das erste Filter, ein FIR-Polyphasen Bandpassfilter, Kapitel~\ref{sec:FIR}, mischt das Signal ein weiteres mal durch unterabtastung in einen Frequnzbereich
 von wenigen kilo Herz. In dem so runtergemischten Band tritt nun entwederdie Mark (logisch 1), oder die Space (logisch 0) auf. Um hier differenzieren zu können,
 muss können unterschiedliche methoden Angewandt werden, in dieser Arbeit wurde zunächst ein Ansatz über einen Hilberfilter, Kapitel~\ref{sec:hilbert}, verfolgt. Später hat sich jedoch das Kammfilter
-als Sinnvollere alternative herausgestellt. Das Kammfilter in Kapitel~\ref{sec:comb} sogt dafür, dass die Frequenzen deutlich von einander zu differenzierne sind. Sobald das Signal durch das Kammfilter
+als sinnvollere Alternative herausgestellt. Das Kammfilter in Kapitel~\ref{sec:comb} sorgt dafür, dass die Frequenzen deutlich von einander zu differenzierne sind. Sobald das Signal durch das Kammfilter
 aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungs Demodulator \ref{sec:fm-demod} mit anschließender Decodierung erfolgen.
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.8\textwidth]{img/signalfluss.png}
-    \caption{Beispielhaftes \ac{CPFSK} moduliertes Trägersignal einer binären 
-    Information. Die Phasenübergänge sind ohne Sprung. Quelle:~\cite{wiki:fsk}}
-    \label{fsk}
+    \def\svgscale{0.5}
+    \def\svgwidth{\columnwidth}
+    \input{img/signal.pdf_tex}
+    \caption{Durch den ADC findet direkt beim Empfang eine Unterabtastung statt. Durch eine weitere Unterabtastung im Bandpass, wird das Signal in das Basisband verschoben.
+    Anschließen durch das Kammfilter für die Demodulation mit anschließender Decocdierung aufbereitet und auf dem Hyperterminal angezeigt.}
+    \label{fig:signal}
 \end{figure}
+
 \section{FIR-Polyphasen Bandpass}\label{sec:FIR}
-Super Bandpass! Ganz tolle Frequenzen. 
+Der FIR-Polyphasen Bandpassfilter unterabtastet die das 2MHz Signal ein weiteres mal und mischt 
+das Nutzsignal ins Basisband.
 
 \subsection{Theorie}
 
@@ -120,24 +124,219 @@ Super Bandpass! Ganz tolle Frequenzen.
 \section{Hilber Transformator}\label{sec:hilbert}
 Super Filter, leider nicht tauglich, Warum?
 
-\section{Matlab}
-
-\section{Komplexes Kammfilter}\label{sec:comb}
-Super Kammfilter\dots
-\subsection{Theorie}
-
 \subsection{Matlab}
 
-\subsection{C}
+\section{Komplexes Kammfilter}\label{sec:comb}
+Um das Signal demodulieren zu können, muss es zunächst aufbereitet werden. 
+Aufgrund des geringen Frequenzhubs der CPFSK Modulation, laufen durch Störungen im Signal die Frequenzen 
+für $D = \{1, 0\}$ zu Teil ineinander. Dadurch ist eine saubere demodulation und anschließende decodierung
+nicht mehr möglich. Um die Frequenzen besser von einander differenziern zu können, ist ein möglicher Ansatz 
+das Verwenden eines Kammfilters, realisiert durch eine Anzahl $N$ Verzögerer.
+Ziel des Kammfilters ist es, die Nullstellen sLEMo zu legen, dass entweder $w_{mark}$ oder $w_{space}$ des Nutzsignals im positiven Frequenzbereich
+gedämpft wird, und das jeweils andere $w$ im negativen Bereich. So wird der Frequenzunterschied zwischen den beiden Frequenzen von $\varDelta$ auf $2\cdot fA$ angehoben.
+Die Frequenzen sind damit deutlich unterscheidbar und können im nächsten Schritt, der Demodulation eindeutig zugeordnet werden.
 
-\section{FM-Verzögerungsdemoulator}
+\subsection{Theorie}
+
+
+Ausgehend von der Übertragnungsfunktion 
+$$H(z) = 1 + z^{-N}$$ 
+mit 
+$$ z = e^{j\omega} $$
+ergibt sich
+
+$$H(j\omega) = 1 + e^{-j\omega N}$$
+
+und dem ausklammern von $ e^{-j \frac{\omega N}{2}}$:
+$$
+H(e^{j\omega}) = e^{-j \frac{\omega N}{2}} \cdot (e^{-j \frac{\omega N}{2}} + e^{j \frac{\omega N}{2}})
+$$
+umschreiben
+$$
+(e^{-j \frac{\omega N}{2}} + e^{j \frac{\omega N}{2}}) = 2  cos(\frac{\omega N}{2})
+$$
+Zur bestimmung der Nullstellen, Argument des Cosinus betrachten.
+
+Allg.: $0 = cos(\frac{\pi}{2} + k\pi)$
+$$
+\frac{w_0 N}{2} = \frac{\pi}{2} + k\pi
+$$
+
+$$
+<=> w_0 = \frac{2\pi k + \pi}{N}
+$$
+mit $k = 0$, $w_0 = 2\pi \cdot \frac{f}{fA}$ und nach $N$ Aufgelöst, ergibt sich:
+
+$$
+<=> N = \frac{\pi}{2\pi \frac{f}{fA}}
+$$
+eingesetzt:
+
+$$
+N = \lfloor \frac{\pi}{2\pi \frac{450Hz}{3832Hz}}\rfloor = 4
+$$
+
+Der Faktor N bestimmt die Anzahl der benötigten Verzögerer, damit $\omega_0$ im idealfall genau so auf $\omega_{mark}$ oder $\omega_{space}$ liegen dass eine der beiden 
+Frequenzen im positiven Frequenzbereich gedämpft wird und die andere im Negativen. In diesem Fall liefert $N = 4$ das gewünschte Ergebnis, siehe Abb.~\ref{fig:comb}, Latexcode \ref{code:comb}
+
+\subsection{Matlab}
+In Matlab wird das Filter überprüft, Implementiert wird das Filter mithilfe von 4 Verzögerern.
+Dafür wird in Matlab ein mit $N$-Nullen gefülltes Array verwendet. In Abb.~\ref{fig:comb} ist zu sehen,
+dass die Nullstellen des Kammfilter sehr gut auf den jeweileigen Frequenzen $- w_{mark}$ und $w_{space}$ liegen.
+
+\begin{listing}
+    \label{codeM:comb}
+    \caption{In Matlab wird Überprüft ob die Berechnung des $N$ korrekt sind, indem der Filter mit den Frequenzen
+    $w_{mark}$ und $w_{space}$ geplottet wird, siehe Abb.~\ref{fig:comb}. Es wird kontrolliert ob die Nullstellen in den richten Punkten auf der Frequenzachse liegen.}
+\begin{minted}[linenos, bgcolor=bg]{matlab}
+    N = 4
+    fA_green = 3832;
+    freq_comb = (-fA_green:fA_green)/fA_green;
+    
+    H_comb = freqz([zeros(1,N), 1], 1, 2*pi*freq_comb)
+                +i*freqz(1,1,2*pi*freq_comb);
+    
+    figure(4);
+    plot(freq_comb, abs(H_comb), 'b-')
+    hold on;
+    stem(-732/fA_green, 2, 'k');
+    stem(-1187/fA_green, 2, 'r');
+    stem(732/fA_green, 2, 'k');
+    stem(1187/fA_green, 2, 'r');
+    grid on
+    hold off;
+    xlabel(['normierte Frequenz'])
+    ylabel(['Amplitude'])
+    title('Amplitudengang Kammfilter');
+\end{minted}
+\end{listing}
+
+\begin{figure}[!h]
+    \label{fig:comb}
+    \centering
+    \def\svgscale{0.3}
+    \def\svgwidth{0.8\columnwidth}
+    \input{img/comb_6n.pdf_tex}
+    \caption{Kammfiter mit den deiden Frequenzen $\omega_{mark}$ und $\omega_{space}$, das Kammfilter lässt jeweils eine der beiden Frequenzen passieren.}
+\end{figure}
+\subsection{C}
+Für die C-Implementierung, siehe \ref{codeC:comb}, wird jedes eingabe Sample um $N = 4$ verzögert.
+Die Verzögerung wird über ein Buffer Array der Länge $N$ realisiert:
+\begin{listing}\label{codeC:comb}
+    \caption{C-Implementierung des Kammfilters mithilfe eines Verzögerer Buffers}
+    \begin{minted}[linenos, bgcolor=bg]{c}
+        short delayed_sample = 0;
+        short cnt = 0;
+        short *delay_iter = NULL;
+        short delay_line[4];
+        short *rotating_rw = delay_line;
+ 
+        static void process_comb_and_demod() {
+            // Comb filter
+            I_sig = dec_out_short + 175 * delayed_sample;
+            Q_sig = 984 * delayed_sample;
+            ....
+        }
+
+        static void output_sample() {
+            dec_out_short = dec_out >> 5;
+
+            // Delayline counter overflow management
+            if (rotating_rw == delay_line + 4)
+                rotating_rw = delay_line;
+            
+            // Rotating delayed sample storage
+            delayed_sample = *rotating_rw;
+            *rotating_rw = dec_out_short;
+            rotating_rw += 1;
+
+            cnt++;
+        }
+    \end{minted}
+\end{listing}
+
+\section{FM-Verzögerungsdemoulator} \label{sec:fm-demod}
+Der FM-Verzögerungsdemoulator wird im Worksheet 2 des Projekts Behandelt. 
+Der FM-Verzögerungsdemoulator soll das CPFSK-modulierte Signal demodulieren und eine Rechteckfolge ausgeben.
+
 Warum gehts denn doch? Ausführlich, weshalb sollte es eigentlich nicht gehen, was machen wir anders?
 \subsection{Matlab}
 
 \subsection{C}
 
+\section{Decodierung}
+
+Die Decodierung liest die $D = \{0,1\}$ Bitweise ein und schiebt diese in einen Buffer. 
+Die Symbolfrequenz von $50Hz$ bestimmt die Abtastrate des Decodierers. Da bei dem Start/Stop-Bit um das
+halbe Bit der Stop-Sequenz erkennen zu können liegt hier folgender Ansatz zugrunde:
+
+$$
+f_{decode} = \lfloor fA * \frac{1}{f_{symbol} \cdot 2}\rfloor 
+$$
+eingesetzt
+$$
+f_{decode} = \lfloor 3832Hz * \frac{1}{50Hz\cdot 2}\rfloor = 38
+$$
+Für die Implementierung wird im C-Code der Aufruf druch eine einfach $IF$ und eine Zählvariabel
+gesteuert. Der Decodierer, siehe \ref{codeC:decode}, schiebt Bit für Bit durch einen Buffer, liegt
+die Start/Stop Sequenz $0x001F$ in dem Buffer, werden die nächsten $10$ Bits, als Bits eines Buchstaben interpretiert.
+Jeder Buchstabe wird durch 5 Bits repräsentiert, in \ref{codeC:decode} ab Zeile 20 um die hälfte komprimiert.
+Das daraus erzeugt Ergebnis, representiert den Index der LookUp Table für den entsprechen Buchstaben.
+
+\begin{listing}\label{codeC:decode}
+    \caption{C-Implementierung: Aufruf des Decodierers}
+    \begin{minted}[linenos, bgcolor=bg]{c}
+void decode(unsigned short bit) {
+
+    if (!current_lut) 
+        current_lut = lookup_char;
+
+    buffer = buffer << 1;
+    buffer = buffer | bit;
+    startstop = buffer & 0x001F;
+
+    if (startstop_holdoff > 0) // Underflow protection
+        startstop_holdoff -= 1;
+
+    if (startstop == STOP_SEQUENCE && startstop_holdoff == 0) {
+        startstop_holdoff = 11;
+        // Shift over the start and stop section
+        // and mask the 10 message bits
+        index_pre = (buffer >> 5) & 0x03FF; 
+        // Compress bit stream to half its size
+        // Turn this 1 1 1 1 0 0 1 1 0 0 into 1 1 0 1 1
+        real_index = (((index_pre >> 0) & 0x0001) << 4) 
+                | (((index_pre >> 2) & 0x0001) << 3) 
+                | (((index_pre >> 4) & 0x0001) << 2) 
+                | (((index_pre >> 6) & 0x0001) << 1) 
+                | (((index_pre >> 8) & 0x0001) << 0);
+
+        if (real_index == SWITCH_TO_CHAR) {
+            // Change to characters
+            current_lut = lookup_char;
+        } else if (real_index == SWITCH_TO_NUM) {
+            // Change to numbers
+            current_lut = lookup_num;
+        } else {
+#ifdef USE_MSVC_ANSI_C_SIM
+            // Everything else is a valid character
+            printf(" >> %c <<\n",current_lut[real_index-1]); 
+#endif
+        }
+    }
+}
+    \end{minted}
+\end{listing}
+
+
+
+
+
+--------------------------------------------------------------------------------------------------
+
 \section{Simulation: Matlab}
 In dem folgenden Kapitel wird zunächst ein Rechteckimpuls auf eine Trägerfrequenze mithilfe der \ac{CPFSK} moduliert.
+
 
 \subsection{CPFSK Modulation}
 Die \ac{CPFSK} Modulation ist eine Methode um digitale Signale mithilfe einer Trägerfrequenze analog zu Übertragen.
@@ -157,7 +356,6 @@ somit die Nachbarkanäle stören würde.
 \subsection{Rechteckimpuls $d(i)$}\label{sec:rechteck}
 Mit Angabe der Symboldauer $T = 20ms$ lässt sich auf die minimale Abtastfrequenz nach Nyquist-Shannon schließen.
 Die minimale Abtastfrequenz $f_A$ muss mehr als doppelt so groß wie die höhste abzutastende Frequenz sein.
-
 
 Aus
 \begin{center}
@@ -261,80 +459,6 @@ Es werden nur binäre Daten übertragen $D = \{0, 1\}$. die Frequenzen $ f_1 = f
 Da auch die Start/Stopbits durch $D$ dargestellt werden, würde sich hier im Frequenzbereich
 nur eine veränderung im maximum der Amplitude ergeben, die repräsentierenden Frequenzen selbst bleiben unverändert.
 
-\subsection{Kammfilter}
-Um das Signal demodulieren zu können, muss es zunächst aufbereitet werden. 
-Aufgrund des geringen Frequenzhubs der CPFSK Modulation, laufen durch Störungen im Signal die Frequenzen 
-für $D = \{1, 0\}$ zu Teil ineinander. Dadurch ist eine saubere demodulation und anschließende decodierung
-nicht mehr möglich. Um die Frequenzen besser von einander differenziern zu können, ist ein möglicher Ansatz 
-das Verwenden eines Kammfilters, realisiert durch $N$ Verzögerer.
-Das Kammfilter muss so dimensioniert werden, dass eine Nullstellen bei $f_1 = f_T + \varDelta F$ liegt und 
-gleichzeitig keine, oder eine nur geringe Dämpfung bei $f_2 = f_T - \varDelta F$ vorliegt.
-Aufgrund der Symmetrie des Signals liegt $-f_1$ auf der nagativen Frquenzachse nun im durchlassbereich, wohingegen 
-$-f_2$ gedämpft wird. Damit wächst der Frequenzhub von $2 \cdot \varDelta F$ auf $2*f_A$. Die Frequenzen sind damit deutlich unterscheidbar
-und können im nächsten Schritt, der Demodulation eindeutig zugewiesen werden.
-
-Ausgehend von der Übertragnungsfunktion 
-$$H(z) = z^{-N} + j$$ 
-mit 
-$$ z = e^{j\omega} $$
-ergibt sich
-
-$$H(j\omega) = e^{-j\omega} + e^{j\cdot \frac{\pi}{2}} | j = e^{j\cdot \frac{\pi}{2}}$$
-
-$$
-H(e^{j\omega}) = 
-e^{-j\omega N \frac{1}{2}} \cdot e^{j\cdot \frac{\pi}{2} \frac{1}{2}} 
-(e^{-j\omega N \frac{1}{2}} \cdot e^{-j\cdot \frac{\pi}{2} \frac{1}{2}} + 
-e^{j\omega N \frac{1}{2}} \cdot e^{j\cdot \frac{\pi}{2} \frac{1}{2}}) 
-$$
-zusammengefasst:
-$$ H(e^{j\omega}) = e^{-j\omega N \frac{1}{2}} \cdot e^{j\cdot \frac{\pi}{2} \frac{1}{2}}  
-(e^{-j(\omega \frac{N}{2} + \frac{\pi}{4})} + e^{j(\omega \frac{N}{2} + \frac{\pi}{4})}) 
-$$
-
-$$
-H(e^{j\omega}) = e^{-j\omega N \frac{1}{2}} \cdot e^{j\cdot \frac{\pi}{2} \frac{1}{2}} \cdot 2cos(\frac{N\omega}{2} + \frac{\pi}{4})
-$$
-Die normierten Nullstellen ergeben sich bei:
-$$2cos(\frac{N\omega}{2} + \frac{\pi}{4}) = 0 $$
-Der Cosinus wird zu Null wenn:
-$$
-\frac{N\omega}{2} + \frac{\pi}{4} = k\cdot\pi + \frac{\pi}{2} =>  \frac{N\omega}{2} = k \cdot \pi + \frac{\pi}{4} => \omega = \frac{2}{N} \cdot (k \cdot \pi + \frac{\pi}{4})
-$$
-Der Faktor N bestimmt die Anzahl der benötigten Verzögerer, damit $\omega$ im idealfall genau so auf $\omega_{mark}$ oder $\omega_{space}$ liegen dass eine der beiden 
-Frequenzen im positiven Frequenzbereich gedämpft wird und die andere im Negativen. In diesem Fall liefert $N=6$ das gewünschte Ergebnis, siehe Abb.~\ref{fig:comb}, Latexcode \ref{code:comb}
-\begin{center}
-    \label{code:comb}
-\begin{minted}{matlab}
-    N = 4
-    fA_green = 3832;
-    freq_comb= (-fA_green:fA_green)/fA_green;
-    
-    H_comb = freqz([zeros(1,N), 1], 1, 2*pi*freq_comb)+i*freqz(1,1,2*pi*freq_comb);
-    
-    figure(4);
-    plot(freq_comb, abs(H_comb), 'b-')
-    hold on;
-    stem(-732/fA_green, 2, 'k');
-    stem(-1187/fA_green, 2, 'r');
-    stem(732/fA_green, 2, 'k');
-    stem(1187/fA_green, 2, 'r');
-    grid on
-    hold off;
-    xlabel(['normierte Frequenz'])
-    ylabel(['Amplitude'])
-    title('Amplitudengang Kammfilter');
-\end{minted}
-\end{center}
-
-\begin{figure}[!h]
-    \label{fig:comb}
-    \centering
-    \def\svgscale{0.3}
-    \def\svgwidth{\columnwidth}
-    \input{img/comb_6n.pdf_tex}
-    \caption{Kammfiter mit den deiden Frequenzen $\omega_{mark}$ und $\omega_{space}$, das Kammfilter lässt jeweils eine der beiden Frequenzen passieren.}
-\end{figure}
 
 
 % ---------------------------------------------------------------------------

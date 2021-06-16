@@ -1,0 +1,86 @@
+%% Creator: Inkscape 1.1 (c4e8f9ed74, 2021-05-24), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'spektrum.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{420bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.75)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{spektrum.pdf}}%
+    \put(0.10476196,0.07410714){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0\end{tabular}}}}%
+    \put(0.07440482,0.14216268){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}100\end{tabular}}}}%
+    \put(0.07440482,0.21021821){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}200\end{tabular}}}}%
+    \put(0.07440482,0.27827375){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}300\end{tabular}}}}%
+    \put(0.07440482,0.34632929){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}400\end{tabular}}}}%
+    \put(0.07440482,0.414385){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}500\end{tabular}}}}%
+    \put(0.07440482,0.48244054){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}600\end{tabular}}}}%
+    \put(0.07440482,0.55049607){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}700\end{tabular}}}}%
+    \put(0.07440482,0.61855161){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}800\end{tabular}}}}%
+    \put(0.07440482,0.68660714){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}900\end{tabular}}}}%
+    \put(0.06011911,0.32053607){\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Amplitude\end{tabular}}}}}%
+    \put(0.39732196,0.70669643){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\textbf{Betragspektrum}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{spektrum.pdf}}%
+    \put(0.52589286,0.07775786){\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}<- fT = 1250Hz\end{tabular}}}}}%
+    \put(0.45178571,0.51071429){\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}<- fT - delta\end{tabular}}}}}%
+    \put(0.4625,0.65357143){\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}F\end{tabular}}}}}%
+    \put(0.45178571,0.66607143){\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l} \end{tabular}}}}}%
+    \put(0.59107143,0.50357143){\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}<- fT + delta\end{tabular}}}}}%
+    \put(0.60178571,0.65892857){\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}F\end{tabular}}}}}%
+    \put(0.59107143,0.67142857){\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l} \end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{spektrum.pdf}}%
+    \put(0.12232143,0.04940482){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0\end{tabular}}}}%
+    \put(0.26214286,0.04940482){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}500\end{tabular}}}}%
+    \put(0.41,0.04940482){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}1000\end{tabular}}}}%
+    \put(0.565,0.04940482){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}1500\end{tabular}}}}%
+    \put(0.72,0.04940482){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}2000\end{tabular}}}}%
+    \put(0.875,0.04940482){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}2500\end{tabular}}}}%
+    \put(0.42589321,0.01488089){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Frequenz [Hz]\end{tabular}}}}%
+  \end{picture}%
+\endgroup%

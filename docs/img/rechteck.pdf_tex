@@ -1,0 +1,78 @@
+%% Creator: Inkscape 1.0.2 (e86c870879, 2021-01-15, custom), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'rechteck.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{420bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.75)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{rechteck.pdf}}%
+    \put(0.12232143,0.04940482){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0\end{tabular}}}}%
+    \put(0.25857143,0.04940482){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.05\end{tabular}}}}%
+    \put(0.42071429,0.04940482){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.1\end{tabular}}}}%
+    \put(0.56857143,0.04940482){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.15\end{tabular}}}}%
+    \put(0.73071429,0.04940482){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.2\end{tabular}}}}%
+    \put(0.87857143,0.04940482){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.25\end{tabular}}}}%
+    \put(0.50000036,0.01488089){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}[s]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{rechteck.pdf}}%
+    \put(0.09583339,0.07410714){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}-2\end{tabular}}}}%
+    \put(0.07440482,0.15066964){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}-1.5\end{tabular}}}}%
+    \put(0.09583339,0.22723214){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}-1\end{tabular}}}}%
+    \put(0.07440482,0.30379464){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}-0.5\end{tabular}}}}%
+    \put(0.10476196,0.38035714){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0\end{tabular}}}}%
+    \put(0.08154768,0.45691964){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.5\end{tabular}}}}%
+    \put(0.10476196,0.53348214){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}1\end{tabular}}}}%
+    \put(0.08154768,0.61004464){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}1.5\end{tabular}}}}%
+    \put(0.10476196,0.68660714){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}2\end{tabular}}}}%
+    \put(0.06011911,0.32053607){\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Amplitude\end{tabular}}}}}%
+    \put(0.36517911,0.70669643){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\textbf{Rechteckimpuls: d(i)}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{rechteck.pdf}}%
+  \end{picture}%
+\endgroup%
