@@ -112,14 +112,94 @@ aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungs Demodulator 
 \end{figure}
 
 \section{FIR-Polyphasen Bandpass}\label{sec:FIR}
-Der FIR-Polyphasen Bandpassfilter unterabtastet die das 2MHz Signal ein weiteres mal und mischt 
-das Nutzsignal ins Basisband.
+Das FIR-Polyphasen Bandpassfilter unterabtastet die 2MHz Signal ein weiteres mal durch eine Dezimationsstufe und mischt 
+das Nutzsignal ins Basisband. Zunächst wird hierfür das FIR-Bandpassfilter in Matlab ausgelegt.
+Anschließend werden die in Matlab erzeugten Koeffizienten aufgeteilt in 527 dezimationsstufen und in eine C-Datei geschrieben.
+und später in der C-Implementierung verwendet. 
 
 \subsection{Theorie}
+In dem $~2MHz$-Signal befindet sich das eigentliche Nutzsignal $\frac{1MHz}{5kHz}$-Mal, um hier die beiden Frequenzen für $w_{mark}$ und $w_{space}$
+aus einem der $5kHz$ Bänder herrauszufiltern, wird ein FIR-Bandpass mit Dezimationsstufe eingesetzt. Mit der Festgelegten Abtastfrequenz des ADC von $fA = 2,0192MHz$,
+liegt der erste Träger bei $f_T \approx 4kHz$. Beachtet man nun das $\varDelta f = 742Hz$ breit ist, muss das FIR-Bandpassfilter mindestens ein Band von
+$f_T \pm \frac{\varDelta f}{2}$ passieren lassen. Daraus ergibt sich ein notwendiger druchlassbereich von $B_{FIR} > 742Hz$. 
+Sinnvolle Grenzen ergeben sich dann bei $f_u = 3800Hz$ und $f_o = 4800Hz$.
+
 
 \subsection{Matlab}
+Zu Auslegung des FIR Filters in Matlab lst.~\ref{codeM:FIRBP}, müssen zuächst die Grenz- und Stopfrequenzen Festgelegt werden.
+Es ergeben sich $f_u = 3800Hz$ und $f_o = 4800Hz$, die Stopfrequenzen $f_{uStop} = f_u - 1500$ und $f_{oStop} = f_o + 1500$.
+Bei den Stopfrequenzen gilt es Abzuwägen, umso steiler das Filter, desto mehr Koeffizienten, desto mehr Rechenzeit wird später in C
+benötigt.
+Der Amplitudengang des Filters, siehe Abb.~\ref{fig:fir_ampli}, zeigt das gewünschte Verhalten. Es werden $2056$ Koeffizienten benötigt.
 
+
+\begin{figure}[!h]
+    \label{fig:fir_ampli}
+    \centering
+    \def\svgscale{0.3}
+    \def\svgwidth{\columnwidth}
+    \input{img/FIR_BP.pdf_tex}
+    \caption{FIR-Bandpassfilter Amplitudengang. Das FIR Filter benötigt 2056 Koeffizienten.}
+\end{figure}
+\begin{listing}\label{codeM:FIRBP}
+    \caption{FIR Filter in Matlab}
+    \begin{minted}[linenos, bgcolor=bg]{c}
+function [outputArg1, outputArg2, outputArg3] = 
+        band(low, high, inputSig, sample_rate)
+%FIR Bandpass
+%
+rp = 3; 
+rs = 40;
+dev = [(10^(rp/20)-1)/(10^(rp/20)+1) 10^(-rs/20)]; 
+low_stop = low - 1500;
+high_stop = high + 1500;
+[N_FIR,fo,mo,w] = firpmord([low_stop low high high_stop], 
+                        [0 1 0], [0.05, 0.01, 0.05], sample_rate);
+fprintf("N_FIR = %d\n", N_FIR);
+coeff = firpm(N_FIR,fo,mo,w);
+
+freqz(coeff,1, 200000, sample_rate)
+
+xb = filter(coeff, 1, inputSig);
+outputArg1 = xb;
+outputArg2 = coeff;
+outputArg3 = fo;
+end
+    \end{minted}
+\end{listing}
 \subsection{C}
+
+\begin{listing}\label{codeC:dezimation}
+    \caption{Beisphafte Polyphase in C, die Koeefizienten}
+    \begin{minted}[linenos, bgcolor=bg]{c}
+const short FIR_BANDPASS_1[4] = {1304, 22, 186, -8,};
+    \end{minted}
+\end{listing}
+
+
+\begin{listing}\label{codeC:FIR}
+    \caption{FIR-Polyphasenbandpass Implementierung in C}
+    \begin{minted}[linenos, bgcolor=bg]{c}
+short FIR_filter_sc(short FIR_delays[], const short FIR_coe[], 
+        short int N_delays, short x_n, int shift) {
+    short i, y;
+    int FIR_accu32 = 0;
+    // read input sample from ADC
+    FIR_delays[N_delays-1] = x_n;	 
+    // clear accu
+    FIR_accu32	= 0;
+    // FIR filter routine				
+    for( i = 0 ; i < N_delays ; i++ )		
+        FIR_accu32 += FIR_delays[N_delays-1-i] * FIR_coe[i];
+    
+    for( i = 1 ; i < N_delays ; i++ )				
+        FIR_delays[i-1] = FIR_delays[i];
+
+    y = (short) (FIR_accu32 >> shift);
+    return y;
+}
+    \end{minted}
+\end{listing}
 
 \section{Hilber Transformator}\label{sec:hilbert}
 Super Filter, leider nicht tauglich, Warum?
@@ -132,7 +212,7 @@ Aufgrund des geringen Frequenzhubs der CPFSK Modulation, laufen durch Störungen
 für $D = \{1, 0\}$ zu Teil ineinander. Dadurch ist eine saubere demodulation und anschließende decodierung
 nicht mehr möglich. Um die Frequenzen besser von einander differenziern zu können, ist ein möglicher Ansatz 
 das Verwenden eines Kammfilters, realisiert durch eine Anzahl $N$ Verzögerer.
-Ziel des Kammfilters ist es, die Nullstellen sLEMo zu legen, dass entweder $w_{mark}$ oder $w_{space}$ des Nutzsignals im positiven Frequenzbereich
+Ziel des Kammfilters ist es, die Nullstellen so zu legen, dass entweder $w_{mark}$ oder $w_{space}$ des Nutzsignals im positiven Frequenzbereich
 gedämpft wird, und das jeweils andere $w$ im negativen Bereich. So wird der Frequenzunterschied zwischen den beiden Frequenzen von $\varDelta$ auf $2\cdot fA$ angehoben.
 Die Frequenzen sind damit deutlich unterscheidbar und können im nächsten Schritt, der Demodulation eindeutig zugeordnet werden.
 
@@ -151,7 +231,10 @@ und dem ausklammern von $ e^{-j \frac{\omega N}{2}}$:
 $$
 H(e^{j\omega}) = e^{-j \frac{\omega N}{2}} \cdot (e^{-j \frac{\omega N}{2}} + e^{j \frac{\omega N}{2}})
 $$
-umschreiben
+
+$e^{-j \frac{\omega N}{2}} \neq 0$ daher wird nur $(e^{-j \frac{\omega N}{2}} + e^{j \frac{\omega N}{2}})$ weiter betrachtet
+
+Es gilt:
 $$
 (e^{-j \frac{\omega N}{2}} + e^{j \frac{\omega N}{2}}) = 2  cos(\frac{\omega N}{2})
 $$
@@ -177,7 +260,7 @@ N = \lfloor \frac{\pi}{2\pi \frac{450Hz}{3832Hz}}\rfloor = 4
 $$
 
 Der Faktor N bestimmt die Anzahl der benötigten Verzögerer, damit $\omega_0$ im idealfall genau so auf $\omega_{mark}$ oder $\omega_{space}$ liegen dass eine der beiden 
-Frequenzen im positiven Frequenzbereich gedämpft wird und die andere im Negativen. In diesem Fall liefert $N = 4$ das gewünschte Ergebnis, siehe Abb.~\ref{fig:comb}, Latexcode \ref{code:comb}
+Frequenzen im positiven Frequenzbereich gedämpft wird und die andere im Negativen. In diesem Fall liefert $N = 4$ das gewünschte Ergebnis, siehe Abb.~\ref{fig:comb}, Latexcode \ref{codeM:comb}
 
 \subsection{Matlab}
 In Matlab wird das Filter überprüft, Implementiert wird das Filter mithilfe von 4 Verzögerern.
@@ -186,7 +269,7 @@ dass die Nullstellen des Kammfilter sehr gut auf den jeweileigen Frequenzen $- w
 
 \begin{listing}
     \label{codeM:comb}
-    \caption{In Matlab wird Überprüft ob die Berechnung des $N$ korrekt sind, indem der Filter mit den Frequenzen
+    \caption{In Matlab wird Überprüft ob die Berechnung des $N$ korrekt sind, indem das Filter mit den Frequenzen
     $w_{mark}$ und $w_{space}$ geplottet wird, siehe Abb.~\ref{fig:comb}. Es wird kontrolliert ob die Nullstellen in den richten Punkten auf der Frequenzachse liegen.}
 \begin{minted}[linenos, bgcolor=bg]{matlab}
     N = 4
@@ -258,8 +341,10 @@ Die Verzögerung wird über ein Buffer Array der Länge $N$ realisiert:
 \section{FM-Verzögerungsdemoulator} \label{sec:fm-demod}
 Der FM-Verzögerungsdemoulator wird im Worksheet 2 des Projekts Behandelt. 
 Der FM-Verzögerungsdemoulator soll das CPFSK-modulierte Signal demodulieren und eine Rechteckfolge ausgeben.
+Der eigentliche Ansatz aus Worksheet zwei mit einem abschließendem sinus als nicht liniarer Verstärker funktioniert idR nicht, 
+da die Frequenzen von $w_{mark}$ und $w_{space}$ aufgrund der Symmetrie des Sinus ($sin(f) = sin(-f)$) nicht mehr von einander zu Unterscheiden sind.
 
-Warum gehts denn doch? Ausführlich, weshalb sollte es eigentlich nicht gehen, was machen wir anders?
+\textit{Warum gehts denn doch? Was machen wir anders?}
 \subsection{Matlab}
 
 \subsection{C}
@@ -281,7 +366,7 @@ Für die Implementierung wird im C-Code der Aufruf druch eine einfach $IF$ und e
 gesteuert. Der Decodierer, siehe \ref{codeC:decode}, schiebt Bit für Bit durch einen Buffer, liegt
 die Start/Stop Sequenz $0x001F$ in dem Buffer, werden die nächsten $10$ Bits, als Bits eines Buchstaben interpretiert.
 Jeder Buchstabe wird durch 5 Bits repräsentiert, in \ref{codeC:decode} ab Zeile 20 um die hälfte komprimiert.
-Das daraus erzeugt Ergebnis, representiert den Index der LookUp Table für den entsprechen Buchstaben.
+Das daraus erzeugt Ergebnis, repräsentiert den Index einer LookUp Table für den entsprechen Buchstaben.
 
 \begin{listing}\label{codeC:decode}
     \caption{C-Implementierung: Aufruf des Decodierers}
