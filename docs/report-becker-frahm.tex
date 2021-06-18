@@ -168,7 +168,10 @@ end
     \end{minted}
 \end{listing}
 \subsection{C}
-
+In der C-Implementierung wird in der endgültigen Version mit dem Datentyp \textit{short} gearbeitet. 
+Dies trägt zu einer besseren performance auf dem DSP bei.
+Die Koeffizienten des FIR-Filters werden in $527$ \textit{const short} Arrays der Größe 4 aufgeteilt, siehe \ref{codeC:dezimation},
+und in den FIR Filter übergeben. Es wird Sample für Sample eingelesen, dezimert und durch die Filterroutine verarbeitet lst.~\ref{codeC:FIR}.
 \begin{listing}\label{codeC:dezimation}
     \caption{Beisphafte Polyphase in C, die Koeefizienten}
     \begin{minted}[linenos, bgcolor=bg]{c}
@@ -202,7 +205,7 @@ short FIR_filter_sc(short FIR_delays[], const short FIR_coe[],
 \end{listing}
 
 \section{Hilbert Transformator}\label{sec:hilbert}
-Der Hibert Transformator wandelt ein Zeitsignal in ein analytisches Signal $x_+(t)$ um.
+Der Hibert Transformator wandelt ein reeles Zeitsignal $x(t)$ in ein analytisches Signal $x_+(t)$ um.
 Dies wird benötigt um das Signal anschlieend mit dem FM-Verzögerungs Demodulator, beschrieben in Kapitel \ref{sec:fm-demod}, zu demodulieren.
 Mit $\mathcal{H}(x(t))$, der Hiltert Transformierten ergibt sich dies wie folgt:
 
@@ -218,13 +221,13 @@ dieser Ansatz auch nicht weiter verfolgt.
 
 
 \section{Komplexes Kammfilter}\label{sec:comb}
-Um das Signal demodulieren zu können, muss es zunächst aufbereitet werden. 
-Aufgrund des geringen Frequenzhubs der CPFSK Modulation, laufen durch Störungen im Signal die Frequenzen 
-für $D = \{1, 0\}$ zu Teil ineinander. Dadurch ist eine saubere demodulation und anschließende decodierung
-nicht mehr möglich. Um die Frequenzen besser von einander differenziern zu können, ist ein möglicher Ansatz 
-das Verwenden eines Kammfilters, realisiert durch eine Anzahl $N$ Verzögerer.
-Ziel des Kammfilters ist es, die Nullstellen so zu legen, dass entweder $w_{mark}$ oder $w_{space}$ des Nutzsignals im positiven Frequenzbereich
-gedämpft wird, und das jeweils andere $w$ im negativen Bereich. So wird der Frequenzunterschied zwischen den beiden Frequenzen von $\varDelta$ auf $2\cdot fA$ angehoben.
+Eine Alternative zu dem in Kapitel~\ref{sec:hilbert} beschriebenen Hilber Transformator ist ein Kammfilter.
+Um die Frequenzen besser von einander differenziern zu können, wird ein Kammfilter genutzt. Dieser kann durch eine Anzahl $N$ Verzögerer realisiert werden.
+Ziel in der Auslegung des Kammfilters ist es, die Nullstellen so zu legen, dass entweder $w_{mark}$ oder $w_{space}$ des Nutzsignals im positiven Frequenzbereich
+gedämpft wird, und das jeweils andere $w$ im negativen Bereich. Zunächst wird das Filter dafürso Ausgelegt, das der Abstand zwischen
+Nullstelle und Hochpunkt in der Filterübertragungsfunktion ca. dem Frequenzhub $\varDelta f$ entsprich, anschließend muss es so Verschoben werden, dass die Nullstellen wie beschrieben auf dem
+gewünschten $w_{mark/space}$ liegen.
+So wird der Frequenzunterschied zwischen den beiden Frequenzen von $\varDelta f$ auf $2\cdot fA$ angehoben.
 Die Frequenzen sind damit deutlich unterscheidbar und können im nächsten Schritt, der Demodulation eindeutig zugeordnet werden. 
 
 \subsection{Theorie}
