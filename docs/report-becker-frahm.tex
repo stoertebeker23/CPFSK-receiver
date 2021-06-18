@@ -201,10 +201,21 @@ short FIR_filter_sc(short FIR_delays[], const short FIR_coe[],
     \end{minted}
 \end{listing}
 
-\section{Hilber Transformator}\label{sec:hilbert}
-Super Filter, leider nicht tauglich, Warum?
+\section{Hilbert Transformator}\label{sec:hilbert}
+Der Hibert Transformator wandelt ein Zeitsignal in ein analytisches Signal $x_+(t)$ um.
+Dies wird benötigt um das Signal anschlieend mit dem FM-Verzögerungs Demodulator, beschrieben in Kapitel \ref{sec:fm-demod}, zu demodulieren.
+Mit $\mathcal{H}(x(t))$, der Hiltert Transformierten ergibt sich dies wie folgt:
 
-\subsection{Matlab}
+$$ 
+x_+(t) = x(t) + j \mathcal{H}(x(t))
+$$
+
+Wobei $y(t) = \mathcal{H}(x(t))$ sich mit mit $Y(f) = X(f) \cdot -j sign(f)$ berechnen lässt.
+Wird dieses analytische Signal jedoch dem FM-Verzögerungs Demodulator übergeben, ist aufgrund des 
+geringen Frequenzhubs $\varDelta f$ eine eindeutige Demodulation jedoch nicht möglich. Der Abstand zwischen beiden Signalen ist so gering, dass sich die 
+Frequenzanteile von $w_{mark}$ und $w_{space}$ teilweise überlappen. Daher wird
+dieser Ansatz auch nicht weiter verfolgt.
+
 
 \section{Komplexes Kammfilter}\label{sec:comb}
 Um das Signal demodulieren zu können, muss es zunächst aufbereitet werden. 
@@ -214,7 +225,7 @@ nicht mehr möglich. Um die Frequenzen besser von einander differenziern zu kön
 das Verwenden eines Kammfilters, realisiert durch eine Anzahl $N$ Verzögerer.
 Ziel des Kammfilters ist es, die Nullstellen so zu legen, dass entweder $w_{mark}$ oder $w_{space}$ des Nutzsignals im positiven Frequenzbereich
 gedämpft wird, und das jeweils andere $w$ im negativen Bereich. So wird der Frequenzunterschied zwischen den beiden Frequenzen von $\varDelta$ auf $2\cdot fA$ angehoben.
-Die Frequenzen sind damit deutlich unterscheidbar und können im nächsten Schritt, der Demodulation eindeutig zugeordnet werden.
+Die Frequenzen sind damit deutlich unterscheidbar und können im nächsten Schritt, der Demodulation eindeutig zugeordnet werden. 
 
 \subsection{Theorie}
 
