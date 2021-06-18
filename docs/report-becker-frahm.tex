@@ -28,8 +28,8 @@
 \usepackage{amsmath} % Required for some math elements 
 \usepackage{svg} % .svg support
 \usepackage[nolist]{acronym}
-\usepackage{minted}
-\definecolor{bg}{rgb}{0.95,0.95,0.95}
+%\usepackage{minted}
+%\definecolor{bg}{rgb}{0.95,0.95,0.95}
 
 \graphicspath{{img/}}
 
@@ -141,68 +141,68 @@ Der Amplitudengang des Filters, siehe Abb.~\ref{fig:fir_ampli}, zeigt das gewün
     \input{img/FIR_BP.pdf_tex}
     \caption{FIR-Bandpassfilter Amplitudengang. Das FIR Filter benötigt 2056 Koeffizienten.}
 \end{figure}
-\begin{listing}\label{codeM:FIRBP}
-    \caption{FIR Filter in Matlab}
-    \begin{minted}[linenos, bgcolor=bg]{c}
-function [outputArg1, outputArg2, outputArg3] = 
-        band(low, high, inputSig, sample_rate)
-%FIR Bandpass
+%\begin{listing}\label{codeM:FIRBP}
+%    \caption{FIR Filter in Matlab}
+%    \begin{minted}[linenos, bgcolor=bg]{c}
+%function [outputArg1, outputArg2, outputArg3] = 
+%        band(low, high, inputSig, sample_rate)
+%%FIR Bandpass
+%%
+%rp = 3; 
+%rs = 40;
+%dev = [(10^(rp/20)-1)/(10^(rp/20)+1) 10^(-rs/20)]; 
+%low_stop = low - 1500;
+%high_stop = high + 1500;
+%[N_FIR,fo,mo,w] = firpmord([low_stop low high high_stop], 
+%                        [0 1 0], [0.05, 0.01, 0.05], sample_rate);
+%fprintf("N_FIR = %d\n", N_FIR);
+%coeff = firpm(N_FIR,fo,mo,w);
 %
-rp = 3; 
-rs = 40;
-dev = [(10^(rp/20)-1)/(10^(rp/20)+1) 10^(-rs/20)]; 
-low_stop = low - 1500;
-high_stop = high + 1500;
-[N_FIR,fo,mo,w] = firpmord([low_stop low high high_stop], 
-                        [0 1 0], [0.05, 0.01, 0.05], sample_rate);
-fprintf("N_FIR = %d\n", N_FIR);
-coeff = firpm(N_FIR,fo,mo,w);
-
-freqz(coeff,1, 200000, sample_rate)
-
-xb = filter(coeff, 1, inputSig);
-outputArg1 = xb;
-outputArg2 = coeff;
-outputArg3 = fo;
-end
-    \end{minted}
-\end{listing}
+%freqz(coeff,1, 200000, sample_rate)
+%
+%xb = filter(coeff, 1, inputSig);
+%outputArg1 = xb;
+%outputArg2 = coeff;
+%outputArg3 = fo;
+%end
+%    \end{minted}
+%\end{listing}
 \subsection{C}
 In der C-Implementierung wird in der endgültigen Version mit dem Datentyp \textit{short} gearbeitet. 
 Dies trägt zu einer besseren performance auf dem DSP bei.
 Die Koeffizienten des FIR-Filters werden in $527$ \textit{const short} Arrays der Größe 4 aufgeteilt, siehe \ref{codeC:dezimation},
 und in den FIR Filter übergeben. Es wird Sample für Sample eingelesen, dezimert und durch die Filterroutine verarbeitet lst.~\ref{codeC:FIR}.
-\begin{listing}\label{codeC:dezimation}
-    \caption{Beisphafte Polyphase in C, die Koeefizienten}
-    \begin{minted}[linenos, bgcolor=bg]{c}
-const short FIR_BANDPASS_1[4] = {1304, 22, 186, -8,};
-    \end{minted}
-\end{listing}
+%\begin{listing}\label{codeC:dezimation}
+%    \caption{Beisphafte Polyphase in C, die Koeefizienten}
+%    \begin{minted}[linenos, bgcolor=bg]{c}
+%const short FIR_BANDPASS_1[4] = {1304, 22, 186, -8,};
+%    \end{minted}
+%\end{listing}
 
 
-\begin{listing}\label{codeC:FIR}
-    \caption{FIR-Polyphasenbandpass Implementierung in C}
-    \begin{minted}[linenos, bgcolor=bg]{c}
-short FIR_filter_sc(short FIR_delays[], const short FIR_coe[], 
-        short int N_delays, short x_n, int shift) {
-    short i, y;
-    int FIR_accu32 = 0;
-    // read input sample from ADC
-    FIR_delays[N_delays-1] = x_n;	 
-    // clear accu
-    FIR_accu32	= 0;
-    // FIR filter routine				
-    for( i = 0 ; i < N_delays ; i++ )		
-        FIR_accu32 += FIR_delays[N_delays-1-i] * FIR_coe[i];
-    
-    for( i = 1 ; i < N_delays ; i++ )				
-        FIR_delays[i-1] = FIR_delays[i];
-
-    y = (short) (FIR_accu32 >> shift);
-    return y;
-}
-    \end{minted}
-\end{listing}
+%\begin{listing}\label{codeC:FIR}
+%    \caption{FIR-Polyphasenbandpass Implementierung in C}
+%    \begin{minted}[linenos, bgcolor=bg]{c}
+%short FIR_filter_sc(short FIR_delays[], const short FIR_coe[], 
+%        short int N_delays, short x_n, int shift) {
+%    short i, y;
+%    int FIR_accu32 = 0;
+%    // read input sample from ADC
+%    FIR_delays[N_delays-1] = x_n;	 
+%    // clear accu
+%    FIR_accu32	= 0;
+%    // FIR filter routine				
+%    for( i = 0 ; i < N_delays ; i++ )		
+%        FIR_accu32 += FIR_delays[N_delays-1-i] * FIR_coe[i];
+%    
+%    for( i = 1 ; i < N_delays ; i++ )				
+%        FIR_delays[i-1] = FIR_delays[i];
+%
+%    y = (short) (FIR_accu32 >> shift);
+%    return y;
+%}
+%    \end{minted}
+%\end{listing}
 
 \section{Hilbert Transformator}\label{sec:hilbert}
 Der Hibert Transformator wandelt ein reeles Zeitsignal $x(t)$ in ein analytisches Signal $x_+(t)$ um.
@@ -281,32 +281,32 @@ In Matlab wird das Filter überprüft, Implementiert wird das Filter mithilfe vo
 Dafür wird in Matlab ein mit $N$-Nullen gefülltes Array verwendet. In Abb.~\ref{fig:comb} ist zu sehen,
 dass die Nullstellen des Kammfilter sehr gut auf den jeweileigen Frequenzen $- w_{mark}$ und $w_{space}$ liegen.
 
-\begin{listing}
-    \label{codeM:comb}
-    \caption{In Matlab wird Überprüft ob die Berechnung des $N$ korrekt sind, indem das Filter mit den Frequenzen
-    $w_{mark}$ und $w_{space}$ geplottet wird, siehe Abb.~\ref{fig:comb}. Es wird kontrolliert ob die Nullstellen in den richten Punkten auf der Frequenzachse liegen.}
-\begin{minted}[linenos, bgcolor=bg]{matlab}
-    N = 4
-    fA_green = 3832;
-    freq_comb = (-fA_green:fA_green)/fA_green;
-    
-    H_comb = freqz([zeros(1,N), 1], 1, 2*pi*freq_comb)
-                +i*freqz(1,1,2*pi*freq_comb);
-    
-    figure(4);
-    plot(freq_comb, abs(H_comb), 'b-')
-    hold on;
-    stem(-732/fA_green, 2, 'k');
-    stem(-1187/fA_green, 2, 'r');
-    stem(732/fA_green, 2, 'k');
-    stem(1187/fA_green, 2, 'r');
-    grid on
-    hold off;
-    xlabel(['normierte Frequenz'])
-    ylabel(['Amplitude'])
-    title('Amplitudengang Kammfilter');
-\end{minted}
-\end{listing}
+%\begin{listing}
+ %   \label{codeM:comb}
+  %  \caption{In Matlab wird Überprüft ob die Berechnung des $N$ korrekt sind, indem das Filter mit den Frequenzen
+   % $w_{mark}$ und $w_{space}$ geplottet wird, siehe Abb.~\ref{fig:comb}. Es wird kontrolliert ob die Nullstellen in den richten Punkten auf der Frequenzachse liegen.}
+%\begin{minted}[linenos, bgcolor=bg]{matlab}
+%    N = 4
+%    fA_green = 3832;
+%    freq_comb = (-fA_green:fA_green)/fA_green;
+%    
+%    H_comb = freqz([zeros(1,N), 1], 1, 2*pi*freq_comb)
+%                +i*freqz(1,1,2*pi*freq_comb);
+%    
+%    figure(4);
+%    plot(freq_comb, abs(H_comb), 'b-')
+%    hold on;
+%    stem(-732/fA_green, 2, 'k');
+%    stem(-1187/fA_green, 2, 'r');
+%    stem(732/fA_green, 2, 'k');
+%    stem(1187/fA_green, 2, 'r');
+%    grid on
+%    hold off;
+%    xlabel(['normierte Frequenz'])
+%    ylabel(['Amplitude'])
+%    title('Amplitudengang Kammfilter');
+%\end{minted}
+%\end{listing}
 
 \begin{figure}[!h]
     \label{fig:comb}
@@ -319,38 +319,38 @@ dass die Nullstellen des Kammfilter sehr gut auf den jeweileigen Frequenzen $- w
 \subsection{C}
 Für die C-Implementierung, siehe \ref{codeC:comb}, wird jedes eingabe Sample um $N = 4$ verzögert.
 Die Verzögerung wird über ein Buffer Array der Länge $N$ realisiert:
-\begin{listing}\label{codeC:comb}
-    \caption{C-Implementierung des Kammfilters mithilfe eines Verzögerer Buffers}
-    \begin{minted}[linenos, bgcolor=bg]{c}
-        short delayed_sample = 0;
-        short cnt = 0;
-        short *delay_iter = NULL;
-        short delay_line[4];
-        short *rotating_rw = delay_line;
- 
-        static void process_comb_and_demod() {
-            // Comb filter
-            I_sig = dec_out_short + 175 * delayed_sample;
-            Q_sig = 984 * delayed_sample;
-            ....
-        }
-
-        static void output_sample() {
-            dec_out_short = dec_out >> 5;
-
-            // Delayline counter overflow management
-            if (rotating_rw == delay_line + 4)
-                rotating_rw = delay_line;
-            
-            // Rotating delayed sample storage
-            delayed_sample = *rotating_rw;
-            *rotating_rw = dec_out_short;
-            rotating_rw += 1;
-
-            cnt++;
-        }
-    \end{minted}
-\end{listing}
+%\begin{listing}\label{codeC:comb}
+%    \caption{C-Implementierung des Kammfilters mithilfe eines Verzögerer Buffers}
+%    \begin{minted}[linenos, bgcolor=bg]{c}
+%        short delayed_sample = 0;
+%        short cnt = 0;
+%        short *delay_iter = NULL;
+%        short delay_line[4];
+%        short *rotating_rw = delay_line;
+% 
+%        static void process_comb_and_demod() {
+%            // Comb filter
+%            I_sig = dec_out_short + 175 * delayed_sample;
+%            Q_sig = 984 * delayed_sample;
+%            ....
+%        }
+%
+%        static void output_sample() {
+%            dec_out_short = dec_out >> 5;
+%
+%            // Delayline counter overflow management
+%            if (rotating_rw == delay_line + 4)
+%                rotating_rw = delay_line;
+%            
+%            // Rotating delayed sample storage
+%            delayed_sample = *rotating_rw;
+%            *rotating_rw = dec_out_short;
+%            rotating_rw += 1;
+%
+%            cnt++;
+%        }
+%    \end{minted}
+%\end{listing}
 
 \section{FM-Verzögerungsdemoulator} \label{sec:fm-demod}
 Der FM-Verzögerungsdemoulator wird im Worksheet 2 des Projekts Behandelt. 
@@ -382,50 +382,50 @@ die Start/Stop Sequenz $0x001F$ in dem Buffer, werden die nächsten $10$ Bits, a
 Jeder Buchstabe wird durch 5 Bits repräsentiert, in \ref{codeC:decode} ab Zeile 20 um die hälfte komprimiert.
 Das daraus erzeugt Ergebnis, repräsentiert den Index einer LookUp Table für den entsprechen Buchstaben.
 
-\begin{listing}\label{codeC:decode}
-    \caption{C-Implementierung: Funktion des Decodierers}
-    \begin{minted}[linenos, bgcolor=bg]{c}
-void decode(unsigned short bit) {
-
-    if (!current_lut) 
-        current_lut = lookup_char;
-
-    buffer = buffer << 1;
-    buffer = buffer | bit;
-    startstop = buffer & 0x001F;
-
-    if (startstop_holdoff > 0) // Underflow protection
-        startstop_holdoff -= 1;
-
-    if (startstop == STOP_SEQUENCE && startstop_holdoff == 0) {
-        startstop_holdoff = 11;
-        // Shift over the start and stop section
-        // and mask the 10 message bits
-        index_pre = (buffer >> 5) & 0x03FF; 
-        // Compress bit stream to half its size
-        // Turn this 1 1 1 1 0 0 1 1 0 0 into 1 1 0 1 1
-        real_index = (((index_pre >> 0) & 0x0001) << 4) 
-                | (((index_pre >> 2) & 0x0001) << 3) 
-                | (((index_pre >> 4) & 0x0001) << 2) 
-                | (((index_pre >> 6) & 0x0001) << 1) 
-                | (((index_pre >> 8) & 0x0001) << 0);
-
-        if (real_index == SWITCH_TO_CHAR) {
-            // Change to characters
-            current_lut = lookup_char;
-        } else if (real_index == SWITCH_TO_NUM) {
-            // Change to numbers
-            current_lut = lookup_num;
-        } else {
-#ifdef USE_MSVC_ANSI_C_SIM
-            // Everything else is a valid character
-            printf(" >> %c <<\n",current_lut[real_index-1]); 
-#endif
-        }
-    }
-}
-    \end{minted}
-\end{listing}
+%\begin{listing}\label{codeC:decode}
+%    \caption{C-Implementierung: Funktion des Decodierers}
+%    \begin{minted}[linenos, bgcolor=bg]{c}
+%void decode(unsigned short bit) {
+%
+%    if (!current_lut) 
+%        current_lut = lookup_char;
+%
+%    buffer = buffer << 1;
+%    buffer = buffer | bit;
+%    startstop = buffer & 0x001F;
+%
+%    if (startstop_holdoff > 0) // Underflow protection
+%        startstop_holdoff -= 1;
+%
+%    if (startstop == STOP_SEQUENCE && startstop_holdoff == 0) {
+%        startstop_holdoff = 11;
+%        // Shift over the start and stop section
+%        // and mask the 10 message bits
+%        index_pre = (buffer >> 5) & 0x03FF; 
+%        // Compress bit stream to half its size
+%        // Turn this 1 1 1 1 0 0 1 1 0 0 into 1 1 0 1 1
+%        real_index = (((index_pre >> 0) & 0x0001) << 4) 
+%                | (((index_pre >> 2) & 0x0001) << 3) 
+%                | (((index_pre >> 4) & 0x0001) << 2) 
+%                | (((index_pre >> 6) & 0x0001) << 1) 
+%                | (((index_pre >> 8) & 0x0001) << 0);
+%
+%        if (real_index == SWITCH_TO_CHAR) {
+%            // Change to characters
+%            current_lut = lookup_char;
+%        } else if (real_index == SWITCH_TO_NUM) {
+%            // Change to numbers
+%            current_lut = lookup_num;
+%        } else {
+%#ifdef USE_MSVC_ANSI_C_SIM
+%            // Everything else is a valid character
+%            printf(" >> %c <<\n",current_lut[real_index-1]); 
+%#endif
+%        }
+%    }
+%}
+%    \end{minted}
+%\end{listing}
 
 
 
@@ -528,30 +528,30 @@ $$
 \sum_{n = 0}^{N - 1}\left\lvert x(n)^2\right\rvert =  \frac{1}{N} \sum_{k = 1}^{N-1}  \left\lvert X(k)^2\right\rvert 
 $$
 
-\begin{minted}{matlab}
-% Die Bandbreite wird durch den Breich beschrieben, in den 99% der
-% Signalenergie fallen.
-
-total_power = 0;
-current_power = 0;
-idx = 0;
-idx_max = round(length(spectrum_sig)/2);
-idx_start = idx_max/2; % fA/4
-
-for i = 1:length(spectrum_sig)/2 - 1
-    total_power = total_power + abs(spectrum_sig(i))^2 / length(spectrum_sig);
-end
-
-N = length(spectrum_sig);
-
-while current_power/total_power < 0.99
-    current_power = current_power + abs(spectrum_sig(idx_start - idx))^2 / N;
-    current_power = current_power + abs(spectrum_sig(idx_start + idx))^2 / N;
-    idx = idx + 1;
-end
-
-fprintf("Bandbreite: %dHz\n", ((idx_start + idx) - (idx_start - idx)))
-\end{minted}
+%\begin{minted}{matlab}
+%% Die Bandbreite wird durch den Breich beschrieben, in den 99% der
+%% Signalenergie fallen.
+%
+%total_power = 0;
+%current_power = 0;
+%idx = 0;
+%idx_max = round(length(spectrum_sig)/2);
+%idx_start = idx_max/2; % fA/4
+%
+%for i = 1:length(spectrum_sig)/2 - 1
+%    total_power = total_power + abs(spectrum_sig(i))^2 / length(spectrum_sig);
+%end
+%
+%N = length(spectrum_sig);
+%
+%while current_power/total_power < 0.99
+%    current_power = current_power + abs(spectrum_sig(idx_start - idx))^2 / N;
+%    current_power = current_power + abs(spectrum_sig(idx_start + idx))^2 / N;
+%    idx = idx + 1;
+%end
+%
+%fprintf("Bandbreite: %dHz\n", ((idx_start + idx) - (idx_start - idx)))
+%\end{minted}
 
 Das Weglassen der Start- und Stoppbits spielt bei der bestimmung der Bandbreite keine rolle.
 Es werden nur binäre Daten übertragen $D = \{0, 1\}$. die Frequenzen $ f_1 = f_T \pm \varDelta F $ repräsentieren. 
