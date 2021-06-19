@@ -26,7 +26,7 @@ amp = 0.5;
 %[bandpass_signal, fswav] = audioread('CPFSK_modulate_text_ADDA8M12_20Apr21_Bec_Fra.wav');
 %[bandpass_signal, fswav] = audioread('CPFSK_modulate_text_ADDA8M12.wav');
 %FileData = load('y_cpfsk_sig.mat');
-bandpass_signal = readmatrix('loopback_starter_MSJ/y_cpfsk.csv');
+bandpass_signal = readmatrix('loopback_starter_MSJ/testsignals/y_cpfsk.csv');
 %bandpass_signal = FileData.Ax_DC_filtered;
 
 low = 4000;

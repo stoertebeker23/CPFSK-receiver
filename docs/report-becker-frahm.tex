@@ -28,6 +28,12 @@
 \usepackage{amsmath} % Required for some math elements 
 \usepackage{svg} % .svg support
 \usepackage[nolist]{acronym}
+\usepackage{trfsigns}
+
+
+\usepackage{amsfonts}
+\usepackage{amsthm}
+
 %\usepackage{minted}
 %\definecolor{bg}{rgb}{0.95,0.95,0.95}
 
@@ -93,7 +99,7 @@ Sobald das Matlab Modell steht, wird die Simulation in C-Code überführt und an
 auf einem DSP implementiert.
 
 \section{Vorbereitung}
-Um ein Grundlegendes Verständnis für das Projekt zu bekommen werden zunächst einige Ansätze in MATLAB simuliert.
+Um ein grundlegendes Verständnis für das Projekt zu bekommen, werden zunächst einige Ansätze in MATLAB simuliert.
 Hierfür wird zuächst eine Rechteckfolge mit dem Wertebereich $D = \{0,1\}$ generiert. Diese wird genutzt um zunächst ein 
 CPFSK moduliertes Testsignal zu erzeugen.
 
@@ -131,7 +137,7 @@ $f_A > 100Hz$
     \centering
     \def\svgscale{0.3}
     \def\svgwidth{\columnwidth}
-    \input{img/rechteck.pdf_tex}
+   % \input{img/rechteck.pdf_tex}
     \caption{Recheckimpuls zur \ac{CPFSK} Simulation in Matlab}
 \end{figure}
 
@@ -147,7 +153,7 @@ da die Integration einer Aufsummierung diskreter Flächenelemte unter der Kurve 
 \begin{figure}[!h]
     \centering
     \def\svgscale{0.3}
-    \includegraphics{img/sig_IIR.png}
+   % \includegraphics{img/sig_IIR.png}
     \caption{Signalflussdiagramm des Integrators 1.Ordnung}
 \end{figure}
 
@@ -162,7 +168,7 @@ somit die Nachbarkanäle stören würde.
     \centering
     \def\svgscale{0.3}
     \def\svgwidth{\columnwidth}
-    \input{img/fsk.pdf_tex}
+   % \input{img/fsk.pdf_tex}
     \caption{Beispielhaftes \ac{CPFSK} moduliertes Trägersignal einer binären 
     Information. Die Phasenübergänge sind ohne Sprung. Quelle:~\cite{wiki:fsk}}
     \label{fsk}
@@ -178,7 +184,7 @@ Zur bestimmung des Spektrums des Signals, wird in Matlab FFT verwendet.
     \centering
     \def\svgscale{0.3}
     \def\svgwidth{\columnwidth}
-    \input{img/spektrum.pdf_tex}
+    %\input{img/spektrum.pdf_tex}
     \caption{Betragspektrum des CPFSK-Modulierten Rechteckimpulses.}
 \end{figure}
 Bei einem $\varDelta(F) = 225Hz$ wird hier eine Bandbreite von ca. $B > 450Hz = 2\cdot \varDelta(F) $ erwartet.
@@ -224,39 +230,30 @@ nur eine veränderung im maximum der Amplitude ergeben, die repräsentierenden F
 
 \section{Signalfluss Empfänger}
 
-Abb.~\ref{fig:signal} zeigt den Aufbau des Softwareradios. Das $~11MhZ$ Signal wird empfangen, es findet eine erste Unterabtastung durch den ADC auf dem DSP statt.
-Hierbei wird das Band auf ca. $2Mhz$ geschmälter. Das erste Filter, ein FIR-Polyphasen Bandpassfilter, Kapitel~\ref{sec:FIR}, mischt das Signal ein weiteres mal durch unterabtastung in einen Frequnzbereich
-von wenigen kilo Herz. In dem so runtergemischten Band tritt nun entwederdie Mark (logisch 1), oder die Space (logisch 0) auf. Um hier differenzieren zu können,
-muss können unterschiedliche methoden Angewandt werden, in dieser Arbeit wurde zunächst ein Ansatz über einen Hilberfilter, Kapitel~\ref{sec:hilbert}, verfolgt. Später hat sich jedoch das Kammfilter
+Abb.~\ref{fig:signal} zeigt den Aufbau des Softwareradios. Der durhc ein analoges Bandpassfilter extrahierte, zwischen $10.8Mhz$ und $11.1Mhz$ befindliche Kanal wird empfangen, und durch Unterabtastung mithilfe des ADCs in das auf das Band bezogene Basisband verschoben.
+Hierbei wird das Band auf $1.0096Mhz$ Nyquistbandbreite geschmälert. Ein Dezimator mit Bandpass als Antialiasingfilter, Kapitel~\ref{sec:FIR}, reduziert die Abtastfrequenz auf $3831,49Hz$. Der Durchlassbereich des Bandpasses wird hierbei jeweils auf den zu empfangenden Kanal angepasst. Die beiden Frequenzen für 1/Mark und -1/Space befinden sich nun im Basisband. Zur Symbolrückgewinnung durch Demodulation können unterschiedliche Methoden der Vorverarbeitung angewandt werden, in dieser Arbeit wurde zunächst ein Ansatz über einen Hilberttransformator, Kapitel~\ref{sec:hilbert}, verfolgt. Später hat sich jedoch die Verwendung eines komplexen Filters
 als sinnvollere Alternative herausgestellt. Das Kammfilter in Kapitel~\ref{sec:comb} sorgt dafür, dass die Frequenzen deutlich von einander zu differenzierne sind. Sobald das Signal durch das Kammfilter
-aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungs Demodulator \ref{sec:fm-demod} mit anschließender Decodierung erfolgen.
+aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungs Demodulator \ref{sec:fm-demod} mit anschließender Dekodierung erfolgen.
 
 \begin{figure}[!h]
     \centering
     \def\svgscale{0.5}
     \def\svgwidth{\columnwidth}
-    \input{img/signal.pdf_tex}
+ %   \input{img/signal.pdf_tex}
     \caption{Durch den ADC findet direkt beim Empfang eine Unterabtastung statt. Durch eine weitere Unterabtastung im Bandpass, wird das Signal in das Basisband verschoben.
     Anschließen durch das Kammfilter für die Demodulation mit anschließender Decocdierung aufbereitet und auf dem Hyperterminal angezeigt.}
     \label{fig:signal}
 \end{figure}
 
-\section{FIR-Polyphasen Bandpass}\label{sec:FIR}
-Das FIR-Polyphasen Bandpassfilter unterabtastet die 2MHz Signal ein weiteres mal durch eine Dezimationsstufe und mischt 
-das Nutzsignal ins Basisband. Zunächst wird hierfür das FIR-Bandpassfilter in Matlab ausgelegt.
-Anschließend werden die in Matlab erzeugten Koeffizienten aufgeteilt in 527 dezimationsstufen und in eine C-Datei geschrieben.
-und später in der C-Implementierung verwendet. 
+\section{Dezimator mit Kanalselektion}\label{sec:FIR}
+Der Wetterdatensender sendet auf mehreren Kanälen in dem genannten Band. Nun muss der jeweils ein Kanal mithilfe eines Bandpasses selektiert werden. Der so ausgewählte Kanal wird nun mithilfe einer Unterabtastung in den Tiefpassbereich verschoben um eine Demodulation durchführen zu können. Zur Steigerung der Recheneffizienz wird eine Dezimationsstufe realisiert, die im Unterabtaster direkt mit den Polyphasen des Bandpasses filtert. So werden pro empfangenen Sample nur sehr wenige Multiplikationen durchgeführt. Das Filter wird in Matlab ausgelegt und dann in Polyphasen zerlegt exportiert. Die exportierte Datei kann direkt als Feld in C verwendet werden.
 
 \subsection{Theorie}
-In dem $~2MHz$-Signal befindet sich das eigentliche Nutzsignal $\frac{1MHz}{5kHz}$-Mal, um hier die beiden Frequenzen für $w_{mark}$ und $w_{space}$
-aus einem der $5kHz$ Bänder herrauszufiltern, wird ein FIR-Bandpass mit Dezimationsstufe eingesetzt. Mit der Festgelegten Abtastfrequenz des ADC von $fA = 2,0192MHz$,
-liegt der erste Träger bei $f_T \approx 4kHz$. Beachtet man nun das $\varDelta f = 742Hz$ breit ist, muss das FIR-Bandpassfilter mindestens ein Band von
-$f_T \pm \frac{\varDelta f}{2}$ passieren lassen. Daraus ergibt sich ein notwendiger druchlassbereich von $B_{FIR} > 742Hz$. 
-Sinnvolle Grenzen ergeben sich dann bei $f_u = 3800Hz$ und $f_o = 4800Hz$.
+Der bei 10100.8 kHz befindliche, 5KHz breite Kanal wird durch die Unterabtastung in den Bereich von 4800Hz +/- 2500Hz verschoben. Da sich im schlechtesten Fall direkt daneben der nächste Kanal anschließt, muss vor einer Unterabtastung gefiltert werden um Aliasing zu vermeiden. Der Filter muss nun einen Durchlassbereich von mindestens der 99\% Bandbreite bzw. $742Hz$ aufweisen, maximal jedoch einen Durchlassbereich von 5Khz weniger zwei mal dem Übergangsbereich, um zuverlässig danebenliegende Bänder zu dämpfen. Die Grenzen des Durchlassbereiches werden somit auf $f_u = 3800Hz$ und $f_o = 4800Hz$ festgelegt. Zudem wird der Bandpass als FIR-Filter realisiert. Der nachfolgende Unterabtaster wird mit dem Faktor 527 betrieben, woraus sich eine Abtastfrequenz von $f_{s_{neu}} = 3831,499Hz$ ergibt. Somit verteilen sich die 2056 Koeffizienten des Filters auf 527 Polyphasen mit jeweils vier Koeffizienten.
 
 
 \subsection{Matlab}
-Zu Auslegung des FIR Filters in Matlab lst.~\ref{codeM:FIRBP}, müssen zuächst die Grenz- und Stopfrequenzen Festgelegt werden.
+Zu Auslegung des FIR Filters in Matlab lst.~\ref{codeM:FIRBP}, müssen zunächst die Grenz- und Stopfrequenzen Festgelegt werden.
 Es ergeben sich $f_u = 3800Hz$ und $f_o = 4800Hz$, die Stopfrequenzen $f_{uStop} = f_u - 1500$ und $f_{oStop} = f_o + 1500$.
 Bei den Stopfrequenzen gilt es Abzuwägen, umso steiler das Filter, desto mehr Koeffizienten, desto mehr Rechenzeit wird später in C
 benötigt.
@@ -268,7 +265,7 @@ Der Amplitudengang des Filters, siehe Abb.~\ref{fig:fir_ampli}, zeigt das gewün
     \centering
     \def\svgscale{0.3}
     \def\svgwidth{\columnwidth}
-    \input{img/FIR_BP.pdf_tex}
+ %   \input{img/FIR_BP.pdf_tex}
     \caption{FIR-Bandpassfilter Amplitudengang. Das FIR Filter benötigt 2056 Koeffizienten.}
 \end{figure}
 %\begin{listing}\label{codeM:FIRBP}
@@ -299,9 +296,9 @@ Der Amplitudengang des Filters, siehe Abb.~\ref{fig:fir_ampli}, zeigt das gewün
 %\end{listing}
 \subsection{C}
 In der C-Implementierung wird in der endgültigen Version mit dem Datentyp \textit{short} gearbeitet. 
-Dies trägt zu einer besseren performance auf dem DSP bei.
+Dies trägt zu einer besseren Performance auf dem DSP bei.
 Die Koeffizienten des FIR-Filters werden in $527$ \textit{const short} Arrays der Größe 4 aufgeteilt, siehe \ref{codeC:dezimation},
-und in den FIR Filter übergeben. Es wird Sample für Sample eingelesen, dezimert und durch die Filterroutine verarbeitet lst.~\ref{codeC:FIR}.
+und in den FIR Filter übergeben. Es wird Sample für Sample eingelesen, dezimiert und durch die Filterroutine verarbeitet lst.~\ref{codeC:FIR}.
 %\begin{listing}\label{codeC:dezimation}
 %    \caption{Beisphafte Polyphase in C, die Koeefizienten}
 %    \begin{minted}[linenos, bgcolor=bg]{c}
@@ -335,16 +332,16 @@ und in den FIR Filter übergeben. Es wird Sample für Sample eingelesen, dezimer
 %\end{listing}
 
 \section{Hilbert Transformator}\label{sec:hilbert}
-Der Hibert Transformator wandelt ein reeles Zeitsignal $x(t)$ in ein analytisches Signal $x_+(t)$ um.
-Dies wird benötigt um das Signal anschlieend mit dem FM-Verzögerungs Demodulator, beschrieben in Kapitel \ref{sec:fm-demod}, zu demodulieren.
-Mit $\mathcal{H}(x(t))$, der Hiltert Transformierten ergibt sich dies wie folgt:
+Der Hibert Transformator wandelt ein reelles Zeitsignal $x(t)$ in ein analytisches Signal $x_+(t)$ um.
+Dies wird benötigt um das Signal anschlieend mit dem FM-Verzögerungsdemodulator, beschrieben in Kapitel \ref{sec:fm-demod}, zu demodulieren.
+Mit $\mathcal{H}(x(t))$, der Hilberttransformierten ergibt sich dies wie folgt:
 
 $$ 
 x_+(t) = x(t) + j \mathcal{H}(x(t))
 $$
 
 Wobei $y(t) = \mathcal{H}(x(t))$ sich mit mit $Y(f) = X(f) \cdot -j sign(f)$ berechnen lässt.
-Wird dieses analytische Signal jedoch dem FM-Verzögerungs Demodulator übergeben, ist aufgrund des 
+Wird dieses analytische Signal jedoch dem FM-Verzögerungsdemodulator übergeben, ist aufgrund des 
 geringen Frequenzhubs $\varDelta f$ eine eindeutige Demodulation jedoch nicht möglich. Der Abstand zwischen beiden Signalen ist so gering, dass sich die 
 Frequenzanteile von $w_{mark}$ und $w_{space}$ teilweise überlappen. Daher wird
 dieser Ansatz auch nicht weiter verfolgt.
@@ -352,10 +349,10 @@ dieser Ansatz auch nicht weiter verfolgt.
 
 \section{Komplexes Kammfilter}\label{sec:comb}
 Eine Alternative zu dem in Kapitel~\ref{sec:hilbert} beschriebenen Hilber Transformator ist ein Kammfilter.
-Um die Frequenzen besser von einander differenziern zu können, wird ein Kammfilter genutzt. Dieser kann durch eine Anzahl $N$ Verzögerer realisiert werden.
+Um die Frequenzen besser von einander differenzieren zu können, wird ein Kammfilter genutzt. Dieser kann durch eine Anzahl $N$ Verzögerer realisiert werden.
 Ziel in der Auslegung des Kammfilters ist es, die Nullstellen so zu legen, dass entweder $w_{mark}$ oder $w_{space}$ des Nutzsignals im positiven Frequenzbereich
-gedämpft wird, und das jeweils andere $w$ im negativen Bereich. Zunächst wird das Filter dafürso Ausgelegt, das der Abstand zwischen
-Nullstelle und Hochpunkt in der Filterübertragungsfunktion ca. dem Frequenzhub $\varDelta f$ entsprich, anschließend muss es so Verschoben werden, dass die Nullstellen wie beschrieben auf dem
+gedämpft wird, und das jeweils andere $w$ im negativen Bereich. Zunächst wird das Filter dafür so Ausgelegt, das der Abstand zwischen
+Nullstelle und Hochpunkt in der Filterübertragungsfunktion ca. dem Frequenzhub $\varDelta f$ entspricht, anschließend muss es so Verschoben werden, dass die Nullstellen wie beschrieben auf dem
 gewünschten $w_{mark/space}$ liegen.
 So wird der Frequenzunterschied zwischen den beiden Frequenzen von $\varDelta f$ auf $2\cdot fA$ angehoben.
 Die Frequenzen sind damit deutlich unterscheidbar und können im nächsten Schritt, der Demodulation eindeutig zugeordnet werden. 
@@ -363,7 +360,7 @@ Die Frequenzen sind damit deutlich unterscheidbar und können im nächsten Schri
 \subsection{Theorie}
 
 
-Ausgehend von der Übertragnungsfunktion 
+Ausgehend von der Übertragungsfunktion 
 $$H(z) = 1 + z^{-N}$$ 
 mit 
 $$ z = e^{j\omega} $$
@@ -373,16 +370,16 @@ $$H(j\omega) = 1 + e^{-j\omega N}$$
 
 und dem ausklammern von $ e^{-j \frac{\omega N}{2}}$:
 $$
-H(e^{j\omega}) = e^{-j \frac{\omega N}{2}} \cdot (e^{-j \frac{\omega N}{2}} + e^{j \frac{\omega N}{2}})
+H(e^{j\omega}) = e^{-j \frac{\omega N}{2}} \cdot (e^{j \frac{\omega N}{2}} + e^{-j \frac{\omega N}{2}})
 $$
 
-$e^{-j \frac{\omega N}{2}} \neq 0$ daher wird nur $(e^{-j \frac{\omega N}{2}} + e^{j \frac{\omega N}{2}})$ weiter betrachtet
+$e^{-j \frac{\omega N}{2}} \neq 0$ daher wird nur $(e^{j \frac{\omega N}{2}} + e^{-j \frac{\omega N}{2}})$ weiter betrachtet
 
 Es gilt:
 $$
 (e^{-j \frac{\omega N}{2}} + e^{j \frac{\omega N}{2}}) = 2  cos(\frac{\omega N}{2})
 $$
-Zur bestimmung der Nullstellen, Argument des Cosinus betrachten.
+Zur Bestimmung der Nullstellen, Argument des Kosinus betrachten.
 
 Allg.: $0 = cos(\frac{\pi}{2} + k\pi)$
 $$
@@ -403,13 +400,38 @@ $$
 N = \lfloor \frac{\pi}{2\pi \frac{450Hz}{3832Hz}}\rfloor = 4
 $$
 
-Der Faktor N bestimmt die Anzahl der benötigten Verzögerer, damit $\omega_0$ im idealfall genau so auf $\omega_{mark}$ oder $\omega_{space}$ liegen dass eine der beiden 
+Der Faktor N bestimmt die Anzahl der benötigten Verzögerer, damit der Abstand eines Maximums des Frequenzganges sowie eine Nullstelle genau dem Abstand der Frequenzen $\omega_{mark}$ und $\omega_{space}$ entsprechen. Die Übertragungsfunktion ergibt jetzt einen reellen Kammfilter der nun so verschoben werden muss, dass eine Nullstelle im positiven Frequenzbereich auf der hohen Symbolfrequenz liegt. Dies kann erreicht werden, indem das Maximum im Nullpunkt des Frequenzbereiches auf die untere Symbolfrequenz verschoben wird. Die Verschiebung ist somit $\omega_{space}$.
+Aus der Verschiebungseigenschaft der Diskreten Fourierttransformation ergibt sich folgendes:
+ 
+$$
+x(k) \cdot W^{kl}_N \fourier X(n-l)
+$$
+
+Für die Verschiebung der bekannten Filterfunktion $h(k) = \{1,0,0,0,1\}$ mit $N=5$ ergibt sich somit der Term
+$$
+h(k) \cdot e^{\frac{-j2\pi{lk}}{N}}
+$$
+Die Variable l bezieht sich jedoch auf den Bereich der Fouriertransformation und nicht auf die uns vorliegende, auf $2\pi$ normierte Frequenz $\omega_{space} = \frac{752Hz\cdot{2\pi}}{3831.5Hz}$. Für die Umrechnung wird nun der Dreisatz verwendet:
+$$
+\cfrac{l}{N} = \cfrac{\omega_{space}}{2\pi} \Rightarrow l=\cfrac{\omega_{space} \cdot N}{2\pi}
+$$
+Ersetzt man nun das l in dem Verschiebungstheorem durch die errechnete Verschiebung, ergibt sich
+$$
+h(k) \cdot e^{\frac{-j2\pi\omega_{space}kN}{2N\pi}} = h(k) \cdot e^{-j\omega_{space}k}
+$$
+Der nun komplexwertige Filter berechnet sich dann zu:
+$$
+h(k) = \{ 1 \cdot e^{-j\omega_{space}0} , 0 \cdot e^{-j\omega_{space}1} , 0 \cdot e^{-j\omega_{space}2} , 0 \cdot e^{-j\omega_{space}3} , 1 \cdot e^{-j\omega_{space}4}\}
+$$
+$$
+h(k) = \{ 1, 0, 0, 0, (0.175 + 0.985j) \}
+$$
 Frequenzen im positiven Frequenzbereich gedämpft wird und die andere im Negativen. In diesem Fall liefert $N = 4$ das gewünschte Ergebnis, siehe Abb.~\ref{fig:comb}, Latexcode \ref{codeM:comb}
 
 \subsection{Matlab}
 In Matlab wird das Filter überprüft, Implementiert wird das Filter mithilfe von 4 Verzögerern.
 Dafür wird in Matlab ein mit $N$-Nullen gefülltes Array verwendet. In Abb.~\ref{fig:comb} ist zu sehen,
-dass die Nullstellen des Kammfilter sehr gut auf den jeweileigen Frequenzen $- w_{mark}$ und $w_{space}$ liegen.
+dass die Nullstellen des Kammfilter sehr gut auf den jeweiligen Frequenzen $- w_{mark}$ und $w_{space}$ liegen.
 
 %\begin{listing}
  %   \label{codeM:comb}
@@ -443,7 +465,7 @@ dass die Nullstellen des Kammfilter sehr gut auf den jeweileigen Frequenzen $- w
     \centering
     \def\svgscale{0.3}
     \def\svgwidth{0.8\columnwidth}
-    \input{img/comb_6n.pdf_tex}
+  %  \input{img/comb_6n.pdf_tex}
     \caption{Kammfiter mit den deiden Frequenzen $\omega_{mark}$ und $\omega_{space}$, das Kammfilter lässt jeweils eine der beiden Frequenzen passieren.}
 \end{figure}
 \subsection{C}
