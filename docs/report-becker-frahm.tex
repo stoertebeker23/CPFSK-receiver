@@ -177,7 +177,7 @@ somit die Nachbarkanäle stören würde.
 Das in Abschnitt~\ref{sec:rechteck} generierte Reckecksignal wird nun CPFSK Modeliert.
 Dafür wir die Formel aus Worksheet 1 verwendet:
 
-$$CPFSK_{sig} = amp \cdot  sin(2  pi \cdot f_T \cdot n \cdot T_A + 2 pi \cdot \varDelta{F} \cdot \frac{\phi (iT)}{f_A} + \varphi{0}) $$
+$$CPFSK_{sig} = amp \cdot  sin(2  \pi \cdot f_T \cdot n \cdot T_A + 2 \pi \cdot \varDelta{F} \cdot \frac{\phi (iT)}{f_A} + \varphi_0) $$
 
 Zur bestimmung des Spektrums des Signals, wird in Matlab FFT verwendet.
 \begin{figure}[!h]
@@ -249,7 +249,7 @@ aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungsdemodulator \
 Der Wetterdatensender sendet auf mehreren Kanälen in dem genannten Band. Nun muss der jeweils ein Kanal mithilfe eines Bandpasses selektiert werden. Der so ausgewählte Kanal wird nun mithilfe einer Unterabtastung in den Tiefpassbereich verschoben um eine Demodulation durchführen zu können. Zur Steigerung der Recheneffizienz wird eine Dezimationsstufe realisiert, die im Unterabtaster direkt mit den Polyphasen des Bandpasses filtert. So werden pro empfangenen Sample nur sehr wenige Multiplikationen durchgeführt. Das Filter wird in Matlab ausgelegt und dann in Polyphasen zerlegt exportiert. Die exportierte Datei kann direkt als Feld in C verwendet werden.
 
 \subsection{Theorie}
-Der bei 10100.8 kHz befindliche, 5KHz breite Kanal wird durch die Unterabtastung in den Bereich von 4800Hz +/- 2500Hz verschoben. Da sich im schlechtesten Fall direkt daneben der nächste Kanal anschließt, muss vor einer Unterabtastung gefiltert werden um Aliasing zu vermeiden. Der Filter muss nun einen Durchlassbereich von mindestens der 99\% Bandbreite bzw. $742Hz$ aufweisen, maximal jedoch einen Durchlassbereich von 5Khz weniger zwei mal dem Übergangsbereich, um zuverlässig danebenliegende Bänder zu dämpfen. Die Grenzen des Durchlassbereiches werden somit auf $f_u = 3800Hz$ und $f_o = 4800Hz$ festgelegt. Zudem wird der Bandpass als FIR-Filter realisiert. Der nachfolgende Unterabtaster wird mit dem Faktor 527 betrieben, woraus sich eine Abtastfrequenz von $f_{s_{neu}} = 3831,499Hz$ ergibt. Somit verteilen sich die 2056 Koeffizienten des Filters auf 527 Polyphasen mit jeweils vier Koeffizienten.
+Der bei 10100.8 kHz befindliche, 5KHz breite Kanal wird durch die Unterabtastung in den Bereich von 4800Hz +/- 2500Hz verschoben. Da sich im schlechtesten Fall direkt daneben der nächste Kanal anschließt, muss vor einer Unterabtastung gefiltert werden um Aliasing zu vermeiden. Der Filter muss nun einen Durchlassbereich von mindestens der 99\% Bandbreite bzw. $742Hz$ aufweisen, maximal jedoch einen Durchlassbereich von $5Khz$ weniger zwei mal dem Übergangsbereich, um zuverlässig danebenliegende Bänder zu dämpfen. Die Grenzen des Durchlassbereiches werden somit auf $f_u = 3800Hz$ und $f_o = 4800Hz$ festgelegt. Zudem wird der Bandpass als FIR-Filter realisiert. Der nachfolgende Unterabtaster wird mit dem Faktor 527 betrieben, woraus sich eine Abtastfrequenz von $f_{s_{neu}} = 3831,499Hz$ ergibt. Somit verteilen sich die 2056 Koeffizienten des Filters auf 527 Polyphasen mit jeweils vier Koeffizienten.
 
 
 \subsection{Matlab}
