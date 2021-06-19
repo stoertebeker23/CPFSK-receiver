@@ -361,46 +361,46 @@ Die Frequenzen sind damit deutlich unterscheidbar und können im nächsten Schri
 
 
 Ausgehend von der Übertragungsfunktion 
-$$H(z) = 1 + z^{-N}$$ 
+$$H(z) = 1 + z^{-u}$$ 
 mit 
 $$ z = e^{j\omega} $$
 ergibt sich
 
-$$H(j\omega) = 1 + e^{-j\omega N}$$
+$$H(j\omega) = 1 + e^{-j\omega u}$$
 
-und dem ausklammern von $ e^{-j \frac{\omega N}{2}}$:
+und dem ausklammern von $ e^{-j \frac{\omega u}{2}}$:
 $$
-H(e^{j\omega}) = e^{-j \frac{\omega N}{2}} \cdot (e^{j \frac{\omega N}{2}} + e^{-j \frac{\omega N}{2}})
+H(e^{j\omega}) = e^{-j \frac{\omega u}{2}} \cdot (e^{j \frac{\omega u}{2}} + e^{-j \frac{\omega u}{2}})
 $$
 
-$e^{-j \frac{\omega N}{2}} \neq 0$ daher wird nur $(e^{j \frac{\omega N}{2}} + e^{-j \frac{\omega N}{2}})$ weiter betrachtet
+$e^{-j \frac{\omega u}{2}} \neq 0$ daher wird nur $(e^{j \frac{\omega u}{2}} + e^{-j \frac{\omega u}{2}})$ weiter betrachtet
 
 Es gilt:
 $$
-(e^{-j \frac{\omega N}{2}} + e^{j \frac{\omega N}{2}}) = 2  cos(\frac{\omega N}{2})
+(e^{-j \frac{\omega u}{2}} + e^{j \frac{\omega u}{2}}) = 2  cos(\frac{\omega u}{2})
 $$
 Zur Bestimmung der Nullstellen, Argument des Kosinus betrachten.
 
 Allg.: $0 = cos(\frac{\pi}{2} + k\pi)$
 $$
-\frac{w_0 N}{2} = \frac{\pi}{2} + k\pi
+\frac{w_0 u}{2} = \frac{\pi}{2} + k\pi
 $$
 
 $$
-<=> w_0 = \frac{2\pi k + \pi}{N}
+<=> w_0 = \frac{2\pi k + \pi}{u}
 $$
-mit $k = 0$, $w_0 = 2\pi \cdot \frac{f}{fA}$ und nach $N$ Aufgelöst, ergibt sich:
+mit $k = 0$, $w_0 = 2\pi \cdot \frac{f}{fA}$ und nach $u$ Aufgelöst, ergibt sich:
 
 $$
-<=> N = \frac{\pi}{2\pi \frac{f}{fA}}
+<=> u = \frac{\pi}{2\pi \frac{f}{fA}}
 $$
 eingesetzt:
 
 $$
-N = \lfloor \frac{\pi}{2\pi \frac{450Hz}{3832Hz}}\rfloor = 4
+u = \lfloor \frac{\pi}{2\pi \frac{450Hz}{3832Hz}}\rfloor = 4
 $$
 
-Der Faktor N bestimmt die Anzahl der benötigten Verzögerer, damit der Abstand eines Maximums des Frequenzganges sowie eine Nullstelle genau dem Abstand der Frequenzen $\omega_{mark}$ und $\omega_{space}$ entsprechen. Die Übertragungsfunktion ergibt jetzt einen reellen Kammfilter der nun so verschoben werden muss, dass eine Nullstelle im positiven Frequenzbereich auf der hohen Symbolfrequenz liegt. Dies kann erreicht werden, indem das Maximum im Nullpunkt des Frequenzbereiches auf die untere Symbolfrequenz verschoben wird. Die Verschiebung ist somit $\omega_{space}$.
+Der Faktor u bestimmt die Anzahl der benötigten Verzögerer, damit der Abstand eines Maximums des Frequenzganges sowie eine Nullstelle genau dem Abstand der Frequenzen $\omega_{mark}$ und $\omega_{space}$ entsprechen. Die Übertragungsfunktion ergibt jetzt einen reellen Kammfilter der nun so verschoben werden muss, dass eine Nullstelle im positiven Frequenzbereich auf der hohen Symbolfrequenz liegt. Dies kann erreicht werden, indem das Maximum im Nullpunkt des Frequenzbereiches auf die untere Symbolfrequenz verschoben wird. Die Verschiebung ist somit $\omega_{space}$.
 Aus der Verschiebungseigenschaft der Diskreten Fourierttransformation ergibt sich folgendes:
  
 $$
@@ -419,14 +419,14 @@ Ersetzt man nun das l in dem Verschiebungstheorem durch die errechnete Verschieb
 $$
 h(k) \cdot e^{\frac{-j2\pi\omega_{space}kN}{2N\pi}} = h(k) \cdot e^{-j\omega_{space}k}
 $$
-Der nun komplexwertige Filter berechnet sich dann zu:
+Der nun komplexwertige Filter berechnet sich zu:
 $$
 h(k) = \{ 1 \cdot e^{-j\omega_{space}0} , 0 \cdot e^{-j\omega_{space}1} , 0 \cdot e^{-j\omega_{space}2} , 0 \cdot e^{-j\omega_{space}3} , 1 \cdot e^{-j\omega_{space}4}\}
 $$
 $$
 h(k) = \{ 1, 0, 0, 0, (0.175 + 0.985j) \}
 $$
-Frequenzen im positiven Frequenzbereich gedämpft wird und die andere im Negativen. In diesem Fall liefert $N = 4$ das gewünschte Ergebnis, siehe Abb.~\ref{fig:comb}, Latexcode \ref{codeM:comb}
+Dies ermöglicht die verwendung eines Verzögerungsdemodulators mit einem Sinus, da im positiven Frequenzbereich $\omega_{mark}$ gegenüber $\omega_{space}$ um gedämpft wird und im negativen Frequenzbereich das invertierte Verhalten auftritt.
 
 \subsection{Matlab}
 In Matlab wird das Filter überprüft, Implementiert wird das Filter mithilfe von 4 Verzögerern.
@@ -504,20 +504,72 @@ Die Verzögerung wird über ein Buffer Array der Länge $N$ realisiert:
 %    \end{minted}
 %\end{listing}
 
-\section{FM-Verzögerungsdemoulator} \label{sec:fm-demod}
+\section{Verzögerungsdemoulator} \label{sec:fm-demod}
 Der FM-Verzögerungsdemoulator wird im Worksheet 2 des Projekts Behandelt. 
-Der FM-Verzögerungsdemoulator soll das CPFSK-modulierte Signal demodulieren und eine Rechteckfolge ausgeben.
-Der eigentliche Ansatz aus Worksheet zwei mit einem abschließendem sinus als nicht liniarer Verstärker funktioniert idR nicht, 
-da die Frequenzen von $w_{mark}$ und $w_{space}$ aufgrund der Symmetrie des Sinus ($sin(f) = sin(-f)$) nicht mehr von einander zu Unterscheiden sind.
-
-\textit{Warum gehts denn doch? Was machen wir anders?}
+Der FM-Verzögerungsdemoulator soll das CPFSK-modulierte Signal demodulieren und eine Rechteckfolge ausgeben.\\
+Um auf die Verwendung von komplexer Signalverarbeitung zu verzichten, wird der im Worksheet als "Verzögerungsdemodulator mit reeller Signalverarbeitung" referenzierte Aufbau verwenden. Das komplexe Signal $e^{jn\omega_0}$ auf zwei als reell zu betrachtende Anteile zerlegt:
+$$
+v_I(n) = \mathfrak{Re}\{e^{jn\omega_0}\} = cos(\omega_0 n)
+$$
+$$
+v_Q(n) = \mathfrak{Im}\{e^{jn\omega_0}\} = sin(\omega_0 n)
+$$
+Aus dem reellen Verzögerungsdemodulator ergibt sich dann folgende Funktion:
+$$
+y(n) = cos(\omega_0 (n-1)) \cdot sin(\omega_0 n) - sin(\omega_0 (n-1)) \cdot cos(\omega_0 n) 
+$$
+Um die Frequenz $\omega_0$ zurückzugewinnen, wird dann der invertierte Sinus verwendet:
+$$
+\omega_0 = sin^{-1}(y(n))
+$$ 
+Doch zunächst muss $y(n)$ betrachtete werden, denn in dem hier dargestellten Fall, fällt die Trägerfrequenz im Basisband sehr nahe $\cfrac{f_s}{4}$ und somit $\cfrac{\pi}{2}$. An dieser Stelle weißt der Sinus eine Symmetrie auf, was dazu führen kann, dass der Ausgang des Demodulators nur einen sehr geringen bis gar keinen Hub aufweist. Dies gilt es zunächst mathematisch zu prüfen:
+$$
+\omega_{mark} = 2\pi\cdot \cfrac{\cfrac{f_s}{4}+\Delta f}{f_s}=\cfrac{\pi}{2}+\cfrac{2\pi \Delta f}{f_s}
+$$
+$$
+\omega_{space} = 2\pi\cdot \cfrac{\cfrac{f_s}{4}-\Delta f}{f_s}=\cfrac{\pi}{2}-\cfrac{2\pi \Delta f}{f_s}
+$$
+Zunächst wird der Term $y(n)$ anhand des Additionstheorems vereinfacht:
+$$
+y(n) = \{cos(\omega_0 n)cos(\omega_0) + sin(\omega_0 n)sin(\omega_0)\} \cdot sin(\omega_0 n) - \{sin(\omega_0 n)cos(\omega_0) - cos(\omega_0 n)sin(\omega_0) \} \cdot cos(\omega_0 n) 
+$$ 
+$$
+y(n) = sin(\omega_0 n)cos(\omega_0 n)cos(\omega_0) + sin^2(\omega_0 n)sin(\omega_0) - sin(\omega_0 n)cos(\omega_0 n)cos(\omega_0) + cos^2(\omega_0 n)sin(\omega_0) 
+$$ 
+$$
+y(n) = sin^2(\omega_0 n)sin(\omega_0) + cos^2(\omega_0 n)sin(\omega_0) 
+$$
+$$
+y(n) = \{sin^2(\omega_0 n) + cos^2(\omega_0 n)\}sin(\omega_0) = sin(\omega_0)
+$$
+Ein einsetzen in die Funktion ergibt für beide Fälle folgendes Ergebnis:
+$$
+y(n)\arrowvert_{\omega_{mark}} = sin(\cfrac{\pi}{2}+\cfrac{2\pi \Delta f}{f_s})
+$$
+$$
+y(n)\arrowvert_{\omega_{space}} = sin(\cfrac{\pi}{2}-\cfrac{2\pi \Delta f}{f_s})
+$$
+Der Sinus an der Stelle $\cfrac{\pi}{2}$ ist jedoch symmetrisch, weswegen der Demodulator bis auf kleine Abweichungen stets für beide Frequenzen das selbe Ergebnis berechnen wird. Der komplexe Kammfilter führt durch das asymetrische Dämpfungsverhalten jedoch zu folgenden Verhältnissen:\\\\
+Signalfrequenzen vor dem Filter:
+$$
+-\omega_{mark} = \omega_{mark} \arrowvert -\omega_{space} = \omega_{space} 
+$$
+Signalfrequenzen nach dem Filter:
+$$
+-\omega_{mark} >> \omega_{mark} \arrowvert -\omega_{space} << \omega_{space} 
+$$
+Es gehen also $-\omega_{mark}$ und $\omega_{space}$ in den Demodulator ein.
+Somit ergibt sich für die obere Frequenz das exakt invertierte der unteren Signalfrequenz. Der Hub wird so maximal:
+$$
+sin(-\omega_{mark}) = -sin(\omega_{mark}) = -sin(\omega_{space}) \Longleftrightarrow sin(\omega_{space})
+$$
 \subsection{Matlab}
 
 \subsection{C}
 
 \section{Decodierung}
 
-Die Decodierung liest die $D = \{0,1\}$ Bitweise ein und schiebt diese in einen Buffer. 
+Die Decodierung liest die $D = \{0,1\}$ Bitweise ein und schiebt diese in einen Puffer. 
 Die Symbolfrequenz von $50Hz$ bestimmt die Abtastrate des Decodierers. Da bei dem Start/Stop-Bit um das
 halbe Bit der Stop-Sequenz erkennen zu können liegt hier folgender Ansatz zugrunde:
 
@@ -526,11 +578,11 @@ f_{decode} = \lfloor fA * \frac{1}{f_{symbol} \cdot 2}\rfloor
 $$
 eingesetzt
 $$
-f_{decode} = \lfloor 3832Hz * \frac{1}{50Hz\cdot 2}\rfloor = 38
+f_{decode} = 3831,499Hz * \frac{1}{50Hz\cdot 2} = 38,31
 $$
-Für die Implementierung wird im C-Code der Aufruf druch eine einfach $IF$ und eine Zählvariabel
-gesteuert. Der Decodierer, siehe \ref{codeC:decode}, schiebt Bit für Bit durch einen Buffer, liegt
-die Start/Stop Sequenz $0x001F$ in dem Buffer, werden die nächsten $10$ Bits, als Bits eines Buchstaben interpretiert.
+Für die Implementierung wird im C-Code der Aufruf druch zwei gekapselte $IF$ und zwei Zählvariablen
+gesteuert, um bei jedem dritten durchlauf eine weitere Schaltdauer abzuwarten. Der Dekodierer, siehe \ref{codeC:decode}, schiebt Bit für Bit durch einen Puffer, liegt
+die Start/Stop Sequenz $0x001F$ in dem Puffer, werden die nächsten $10$ Bits, als Bits eines Buchstaben interpretiert.
 Jeder Buchstabe wird durch 5 Bits repräsentiert, in \ref{codeC:decode} ab Zeile 20 um die hälfte komprimiert.
 Das daraus erzeugt Ergebnis, repräsentiert den Index einer LookUp Table für den entsprechen Buchstaben.
 
