@@ -49,7 +49,7 @@
 %	DOCUMENT INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title{Projekt: Mobilfunk und Singalverabreitung} % Title
+\title{Projekt: Mobilfunk und Signalverarbeitung} % Title
 
 \author{Lukas Becker, Tobias Frahm} % Author name
 
@@ -63,13 +63,13 @@
 \begin{tabular}{l r}
 Date Performed: & \today \\ % Date the experiment was performed
 Partners: & Lukas Becker, Tobias Frahm \\ % Partner names
-Instructor: & Prof. Dr. Sauvergerd \\% Instructor/supervisor
+Instructor: & Prof. Dr. Sauvagerd \\% Instructor/supervisor
 University: & University of Applied Science 
 \end{tabular}
 \end{center}
 
 \begin{acronym}
-    \acro{CPFSK}{Continus Phase Frequency Shift Keying}
+    \acro{CPFSK}{Continous Phase Frequency Shift Keying}
 \end{acronym}
 
 % If you wish to include an abstract, uncomment the lines below
@@ -88,12 +88,12 @@ In diesem Projekt wird eine \ac{CPFSK} Demodulation von Wetterdaten
 Diese  \ac{CPFSK} Demodulation  wird  in  Form  eines  \textit{Software  Radios}  auf  einem  
 Digitalen Signalprozessor (DSP) implementiert. 
 
-Die \ac{CPFSK}-kodierten Wetterdaten werden mit einer Draht-Antenne im Frequenzebereich
+Die \ac{CPFSK}-kodierten Wetterdaten werden mit einer Draht-Antenne im Frequenzbereich
 $10.1Mhz$ bis $11.1MHz$ empfangen und verstärkt. Bei dem so empfangenem Signal handelt es sich um 
 \ac{CPFSK}-Modulierte Seewetterdaten. Ziel das Projektes ist es, zunächst in Matlab ein Modell zu erstellen, welches
-in der Lage ist, die \ac{CPFSK} modulierten Seewetterdaten zu decodieren und diese auszugeben. 
+in der Lage ist, die \ac{CPFSK} modulierten Seewetterdaten zu dekodieren und diese auszugeben. 
 Für das Matlab Modell wird hierfür zunächst ein \ac{CPFSK}-Signal in Matlab erzeugt um die ersten 
-Schritte durchzuführen. Später in der Simulation kann hier auf ein Zeitbegrenztes Signal 
+Schritte durchzuführen. Später in der Simulation kann hier auf ein zeitbegrenztes Signal 
 als Grundlage für das Matlab Modell genutzt zurückgegriffen werden. 
 Sobald das Matlab Modell steht, wird die Simulation in C-Code überführt und anschließend 
 auf einem DSP implementiert.
@@ -104,9 +104,9 @@ Hierfür wird zuächst eine Rechteckfolge mit dem Wertebereich $D = \{0,1\}$ gen
 CPFSK moduliertes Testsignal zu erzeugen.
 
 \subsection{Rechteckimpuls $d(i)$}\label{sec:rechteck}
-\textit{TODO: Das ergibt noch keinen Sinn... und d(i) wird auch gar nicht für das CPFSk genutzt?!}
+\textit{TODO: Das ergibt noch keinen Sinn... und d(i) wird auch gar nicht für das CPFSK genutzt?!}
 Mit Angabe der Symboldauer $T = 20ms$ lässt sich auf die minimale Abtastfrequenz nach Nyquist-Shannon schließen.
-Die minimale Abtastfrequenz $f_A$ muss mehr als doppelt so groß wie die höhste abzutastende Frequenz sein.
+Die minimale Abtastfrequenz $f_A$ muss mehr als doppelt so groß wie die höchste abzutastende Frequenz sein.
 
 Aus
 \begin{center}
@@ -138,12 +138,12 @@ $f_A > 100Hz$
     \def\svgscale{0.3}
     \def\svgwidth{\columnwidth}
    % \input{img/rechteck.pdf_tex}
-    \caption{Recheckimpuls zur \ac{CPFSK} Simulation in Matlab}
+    \caption{Rechteckimpuls zur \ac{CPFSK} Simulation in Matlab}
 \end{figure}
 
 \subsection{Anfangsphase $\phi(iT)$}
-Für die CPFSK modulierung muss die Anfangsphase $\phi(iT)$ bestimmt werden.
-Gegeben ist die ein Integrator (IIR Filter 1.Ordnung) mit der Übertragnungsfunktion:
+Für die CPFSK-Modulation muss die Anfangsphase $\phi(iT)$ bestimmt werden.
+Gegeben ist die ein Integrator (IIR Filter 1.Ordnung) mit der Übertragungsfunktion:
 $$
 H_I(z)=\frac{z^{-1}}{1-z^{-1}}
 $$
@@ -159,10 +159,10 @@ da die Integration einer Aufsummierung diskreter Flächenelemte unter der Kurve 
 
 \subsection{CPFSK Signal}
 
-Die \ac{CPFSK} Modulation ist eine Methode um digitale Signale mithilfe einer Trägerfrequenze analog zu Übertragen.
+Die \ac{CPFSK} Modulation ist eine Methode um digitale Signale mithilfe einer Trägerfrequenz analog zu Übertragen.
 Bei der \ac{CPFSK} Modulation handelt es sich um eine Frequenzmodulation ohne Sprünge im Phasenübergang. In Abb.~\ref{fsk}
-ist im oberen Bereich das binäre Signale, im mittleren Bild die Trägerfrequenze und unten das binäre Signal auf die Trägerfrequenze
-moduliert zu sehen. Der Phasenübergäng ohne Sprung ist notwendig, da Sprünge ein theoretisch unendliches breites Band benötigen
+ist im oberen Bereich das binäre Signale, im mittleren Bild die Trägerfrequenz und unten das binäre Signal auf die Trägerfrequenze
+moduliert zu sehen. Der Phasenübergang ohne Sprung ist notwendig, da Sprünge ein theoretisch unendliches breites Band benötigen
 somit die Nachbarkanäle stören würde.
 \begin{figure}[!h]
     \centering
@@ -189,7 +189,7 @@ Zur bestimmung des Spektrums des Signals, wird in Matlab FFT verwendet.
 \end{figure}
 Bei einem $\varDelta(F) = 225Hz$ wird hier eine Bandbreite von ca. $B > 450Hz = 2\cdot \varDelta(F) $ erwartet.
 
-Zur Bandbreitenbestimmung wird das Parsevalsche Theorem genutz, die Bandbreite des CPFSK Signals ist derjenige Bereich,
+Zur Bandbreitenbestimmung wird das Parsevalsche Theorem genutzt, die Bandbreite des CPFSK Signals ist derjenige Bereich,
 in den 99\% der Signalenergie von $0...\frac{f_A}{2}$ Fallen. Es ergibt sich hierbei eine Bandbreite von $536Hz$
 
 $$
@@ -221,19 +221,19 @@ $$
 %fprintf("Bandbreite: %dHz\n", ((idx_start + idx) - (idx_start - idx)))
 %\end{minted}
 
-Das Weglassen der Start- und Stoppbits spielt bei der bestimmung der Bandbreite keine rolle.
+Das Weglassen der Start- und Stopbits spielt bei der Bestimmung der Bandbreite keine rolle.
 Es werden nur binäre Daten übertragen $D = \{0, 1\}$. die Frequenzen $ f_1 = f_T \pm \varDelta F $ repräsentieren. 
 Da auch die Start/Stopbits durch $D$ dargestellt werden, würde sich hier im Frequenzbereich
-nur eine veränderung im maximum der Amplitude ergeben, die repräsentierenden Frequenzen selbst bleiben unverändert.
+nur eine Veränderung im Maximum der Amplitude ergeben, die repräsentierenden Frequenzen selbst bleiben unverändert.
 
 
 
 \section{Signalfluss Empfänger}
 
-Abb.~\ref{fig:signal} zeigt den Aufbau des Softwareradios. Der durhc ein analoges Bandpassfilter extrahierte, zwischen $10.8Mhz$ und $11.1Mhz$ befindliche Kanal wird empfangen, und durch Unterabtastung mithilfe des ADCs in das auf das Band bezogene Basisband verschoben.
-Hierbei wird das Band auf $1.0096Mhz$ Nyquistbandbreite geschmälert. Ein Dezimator mit Bandpass als Antialiasingfilter, Kapitel~\ref{sec:FIR}, reduziert die Abtastfrequenz auf $3831,49Hz$. Der Durchlassbereich des Bandpasses wird hierbei jeweils auf den zu empfangenden Kanal angepasst. Die beiden Frequenzen für 1/Mark und -1/Space befinden sich nun im Basisband. Zur Symbolrückgewinnung durch Demodulation können unterschiedliche Methoden der Vorverarbeitung angewandt werden, in dieser Arbeit wurde zunächst ein Ansatz über einen Hilberttransformator, Kapitel~\ref{sec:hilbert}, verfolgt. Später hat sich jedoch die Verwendung eines komplexen Filters
-als sinnvollere Alternative herausgestellt. Das Kammfilter in Kapitel~\ref{sec:comb} sorgt dafür, dass die Frequenzen deutlich von einander zu differenzierne sind. Sobald das Signal durch das Kammfilter
-aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungs Demodulator \ref{sec:fm-demod} mit anschließender Dekodierung erfolgen.
+Abb.~\ref{fig:signal} zeigt den Aufbau des Softwareradios. Der durch ein analoges Bandpassfilter extrahierte, zwischen $10.8Mhz$ und $11.1Mhz$ befindliche Kanal wird empfangen, und durch Unterabtastung mithilfe des ADCs in das auf das Band bezogene Basisband verschoben.
+Hierbei wird das Band auf $1.0096Mhz$ Nyquistbandbreite geschmälert. Ein Dezimator mit Bandpass als Anti-Aliasingfilter, Kapitel~\ref{sec:FIR}, reduziert die Abtastfrequenz auf $3831,49Hz$. Der Durchlassbereich des Bandpasses wird hierbei jeweils auf den zu empfangenden Kanal angepasst. Die beiden Frequenzen für 1/Mark und -1/Space befinden sich nun im Basisband. Zur Symbolrückgewinnung durch Demodulation können unterschiedliche Methoden der Vorverarbeitung angewandt werden, in dieser Arbeit wurde zunächst ein Ansatz über einen Hilberttransformator, Kapitel~\ref{sec:hilbert}, verfolgt. Später hat sich jedoch die Verwendung eines komplexen Filters
+als sinnvollere Alternative herausgestellt. Das Kammfilter in Kapitel~\ref{sec:comb} sorgt dafür, dass die Frequenzen deutlich von einander zu differenzieren sind. Sobald das Signal durch das Kammfilter
+aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungsdemodulator \ref{sec:fm-demod} mit anschließender Dekodierung erfolgen.
 
 \begin{figure}[!h]
     \centering
@@ -241,7 +241,7 @@ aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungs Demodulator 
     \def\svgwidth{\columnwidth}
  %   \input{img/signal.pdf_tex}
     \caption{Durch den ADC findet direkt beim Empfang eine Unterabtastung statt. Durch eine weitere Unterabtastung im Bandpass, wird das Signal in das Basisband verschoben.
-    Anschließen durch das Kammfilter für die Demodulation mit anschließender Decocdierung aufbereitet und auf dem Hyperterminal angezeigt.}
+    Anschließen durch das Kammfilter für die Demodulation mit anschließender Dekodierung aufbereitet und auf dem Hyperterminal angezeigt.}
     \label{fig:signal}
 \end{figure}
 
@@ -333,7 +333,7 @@ und in den FIR Filter übergeben. Es wird Sample für Sample eingelesen, dezimie
 
 \section{Hilbert Transformator}\label{sec:hilbert}
 Der Hibert Transformator wandelt ein reelles Zeitsignal $x(t)$ in ein analytisches Signal $x_+(t)$ um.
-Dies wird benötigt um das Signal anschlieend mit dem FM-Verzögerungsdemodulator, beschrieben in Kapitel \ref{sec:fm-demod}, zu demodulieren.
+Dies wird benötigt um das Signal anschließend mit dem FM-Verzögerungsdemodulator, beschrieben in Kapitel \ref{sec:fm-demod}, zu demodulieren.
 Mit $\mathcal{H}(x(t))$, der Hilberttransformierten ergibt sich dies wie folgt:
 
 $$ 
@@ -348,7 +348,7 @@ dieser Ansatz auch nicht weiter verfolgt.
 
 
 \section{Komplexes Kammfilter}\label{sec:comb}
-Eine Alternative zu dem in Kapitel~\ref{sec:hilbert} beschriebenen Hilber Transformator ist ein Kammfilter.
+Eine Alternative zu dem in Kapitel~\ref{sec:hilbert} beschriebenen Hilberttransformator ist ein Kammfilter.
 Um die Frequenzen besser von einander differenzieren zu können, wird ein Kammfilter genutzt. Dieser kann durch eine Anzahl $N$ Verzögerer realisiert werden.
 Ziel in der Auslegung des Kammfilters ist es, die Nullstellen so zu legen, dass entweder $w_{mark}$ oder $w_{space}$ des Nutzsignals im positiven Frequenzbereich
 gedämpft wird, und das jeweils andere $w$ im negativen Bereich. Zunächst wird das Filter dafür so Ausgelegt, das der Abstand zwischen
@@ -401,7 +401,7 @@ u = \lfloor \frac{\pi}{2\pi \frac{450Hz}{3832Hz}}\rfloor = 4
 $$
 
 Der Faktor u bestimmt die Anzahl der benötigten Verzögerer, damit der Abstand eines Maximums des Frequenzganges sowie eine Nullstelle genau dem Abstand der Frequenzen $\omega_{mark}$ und $\omega_{space}$ entsprechen. Die Übertragungsfunktion ergibt jetzt einen reellen Kammfilter der nun so verschoben werden muss, dass eine Nullstelle im positiven Frequenzbereich auf der hohen Symbolfrequenz liegt. Dies kann erreicht werden, indem das Maximum im Nullpunkt des Frequenzbereiches auf die untere Symbolfrequenz verschoben wird. Die Verschiebung ist somit $\omega_{space}$.
-Aus der Verschiebungseigenschaft der Diskreten Fourierttransformation ergibt sich folgendes:
+Aus der Verschiebungseigenschaft der Diskreten Fouriertransformation ergibt sich folgendes:
  
 $$
 x(k) \cdot W^{kl}_N \fourier X(n-l)
@@ -426,7 +426,7 @@ $$
 $$
 h(k) = \{ 1, 0, 0, 0, (0.175 + 0.985j) \}
 $$
-Dies ermöglicht die verwendung eines Verzögerungsdemodulators mit einem Sinus, da im positiven Frequenzbereich $\omega_{mark}$ gegenüber $\omega_{space}$ um gedämpft wird und im negativen Frequenzbereich das invertierte Verhalten auftritt.
+Dies ermöglicht die Verwendung eines Verzögerungsdemodulator mit einem Sinus, da im positiven Frequenzbereich $\omega_{mark}$ gegenüber $\omega_{space}$ um gedämpft wird und im negativen Frequenzbereich das invertierte Verhalten auftritt.
 
 \subsection{Matlab}
 In Matlab wird das Filter überprüft, Implementiert wird das Filter mithilfe von 4 Verzögerern.
@@ -466,10 +466,10 @@ dass die Nullstellen des Kammfilter sehr gut auf den jeweiligen Frequenzen $- w_
     \def\svgscale{0.3}
     \def\svgwidth{0.8\columnwidth}
   %  \input{img/comb_6n.pdf_tex}
-    \caption{Kammfiter mit den deiden Frequenzen $\omega_{mark}$ und $\omega_{space}$, das Kammfilter lässt jeweils eine der beiden Frequenzen passieren.}
+    \caption{Kammfilter mit den beiden Frequenzen $\omega_{mark}$ und $\omega_{space}$, das Kammfilter lässt jeweils eine der beiden Frequenzen passieren.}
 \end{figure}
 \subsection{C}
-Für die C-Implementierung, siehe \ref{codeC:comb}, wird jedes eingabe Sample um $N = 4$ verzögert.
+Für die C-Implementierung, siehe \ref{codeC:comb}, wird jedes Eingabe Sample um $N = 4$ verzögert.
 Die Verzögerung wird über ein Buffer Array der Länge $N$ realisiert:
 %\begin{listing}\label{codeC:comb}
 %    \caption{C-Implementierung des Kammfilters mithilfe eines Verzögerer Buffers}
@@ -504,9 +504,9 @@ Die Verzögerung wird über ein Buffer Array der Länge $N$ realisiert:
 %    \end{minted}
 %\end{listing}
 
-\section{Verzögerungsdemoulator} \label{sec:fm-demod}
-Der FM-Verzögerungsdemoulator wird im Worksheet 2 des Projekts Behandelt. 
-Der FM-Verzögerungsdemoulator soll das CPFSK-modulierte Signal demodulieren und eine Rechteckfolge ausgeben.\\
+\section{Verzögerungsdemodulator} \label{sec:fm-demod}
+Der FM-Verzögerungsdemodulator wird im Worksheet 2 des Projekts Behandelt. 
+Der FM-Verzögerungsdemodulator soll das CPFSK-modulierte Signal demodulieren und eine Rechteckfolge ausgeben.\\
 Um auf die Verwendung von komplexer Signalverarbeitung zu verzichten, wird der im Worksheet als "Verzögerungsdemodulator mit reeller Signalverarbeitung" referenzierte Aufbau verwenden. Das komplexe Signal $e^{jn\omega_0}$ auf zwei als reell zu betrachtende Anteile zerlegt:
 $$
 v_I(n) = \mathfrak{Re}\{e^{jn\omega_0}\} = cos(\omega_0 n)
@@ -531,10 +531,16 @@ $$
 $$
 Zunächst wird der Term $y(n)$ anhand des Additionstheorems vereinfacht:
 $$
-y(n) = \{cos(\omega_0 n)cos(\omega_0) + sin(\omega_0 n)sin(\omega_0)\} \cdot sin(\omega_0 n) - \{sin(\omega_0 n)cos(\omega_0) - cos(\omega_0 n)sin(\omega_0) \} \cdot cos(\omega_0 n) 
+y(n) = \{cos(\omega_0 n)cos(\omega_0) + sin(\omega_0 n)sin(\omega_0)\} \cdot sin(\omega_0 n) - 
+$$
+$$
+\{sin(\omega_0 n)cos(\omega_0) - cos(\omega_0 n)sin(\omega_0) \} \cdot cos(\omega_0 n) 
 $$ 
 $$
-y(n) = sin(\omega_0 n)cos(\omega_0 n)cos(\omega_0) + sin^2(\omega_0 n)sin(\omega_0) - sin(\omega_0 n)cos(\omega_0 n)cos(\omega_0) + cos^2(\omega_0 n)sin(\omega_0) 
+y(n) = sin(\omega_0 n)cos(\omega_0 n)cos(\omega_0) + sin^2(\omega_0 n)sin(\omega_0) - 
+$$
+$$
+sin(\omega_0 n)cos(\omega_0 n)cos(\omega_0) + cos^2(\omega_0 n)sin(\omega_0) 
 $$ 
 $$
 y(n) = sin^2(\omega_0 n)sin(\omega_0) + cos^2(\omega_0 n)sin(\omega_0) 
@@ -549,28 +555,28 @@ $$
 $$
 y(n)\arrowvert_{\omega_{space}} = sin(\cfrac{\pi}{2}-\cfrac{2\pi \Delta f}{f_s})
 $$
-Der Sinus an der Stelle $\cfrac{\pi}{2}$ ist jedoch symmetrisch, weswegen der Demodulator bis auf kleine Abweichungen stets für beide Frequenzen das selbe Ergebnis berechnen wird. Der komplexe Kammfilter führt durch das asymetrische Dämpfungsverhalten jedoch zu folgenden Verhältnissen:\\\\
-Signalfrequenzen vor dem Filter:
+Der Sinus an der Stelle $\cfrac{\pi}{2}$ ist jedoch symmetrisch, weswegen der Demodulator bis auf kleine Abweichungen stets für beide Frequenzen das selbe Ergebnis berechnen wird. Der komplexe Kammfilter führt durch das asymmetrische Dämpfungsverhalten jedoch zu folgenden Verhältnissen:\\\\
+Leistung bei den Signalfrequenzen vor dem Filter:
 $$
--\omega_{mark} = \omega_{mark} \arrowvert -\omega_{space} = \omega_{space} 
+\arrowvert X \{ -\omega_{mark} \} \arrowvert^2 = \arrowvert X \{ -\omega_{mark} \} \arrowvert^2 \leftrightarrow \arrowvert X \{ -\omega_{space} \} \arrowvert^2 = \arrowvert X \{ -\omega_{space} \} \arrowvert^2
 $$
-Signalfrequenzen nach dem Filter:
+Leistung bei den Signalfrequenzen nach dem Filter:
 $$
--\omega_{mark} >> \omega_{mark} \arrowvert -\omega_{space} << \omega_{space} 
+\arrowvert X \{ -\omega_{mark} \} \arrowvert^2 >> \arrowvert X \{ -\omega_{mark} \} \arrowvert^2 \leftrightarrow \arrowvert X \{ -\omega_{space} \} \arrowvert^2 << \arrowvert X \{ -\omega_{space} \} \arrowvert^2
 $$
 Es gehen also $-\omega_{mark}$ und $\omega_{space}$ in den Demodulator ein.
-Somit ergibt sich für die obere Frequenz das exakt invertierte der unteren Signalfrequenz. Der Hub wird so maximal:
+Somit ergibt sich für die obere Frequenz das Inverse des Augangs bei der unteren Signalfrequenz. Der Hub wird so maximal:
 $$
 sin(-\omega_{mark}) = -sin(\omega_{mark}) = -sin(\omega_{space}) \Longleftrightarrow sin(\omega_{space})
 $$
 \subsection{Matlab}
 
 \subsection{C}
-
+Es wird der reelle Verzögerungsdemodulator implementiert der jedoch aus Effizienzgründen auf die Bildung des invertierten Sinus verzichtet, da dieser letztlich einen nichtlinearen Verstärker darstellt, welcher beim Überschreiten des Wertebereichs von $[-\frac{\pi}{2};\frac{\pi}{2}]$ nicht definiert ist. In den durchgeführten Simulationen reichte das SNR stets aus, um das Signal verlässlich zu dekodieren.
 \section{Decodierung}
 
-Die Decodierung liest die $D = \{0,1\}$ Bitweise ein und schiebt diese in einen Puffer. 
-Die Symbolfrequenz von $50Hz$ bestimmt die Abtastrate des Decodierers. Da bei dem Start/Stop-Bit um das
+Der Dekodierer liest die Ausgangswerte des Demodulators binarisiert als $D = \{0,1\}$ bitweise ein und schreibt diese in eine Puffer. 
+Die Symbolfrequenz von $50Hz$ bestimmt die Abtastrate des Dekodierers. Da bei dem Start/Stop-Bit um das
 halbe Bit der Stop-Sequenz erkennen zu können liegt hier folgender Ansatz zugrunde:
 
 $$
@@ -580,11 +586,14 @@ eingesetzt
 $$
 f_{decode} = 3831,499Hz * \frac{1}{50Hz\cdot 2} = 38,31
 $$
-Für die Implementierung wird im C-Code der Aufruf druch zwei gekapselte $IF$ und zwei Zählvariablen
-gesteuert, um bei jedem dritten durchlauf eine weitere Schaltdauer abzuwarten. Der Dekodierer, siehe \ref{codeC:decode}, schiebt Bit für Bit durch einen Puffer, liegt
-die Start/Stop Sequenz $0x001F$ in dem Puffer, werden die nächsten $10$ Bits, als Bits eines Buchstaben interpretiert.
-Jeder Buchstabe wird durch 5 Bits repräsentiert, in \ref{codeC:decode} ab Zeile 20 um die hälfte komprimiert.
-Das daraus erzeugt Ergebnis, repräsentiert den Index einer LookUp Table für den entsprechen Buchstaben.
+So wird durch einen Taktteiler die Abtastfrequenz erneut gesenkt. Der Dekodierer detektiert nun die Start/Stop folge und synchronisiert sich so auf den Datenstrom. Wird die Datenfolge $0x001F$ empfangen, werden die davor liegenden 10 Bits invertiert und um den Faktor zwei unterabgetastet. Der so entstehende Bitvektor wird unter Zuhilfenahme einer Lookuptable dann in Buchstaben oder Zahlen übersetzt. Das Umschalten zwischen zwei Tabellen geschieht bei den jeweiligen Zeichenfolgen.
+
+\subsection{Matlab}
+
+\subsection{ANSI C} 
+Der Taktteiler wird durch zwei Zähler realisiert, der Hauptzähler ruft die Dekodierer alle 38 Zeichen auf, alle 3 Perioden wird jedoch bis 39 gezählt um die $0.31Hz$ zu kompensieren. Der Dekodierer selbst verschiebt den bisher eingetroffenen Datenstrom nach links und verodert das neu erhalten Bit mit dem Puffer. Eine 16Bit Variable stellt hierbei den FIFO Puffer dar. Die 5 letzten Bits werden mit der Start/Stop Datenfolge verglichen. Wird diese erfolgreich detektiert, so wird der Puffer kopiert und die fünf Start/Stop Bits nach rechts aus dem Buffer geschoben. Um die Datenfolge zurückzugewinnen, werden die letzten 10 Bits des neuen Puffers maskiert, invertiert und unterabgetastet, sodass sich die fünf Symbolbits ergeben.
+Diese Werden dann als short-Typ als Feldindex für die Lookuptable verwendet.
+Mit der implementierten Prozedur wird jedoch das Symbol $xxxx111100$ ebenfalls als Start/Stop-Folge interpretiert, weswegen ein weiterer Zähler den Abstand zur letzten detektierten Start/Stop-Folge prüft. Dies führt zu möglichen Synchronisierungsfehlern bis die erste Symbolfolge auftritt, die keine Start/Stop-Sequenz enthält. 
 
 %\begin{listing}\label{codeC:decode}
 %    \caption{C-Implementierung: Funktion des Decodierers}
