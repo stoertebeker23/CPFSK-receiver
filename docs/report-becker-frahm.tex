@@ -343,7 +343,7 @@ dieser Ansatz auch nicht weiter verfolgt.
 Eine Alternative zu dem in Kapitel~\ref{sec:hilbert} beschriebenen Hilberttransformator ist ein Kammfilter.
 Um die Frequenzen besser von einander differenzieren zu können, wird ein Kammfilter genutzt. Dieser kann durch eine Anzahl $N$ Verzögerer realisiert werden.
 Ziel in der Auslegung des Kammfilters ist es, die Nullstellen so zu legen, dass entweder $w_{mark}$ oder $w_{space}$ des Nutzsignals im positiven Frequenzbereich
-gedämpft wird, und das jeweils andere $w$ im negativen Bereich. Zunächst wird das Filter dafür so Ausgelegt, das der Abstand zwischen
+gedämpft wird, und das jeweils andere $w$ im negativen Bereich. Zunächst wird das Filter dafür so ausgelegt, das der Abstand zwischen
 Nullstelle und Hochpunkt in der Filterübertragungsfunktion ca. dem Frequenzhub $\varDelta f$ entspricht, anschließend muss es so Verschoben werden, dass die Nullstellen wie beschrieben auf dem
 gewünschten $w_{mark/space}$ liegen.
 So wird der Frequenzunterschied zwischen den beiden Frequenzen von $\varDelta f$ auf $2\cdot fA$ angehoben.
@@ -416,13 +416,13 @@ $$
 h(k) = \{ 1 \cdot e^{-j\omega_{space}0} , 0 \cdot e^{-j\omega_{space}1} , 0 \cdot e^{-j\omega_{space}2} , 0 \cdot e^{-j\omega_{space}3} , 1 \cdot e^{-j\omega_{space}4}\}
 $$
 $$
-h(k) = \{ 1, 0, 0, 0, (0.175 + 0.985j) \}
+h(k) = \{ 1, 0, 0, 0, (0.175 - 0.985j) \}
 $$
 Dies ermöglicht die Verwendung eines Verzögerungsdemodulator mit einem Sinus, da im positiven Frequenzbereich $\omega_{mark}$ gegenüber $\omega_{space}$ um gedämpft wird und im negativen Frequenzbereich das invertierte Verhalten auftritt.
 
 \subsection{MATLAB}
 In \textit{MATLAB} wird das Filter überprüft, Implementiert wird das Filter mithilfe der errechneten Übertragungsfunktion.
-Dafür wird in \textit{MATLAB} ein mit $N$-Nullen gefülltes Array verwendet. In Abb.~\ref{fig:comb} ist zu sehen,
+Dafür wird in \textit{MATLAB} ein $h(k)$ entsprechendes Array verwendet. In Abb.~\ref{fig:comb} ist zu sehen,
 dass die Nullstellen des Kammfilter gut auf den jeweiligen Frequenzen $- w_{mark}$ und $w_{space}$ liegen.
 
 \begin{listing}
@@ -431,11 +431,12 @@ dass die Nullstellen des Kammfilter gut auf den jeweiligen Frequenzen $- w_{mark
  $w_{mark}$ und $w_{space}$ geplottet wird, siehe Abb.~\ref{fig:comb}. Es wird kontrolliert ob die Nullstellen in den richten Punkten auf der Frequenzachse liegen.}
 \begin{minted}[linenos, bgcolor=bg, breaklines]{matlab}
 N = 5
+b_compl = [1 0 0 0 0.17502 - 0.98456i];
 fA_green = 3832;
-freq_comb= (-fA_green:fA_green)/fA_green;
 
-compl = (0.175 + 0.985j)
-H_comb = freqz([1, zeros(1, N), compl], 1, 2*pi*freq_comb);
+hz = freqz(b_compl,1, 2*pi*freq);
+plot(freq*fA_green, abs(hz))
+
 \end{minted}
 \end{listing}
 
@@ -448,8 +449,8 @@ H_comb = freqz([1, zeros(1, N), compl], 1, 2*pi*freq_comb);
     \caption{Kammfilter mit den beiden Frequenzen $\omega_{mark}$ und $\omega_{space}$, das Kammfilter lässt jeweils eine der beiden Frequenzen passieren.}
 \end{figure}
 \subsection{ANSI C}
-Für die C-Implementierung, siehe \ref{codeC:comb}, wird jedes Eingabe Sample um $N = 5$ verzögert.
-Die Verzögerung wird über ein Puffer Array der Länge $N$ realisiert:
+Für die C-Implementierung, siehe \ref{codeC:comb}, wird jedes Eingabe Sample um $N - 1 = 4$ verzögert.
+Die Verzögerung wird über ein Puffer Array der Länge $4$ realisiert, welches mit einem rotierenden Zeiger adressiert wird. Dieser ersetzt nach erfolgreicher Berechnung des Kammfilters, den ältesten Wert durch den aktuellen.:
 \begin{listing}\label{codeC:comb}
     \caption{C-Implementierung des Kammfilters mithilfe eines Verzögerer Puffers}
     \begin{minted}[linenos, bgcolor=bg]{c}
@@ -529,7 +530,7 @@ $$
 $$
 y(n) = \{sin^2(\omega_0 n) + cos^2(\omega_0 n)\}sin(\omega_0) = sin(\omega_0)
 $$
-Ein einsetzen in die Funktion ergibt für beide Fälle folgendes Ergebnis:
+Der reele Verzögerungsdemodulator entspricht also dem komplexen Verzögerungsdemodulator. Ein einsetzen in die Funktion ergibt für beide Fälle folgendes Ergebnis:
 $$
 y(n)\arrowvert_{\omega_{mark}} = sin(\cfrac{\pi}{2}+\cfrac{2 \pi \Delta f}{f_s})
 $$
