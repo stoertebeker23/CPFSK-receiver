@@ -172,7 +172,7 @@ somit die Nachbarkanäle stören würde.
     \label{fsk}
 \end{figure}
 
-Das in Abschnitt~\ref{sec:rechteck} generierte Reckecksignal wird nun \ac{CPFSK} Modeliert.
+Das in Abschnitt~\ref{sec:rechteck} generierte Rechtecksignal wird nun \ac{CPFSK} moduliert.
 Dafür wir die Formel aus Worksheet 1 verwendet:
 
 $$CPFSK_{sig} = amp \cdot  sin(2  \pi \cdot f_T \cdot n \cdot T_A + 2 \pi \cdot \varDelta{F} \cdot \frac{\phi (iT)}{f_A} + \varphi_0) $$
@@ -449,9 +449,9 @@ H_comb = freqz([1, zeros(1, N), compl], 1, 2*pi*freq_comb);
 \end{figure}
 \subsection{ANSI C}
 Für die C-Implementierung, siehe \ref{codeC:comb}, wird jedes Eingabe Sample um $N = 5$ verzögert.
-Die Verzögerung wird über ein Buffer Array der Länge $N$ realisiert:
+Die Verzögerung wird über ein Puffer Array der Länge $N$ realisiert:
 \begin{listing}\label{codeC:comb}
-    \caption{C-Implementierung des Kammfilters mithilfe eines Verzögerer Buffers}
+    \caption{C-Implementierung des Kammfilters mithilfe eines Verzögerer Puffers}
     \begin{minted}[linenos, bgcolor=bg]{c}
 short delayed_sample = 0;
 short cnt = 0;
@@ -569,9 +569,9 @@ f_{decode} = 3831,499Hz * \frac{1}{50Hz\cdot 2} = 38,31
 $$
 So wird durch einen Taktteiler die Abtastfrequenz erneut gesenkt. Der Dekodierer detektiert nun die Start/Stop folge und synchronisiert sich so auf den Datenstrom. Wird die Datenfolge $0x001F$ empfangen, werden die davor liegenden 10 Bits invertiert und um den Faktor zwei unterabgetastet. Der so entstehende Bitvektor wird unter Zuhilfenahme einer Lookuptable dann in Buchstaben oder Zahlen übersetzt. Das Umschalten zwischen zwei Tabellen geschieht bei den jeweiligen Zeichenfolgen.
 \subsection{MATLAB}
-In listing~\ref{codeM:decode}, der MATALB Implementierung des Decoders wird die durch den Verzögerungsdemodulator binarisierte Ausgabe
-Blockweise aus dem Buffer \textit{binarized} ausgelesen. Sobald die Start/Stop Bit-Sequenz $[1 1 1 0 0]$ erkannt wird, werden die Bits aus dem Buffer
-in der Reinfolge umgedreht, da hier das MSB zuerst gesendet wird. Die Bits werden in den Datentyp String umgewandelt und anschließend
+In listing~\ref{codeM:decode}, der MATALB Implementierung des Dekodierers wird die durch den Verzögerungsdemodulator binarisierte Ausgabe
+Blockweise aus dem Puffer \textit{binarized} ausgelesen. Sobald die Start/Stop Bit-Sequenz $[1 1 1 0 0]$ erkannt wird, werden die Bits aus dem Buffer
+in der Reihenfolge umgedreht, da hier das MSB zuerst gesendet wird. Die Bits werden in den Datentyp String umgewandelt und anschließend
 als Dezimalzahl interpretiert. Die so ermittelte Zahl entspricht dem Index des Buchstaben der Lookuptable. 
 Sollte der so erkannte Buchstabe das Umschalten zwischen Zahlen und Buchstaben repräsentieren, wird die Lookuptable
 entsprechend ausgetauscht. 
@@ -622,7 +622,7 @@ Mit der implementierten Prozedur wird jedoch das Symbol $xxxx111100$ ebenfalls a
 Start/Stop-Folge interpretiert, weswegen ein weiterer Zähler den Abstand zur letzten detektierten Start/Stop-Folge prüft. Dies führt zu möglichen Synchronisierungsfehlern bis die erste Symbolfolge auftritt, die keine Start/Stop-Sequenz enthält. 
 
 \begin{listing}\label{codeC:decode}
-    \caption{C-Implementierung: Funktion des Decodierers}
+    \caption{C-Implementierung: Funktion des Dekodierers}
     \begin{minted}[linenos, bgcolor=bg, breaklines]{c}
 void decode(unsigned short bit) {
 
@@ -666,15 +666,7 @@ void decode(unsigned short bit) {
     \end{minted}
 \end{listing}
 
-
-
-
-
 --------------------------------------------------------------------------------------------------
-
-
-
-
 
 
 % ---------------------------------------------------------------------------
