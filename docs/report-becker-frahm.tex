@@ -223,19 +223,18 @@ Da auch die Start/Stopbits durch $D$ dargestellt werden, würde sich hier im Fre
 nur eine Veränderung im Maximum der Amplitude ergeben, die repräsentierenden Frequenzen selbst bleiben unverändert.
 
 \subsection{FM Verzögerungsdemodulator - Worksheet02}
-Zur demodulation des Signals soll ein FM Verzögerungsdemodulator zum Einsatz kommen. Dieser ist für die Symbolrückgewinnung zuständig. 
-
-Das Eingangssignal des Signalflussdiagramm in Abb.~\ref{fig:fm-verz} wird in dem Worksheet wie folgt beschrieben:
 
 \begin{figure}[!h]
     \centering
     \def\svgscale{0.5}
     \def\svgwidth{\columnwidth}
-   % \input{img/signal.pdf_tex}
-    \caption{TBD}
+    \input{img/ws02_fluss.pdf_tex}
+    \caption{FM Basisband-Verzögerungsdemodulator. Quelle: Worksheet02}
     \label{fig:fm-verz}
 \end{figure}
 
+Zur demodulation des Signals soll ein FM Verzögerungsdemodulator zum Einsatz kommen. Dieser ist für die Symbolrückgewinnung zuständig. 
+Das Eingangssignal des Signalflussdiagramm in Abb.~\ref{fig:fm-verz} wird in dem Worksheet wie folgt beschrieben:
 
 $$
 v(n) = v e^{j w_0 n}
@@ -275,6 +274,108 @@ $$
 Um die Begrenzung durch den Wertebereich zu Verhindern, muss, wie in Abb.~\ref{fig:signal} zu sehen, 
 das Eingangssignal mit dem Faktor $\frac{1}{v}$ Verstärkt werden.
 
+In Teilaufgabe 2 des Worksheets soll nun das Signalflussdiagramm in Matlab umgesetzt werden.
+Dafür wurde zunächst das in Abb.~\ref{fig:cpfsk} gezeigte CPFSK Signal in \textit{MATLAB} erzeugt.
+
+
+\begin{figure}[!h]
+    \centering
+    \def\svgscale{0.5}
+    \def\svgwidth{0.8\columnwidth}
+    \input{img/cpfsk.pdf_tex}
+    \caption{CPFSK Signal: Man erkennt deutlich die Wechsel der Mark/Space Frequenzen.}
+    \label{fig:cpfsk}
+\end{figure}
+
+Um das reele Signal dem FM-Demodulator übergeben zu können, wird es durch einen Hilbert-Transformator gefiltert.
+Dies ist in der \textit{MATLAB} Simulation in listing.~\ref{codeM:hilbert} gezeigt. Die  Abb.~\ref{fig:hilbert_vor} und Abb.~\ref{fig:hilbert_nach} zeigen das Signal vor und nach 
+der Anwendung des Hilbert Filters. Das reele Signal wird zu einem koplexen Signal. 
+
+\begin{figure}[!h]
+    \centering
+    \def\svgscale{0.5}
+    \def\svgwidth{0.8\columnwidth}
+    \input{img/hil_vor.pdf_tex}
+    \caption{Amplitudengang des reelen Signals}
+    \label{fig:hilbert_vor}
+\end{figure}
+
+\begin{figure}[!h]
+    \centering
+    \def\svgscale{0.5}
+    \def\svgwidth{0.8\columnwidth}
+    \input{img/hil_nach.pdf_tex}
+    \caption{Amplitudengang des komplexen Signals}
+    \label{fig:hilbert_nach}
+\end{figure}
+
+\begin{listing}\label{codeM:hilbert}
+    \caption{CPFSK Signal Hilbert gefiltert, jeweils für die Mark und Space Frequenzen}
+    \begin{minted}[linenos, bgcolor=bg, breaklines]{matlab}
+v_max = 0.5;
+fA = 4000;
+n = 1:1:fA;
+fT = fA/4;
+fHub = 225;
+fSpace = fT - fHub;
+fMark = fT + fHub;
+
+
+sqre = out;
+stem(t, sqre)
+xlim([0, 0.08])
+title('Rechteckfolge')
+xlabel(['t [s]'])
+ylabel(['Amplitude'])
+
+phi_0 = pi;
+num_integrator = [0, 1];
+den_integrator = [1, -1];
+
+Phi_iT = filter(num_integrator, den_integrator, sqre(1:801)) + phi_0;
+cpfsk_sig = v_max * sin(2 * pi * fT * n(1:801)/fA + 2 * fHub * pi * Phi_iT/fA + phi_0);
+fn = (-length(n(1:801))/2:(length(n(1:801))-1)/2) * fA/length(n(1:801));
+
+plot(n(1:801), cpfsk_sig)
+xlim([0, 400])
+title('CPFSK Moduliertes Signal')
+xlabel(['Samples [n]'])
+ylabel(['Amplitude'])
+
+plot(fn, abs(fft(cpfsk_sig)))
+title('CPFSK Moduliertes Signal (vor Hilbert Transformation)')
+xlabel(['Frequenz [Hz]'])
+ylabel(['Amplitude'])
+grid on;
+
+
+Phi_iT1 = filter(num_integrator, den_integrator, sqre(1:82)) + phi_0;
+cpfsk_sig1 = v_max * sin(2 * pi * fT * n(1:82)/fA + 2 * fHub * pi * Phi_iT1/fA + phi_0);
+y1 = hilbert(cpfsk_sig1);
+
+Phi_iT0 = filter(num_integrator, den_integrator, sqre(83:162)) + phi_0;
+cpfsk_sig0 = v_max * sin(2 * pi * fT * n(83:162)/fA + 2 * fHub * pi * Phi_iT0/fA + phi_0);
+y0 = hilbert(cpfsk_sig0);
+
+% Plot
+fn0 = (-length(n(1:82))/2:(length(n(1:82))-1)/2) * fA/length(n(1:82));
+plot(fn0, abs(fftshift(fft(y1))/length(n(1:82))))
+hold on;
+fn1 = (-length(n(83:162))/2:(length(n(83:162))-1)/2) * fA/length(n(83:162));
+plot(fn1, abs(fftshift(fft(y0))/length(n(83:162))))
+
+title('CPFSK Spektren (nach Hilbert Transformation)')
+xlabel(['Frequenz [Hz]'])
+ylabel(['Amplitude'])
+
+grid on
+hold off;
+    \end{minted}
+\end{listing}
+
+
+
+
 \section{Signalfluss Empfänger}
 
 Abb.~\ref{fig:signal} zeigt den Aufbau des Softwareradios. Das durch ein analoges Bandpassfilter extrahierte, zwischen $10.1Mhz$ und $11.1Mhz$ befindliche Band wird empfangen, und durch Unterabtastung mithilfe des ADCs in das auf das Band bezogene Basisband verschoben.
@@ -297,7 +398,15 @@ aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungsdemodulator \
 Der Wetterdatensender sendet auf mehreren Kanälen in dem genannten Band. Nun muss der jeweils ein Kanal mithilfe eines Bandpasses selektiert werden. Der so ausgewählte Kanal wird nun mithilfe einer Unterabtastung in den Tiefpassbereich verschoben um eine Demodulation durchführen zu können. Zur Steigerung der Recheneffizienz wird eine Dezimationsstufe realisiert, die im Unterabtaster direkt mit den Polyphasen des Bandpasses filtert. So werden pro empfangenen Sample nur sehr wenige Multiplikationen durchgeführt. Das Filter wird in \textit{MATLAB} ausgelegt und dann in Polyphasen zerlegt exportiert. Die exportierte Datei kann direkt als Feld in C verwendet werden.
 
 \subsection{Theorie}
-Der bei 10100.8 kHz befindliche, 5KHz breite Kanal wird durch die Unterabtastung in den Bereich von 4800Hz +/- 2500Hz verschoben. Da sich im schlechtesten Fall direkt daneben der nächste Kanal anschließt, muss vor einer Unterabtastung gefiltert werden um Aliasing zu vermeiden. Der Filter muss nun einen Durchlassbereich von mindestens der 99\% Bandbreite bzw. $704Hz$ aufweisen, maximal jedoch einen Durchlassbereich von $5Khz$ weniger zwei mal dem Übergangsbereich, um zuverlässig danebenliegende Bänder zu dämpfen. Die Grenzen des Durchlassbereiches werden somit auf $f_u = 3800Hz$ und $f_o = 4800Hz$ festgelegt, der Übergangsbereich auf jeweils 1500 Hz um die Anzahl der Koeffizienten gering zu halten. Zudem wird der Bandpass als FIR-Filter realisiert. Der nachfolgende Unterabtaster wird mit dem Faktor 527 betrieben, woraus sich eine Abtastfrequenz von $f_{s_{neu}} = 3831,499Hz$ ergibt. Somit verteilen sich die 2056 Koeffizienten des Filters auf 527 Polyphasen mit jeweils vier Koeffizienten. Da nicht jede der Polyphasen vier Koeffizienten aufweisen kann, werden Nullen eingefügt.
+Der bei 10100.8 kHz befindliche, 5KHz breite Kanal wird durch die Unterabtastung in den Bereich von 4800Hz +/- 2500Hz verschoben. 
+Da sich im schlechtesten Fall direkt daneben der nächste Kanal anschließt, muss vor einer Unterabtastung gefiltert werden um Aliasing zu vermeiden. 
+Der Filter muss nun einen Durchlassbereich von mindestens der 99\% Bandbreite bzw. $704Hz$ aufweisen, maximal 
+jedoch einen Durchlassbereich von $5Khz$ weniger zwei mal dem Übergangsbereich, um zuverlässig danebenliegende Bänder zu dämpfen. 
+Die Grenzen des Durchlassbereiches werden somit auf $f_u = 3800Hz$ und $f_o = 4800Hz$ festgelegt, der Übergangsbereich auf jeweils 1500 Hz um die
+Anzahl der Koeffizienten gering zu halten. Zudem wird der Bandpass als FIR-Filter realisiert. Der nachfolgende Unterabtaster 
+wird mit dem Faktor 527 betrieben, woraus sich eine Abtastfrequenz von $f_{s_{neu}} = 3831,499Hz$ ergibt. Somit verteilen sich die 
+2056 Koeffizienten des Filters auf 527 Polyphasen mit jeweils vier Koeffizienten. Da nicht jede der Polyphasen vier Koeffizienten aufweisen kann, 
+werden Nullen eingefügt.
 
 \subsection{MATLAB}
 Zu Auslegung des FIR Filters in \textit{MATLAB} listing~\ref{codeM:FIRBP}, müssen zunächst die Grenz- und Stopfrequenzen Festgelegt werden.
