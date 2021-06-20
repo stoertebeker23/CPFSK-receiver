@@ -97,10 +97,11 @@ auf einem DSP implementiert. Geschuldet der aktuellen Situation im Bezug auf den
 
 \section{Vorbereitung}
 Um ein grundlegendes Verständnis für das Projekt zu bekommen, werden zunächst einige Ansätze in \textit{MATLAB} simuliert.
-Hierfür wird zuächst eine Rechteckfolge mit dem Wertebereich $D = \{-1,1\}$ generiert. Diese wird genutzt um zunächst ein 
-\ac{CPFSK} moduliertes Testsignal zu erzeugen.
+Hierfür wird zuächst eine Rechteckfolge mit dem Wertebereich $D = \{-1,1\}$ generiert. Anschließend wird die Anfangsphase für das CPFSK Signal bestimmt. Diese wird genutzt um zunächst ein 
+\ac{CPFSK} moduliertes Testsignal zu erzeugen. Mit dem so erzeugtem CPFSK Signal, kann eine erste Bandbreitenabschätzung durchgeführt werden.
 
-\subsection{Rechteckimpuls $d(i)$}\label{sec:rechteck}
+
+\subsection{Rechteckimpuls $d(i)$ - Worksheet01}\label{sec:rechteck}
 Mit Angabe der Symboldauer $T = 20ms$ lässt sich auf die minimale Abtastfrequenz nach Nyquist-Shannon schließen.
 Die minimale Abtastfrequenz $f_A$ muss mehr als doppelt so groß wie die höchste abzutastende Frequenz sein.
 
@@ -137,7 +138,7 @@ $f_A > 100Hz$
     \caption{Rechteckimpuls zur \ac{CPFSK} Simulation in \textit{MATLAB}}
 \end{figure}
 
-\subsection{Anfangsphase $\phi(iT)$}
+\subsection{Anfangsphase $\phi(iT)$ - Worksheet01}
 Für die \ac{CPFSK}-Modulation muss die Anfangsphase $\phi(iT)$ bestimmt werden.
 Gegeben ist ein Integrator (IIR Filter 1.Ordnung) mit der Übertragungsfunktion:
 $$
@@ -153,7 +154,7 @@ da die Integration einer Aufsummierung diskreter Flächenelemte unter der Kurve 
     \caption{Signalflussdiagramm des Integrators 1.Ordnung}
 \end{figure}
 
-\subsection{\ac{CPFSK} Signal}
+\subsection{\ac{CPFSK} Signal - Worksheet01}
 
 Die \ac{CPFSK} Modulation ist eine Methode um digitale Signale mithilfe einer Trägerfrequenz analog zu Übertragen.
 Bei der \ac{CPFSK} Modulation handelt es sich um eine Frequenzmodulation ohne Sprünge im Phasenübergang. In Abb.~\ref{fsk}
@@ -221,7 +222,58 @@ Es werden nur binäre Daten übertragen $D = \{0, 1\}$. die Frequenzen $ f_{0, 1
 Da auch die Start/Stopbits durch $D$ dargestellt werden, würde sich hier im Frequenzbereich
 nur eine Veränderung im Maximum der Amplitude ergeben, die repräsentierenden Frequenzen selbst bleiben unverändert.
 
+\subsection{FM Verzögerungsdemodulator - Worksheet02}
+Zur demodulation des Signals soll ein FM Verzögerungsdemodulator zum Einsatz kommen. Dieser ist für die Symbolrückgewinnung zuständig. 
 
+Das Eingangssignal des Signalflussdiagramm in Abb.~\ref{fig:fm-verz} wird in dem Worksheet wie folgt beschrieben:
+
+\begin{figure}[!h]
+    \centering
+    \def\svgscale{0.5}
+    \def\svgwidth{\columnwidth}
+   % \input{img/signal.pdf_tex}
+    \caption{TBD}
+    \label{fig:fm-verz}
+\end{figure}
+
+
+$$
+v(n) = v e^{j w_0 n}
+$$
+
+Der Zusammenhang zwischen $v(n)$ und dem Ausgangsignal $y(n)$ ergibt sich hier wie folgt:
+
+$$
+y(n) = v e^{j w_0 n} \cdot v e^{-j w_0 (n-1)} = v^2 e^{j w_0}
+$$
+
+weiterhin ergibt sich für $y_{CPFSK}(n)$ und $v(n)$:
+
+$$
+y_{CPFSK}(n) = \Im(v(n) v^\ast(n-1)) = \Im( v^2 e^{j w_0}) = \Im(v^2 (sin(w_0) + j cos(w_0)))
+$$
+
+$$
+y_{CPFSK}(n) = v^2 \cdot sin(w_0)
+$$
+
+Um die Frequenz am Ausgang zu bestimmen, muss nach $w_0$ umgestellt werden und der $arcsin()$ angewand werden:
+
+$$
+sin(w_0) = \frac{y_{CPFSK}(n)}{v^2}
+$$
+
+$$
+w_0 = arcsin(\frac{y_{CPFSK}(n)}{v^2})
+$$
+
+Das in Abb.~\ref{fig:fm-verz} zu sehende Signalflussdiagramm gilt für den Wertebereich:
+$$
+-1 \leq  \frac{y_{CPFSK}(n)}{v^2} \leq 1
+$$
+
+Um die Begrenzung durch den Wertebereich zu Verhindern, muss, wie in Abb.~\ref{fig:signal} zu sehen, 
+das Eingangssignal mit dem Faktor $\frac{1}{v}$ Verstärkt werden.
 
 \section{Signalfluss Empfänger}
 
