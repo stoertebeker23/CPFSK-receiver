@@ -100,7 +100,7 @@ auf einem DSP implementiert.
 \section{Vorbereitung}
 Um ein grundlegendes Verständnis für das Projekt zu bekommen, werden zunächst einige Ansätze in MA\textit{MATLAB}TLAB simuliert.
 Hierfür wird zuächst eine Rechteckfolge mit dem Wertebereich $D = \{0,1\}$ generiert. Diese wird genutzt um zunächst ein 
-CPFSK moduliertes Testsignal zu erzeugen.
+\ac{CPFSK} moduliertes Testsignal zu erzeugen.
 
 \subsection{Rechteckimpuls $d(i)$}\label{sec:rechteck}
 Mit Angabe der Symboldauer $T = 20ms$ lässt sich auf die minimale Abtastfrequenz nach Nyquist-Shannon schließen.
@@ -135,12 +135,12 @@ $f_A > 100Hz$
     \centering
     \def\svgscale{0.3}
     \def\svgwidth{\columnwidth}
-    \input{img/rechteck.pdf_tex}
+  %  \input{img/rechteck.pdf_tex}
     \caption{Rechteckimpuls zur \ac{CPFSK} Simulation in \textit{MATLAB}}
 \end{figure}
 
 \subsection{Anfangsphase $\phi(iT)$}
-Für die CPFSK-Modulation muss die Anfangsphase $\phi(iT)$ bestimmt werden.
+Für die \ac{CPFSK}-Modulation muss die Anfangsphase $\phi(iT)$ bestimmt werden.
 Gegeben ist ein Integrator (IIR Filter 1.Ordnung) mit der Übertragungsfunktion:
 $$
 H_I(z)=\frac{z^{-1}}{1-z^{-1}}
@@ -151,11 +151,11 @@ da die Integration einer Aufsummierung diskreter Flächenelemte unter der Kurve 
 \begin{figure}[!h]
     \centering
     \def\svgscale{0.3}
-    \includegraphics{img/sig_IIR.png}
+   % \includegraphics{img/sig_IIR.png}
     \caption{Signalflussdiagramm des Integrators 1.Ordnung}
 \end{figure}
 
-\subsection{CPFSK Signal}
+\subsection{\ac{CPFSK} Signal}
 
 Die \ac{CPFSK} Modulation ist eine Methode um digitale Signale mithilfe einer Trägerfrequenz analog zu Übertragen.
 Bei der \ac{CPFSK} Modulation handelt es sich um eine Frequenzmodulation ohne Sprünge im Phasenübergang. In Abb.~\ref{fsk}
@@ -166,13 +166,13 @@ somit die Nachbarkanäle stören würde.
     \centering
 
     \def\svgwidth{0.6\columnwidth}
-    \input{img/fsk.pdf_tex}
+ %   \input{img/fsk.pdf_tex}
     \caption{Beispielhaftes \ac{CPFSK} moduliertes Trägersignal einer binären 
-    Information. Die Phasenübergänge sind ohne Sprung. Quelle:~\cite{wiki:fsk}}
+    Information. Die Phasenübergänge sind ohne Sprung. }%´Quelle:~\cite{wiki:fsk}}
     \label{fsk}
 \end{figure}
 
-Das in Abschnitt~\ref{sec:rechteck} generierte Reckecksignal wird nun CPFSK Modeliert.
+Das in Abschnitt~\ref{sec:rechteck} generierte Reckecksignal wird nun \ac{CPFSK} Modeliert.
 Dafür wir die Formel aus Worksheet 1 verwendet:
 
 $$CPFSK_{sig} = amp \cdot  sin(2  \pi \cdot f_T \cdot n \cdot T_A + 2 \pi \cdot \varDelta{F} \cdot \frac{\phi (iT)}{f_A} + \varphi_0) $$
@@ -182,12 +182,12 @@ Zur bestimmung des Spektrums des Signals, wird in \textit{MATLAB} die FFT verwen
     \centering
     \def\svgscale{0.3}
     \def\svgwidth{\columnwidth}
-    \input{img/spektrum.pdf_tex}
-    \caption{Betragspektrum des CPFSK-Modulierten Rechteckimpulses.}
+%    \input{img/spektrum.pdf_tex}
+    \caption{Betragspektrum des \ac{CPFSK}-Modulierten Rechteckimpulses.}
 \end{figure}
 Bei einem $\varDelta F = 225Hz$ wird hier eine Bandbreite von ca. $B > 450Hz = 2\cdot \varDelta F $ erwartet.
 
-Zur Bandbreitenbestimmung wird das Parsevalsche Theorem genutzt, die Bandbreite des CPFSK Signals ist derjenige Bereich,
+Zur Bandbreitenbestimmung wird das Parsevalsche Theorem genutzt, die Bandbreite des \ac{CPFSK} Signals ist derjenige Bereich,
 in den 99\% der Signalenergie von $0...\frac{f_A}{2}$ Fallen. Es ergibt sich hierbei eine Bandbreite von $742Hz$
 
 $$
@@ -232,22 +232,22 @@ Hierbei wird das Band auf $1.0096Mhz$ Nyquistbandbreite geschmälert. Ein Dezima
 als sinnvollere Alternative herausgestellt. Das Kammfilter in Kapitel~\ref{sec:comb} sorgt dafür, dass die Frequenzen deutlich von einander zu differenzieren sind. Sobald das Signal durch das Kammfilter
 aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungsdemodulator \ref{sec:fm-demod} mit anschließender Dekodierung erfolgen.
 
+
 \begin{figure}[!h]
     \centering
     \def\svgscale{0.5}
     \def\svgwidth{\columnwidth}
-    \input{img/signal.pdf_tex}
+   % \input{img/signal.pdf_tex}
     \caption{Durch den ADC findet direkt beim Empfang eine Unterabtastung statt. Durch eine weitere Unterabtastung im Bandpass, wird das Signal in das Basisband verschoben.
     Anschließen durch das Kammfilter für die Demodulation mit anschließender Dekodierung aufbereitet und auf dem Hyperterminal angezeigt.}
     \label{fig:signal}
 \end{figure}
 
-\section{Dezimator mit Kanalselektion}\label{sec:FIR}
+\section{Dezimator mit Kanalselektion}%\label{sec:FIR}
 Der Wetterdatensender sendet auf mehreren Kanälen in dem genannten Band. Nun muss der jeweils ein Kanal mithilfe eines Bandpasses selektiert werden. Der so ausgewählte Kanal wird nun mithilfe einer Unterabtastung in den Tiefpassbereich verschoben um eine Demodulation durchführen zu können. Zur Steigerung der Recheneffizienz wird eine Dezimationsstufe realisiert, die im Unterabtaster direkt mit den Polyphasen des Bandpasses filtert. So werden pro empfangenen Sample nur sehr wenige Multiplikationen durchgeführt. Das Filter wird in \textit{MATLAB} ausgelegt und dann in Polyphasen zerlegt exportiert. Die exportierte Datei kann direkt als Feld in C verwendet werden.
 
 \subsection{Theorie}
 Der bei 10100.8 kHz befindliche, 5KHz breite Kanal wird durch die Unterabtastung in den Bereich von 4800Hz +/- 2500Hz verschoben. Da sich im schlechtesten Fall direkt daneben der nächste Kanal anschließt, muss vor einer Unterabtastung gefiltert werden um Aliasing zu vermeiden. Der Filter muss nun einen Durchlassbereich von mindestens der 99\% Bandbreite bzw. $742Hz$ aufweisen, maximal jedoch einen Durchlassbereich von $5Khz$ weniger zwei mal dem Übergangsbereich, um zuverlässig danebenliegende Bänder zu dämpfen. Die Grenzen des Durchlassbereiches werden somit auf $f_u = 3800Hz$ und $f_o = 4800Hz$ festgelegt. Zudem wird der Bandpass als FIR-Filter realisiert. Der nachfolgende Unterabtaster wird mit dem Faktor 527 betrieben, woraus sich eine Abtastfrequenz von $f_{s_{neu}} = 3831,499Hz$ ergibt. Somit verteilen sich die 2056 Koeffizienten des Filters auf 527 Polyphasen mit jeweils vier Koeffizienten.
-
 
 \subsection{MATLAB}
 Zu Auslegung des FIR Filters in \textit{MATLAB} listing~\ref{codeM:FIRBP}, müssen zunächst die Grenz- und Stopfrequenzen Festgelegt werden.
@@ -262,7 +262,7 @@ Der Amplitudengang des Filters, siehe Abb.~\ref{fig:fir_ampli}, zeigt das gewün
     \centering
     \def\svgscale{0.3}
     \def\svgwidth{\columnwidth}
-    \input{img/FIR_BP.pdf_tex}
+   % \input{img/FIR_BP.pdf_tex}
     \caption{FIR-Bandpassfilter Amplitudengang. Das FIR Filter benötigt 2056 Koeffizienten.}
 \end{figure}
 \begin{listing}\label{codeM:FIRBP}
@@ -444,7 +444,7 @@ H_comb = freqz([1, zeros(1, N), compl], 1, 2*pi*freq_comb);
     \centering
  
     \def\svgwidth{1.2\columnwidth}
-    \input{img/comb_5n.pdf_tex}
+  %  \input{img/comb_5n.pdf_tex}
     \caption{Kammfilter mit den beiden Frequenzen $\omega_{mark}$ und $\omega_{space}$, das Kammfilter lässt jeweils eine der beiden Frequenzen passieren.}
 \end{figure}
 \subsection{ANSI C}
@@ -485,7 +485,7 @@ static void output_sample() {
 
 \section{Verzögerungsdemodulator} \label{sec:fm-demod}
 Der FM-Verzögerungsdemodulator wird im Worksheet 2 des Projekts Behandelt.
-Der FM-Verzögerungsdemodulator soll das CPFSK-modulierte Signal demodulieren und eine Rechteckfolge ausgeben.\\
+Der FM-Verzögerungsdemodulator soll das \ac{CPFSK}-modulierte Signal demodulieren und eine Rechteckfolge ausgeben.\\
 Um auf die Verwendung von komplexer Signalverarbeitung zu verzichten, wird der im Worksheet als "Verzögerungsdemodulator mit 
 reeller Signalverarbeitung" referenzierte Aufbau verwenden. Das komplexe Signal $e^{jn\omega_0}$ 
 auf zwei als reell zu betrachtende Anteile zerlegt:
