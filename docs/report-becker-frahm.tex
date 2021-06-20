@@ -82,24 +82,22 @@ University: & University of Applied Science
 
 \section{Projektbeschreibung und Ziel des Projektes}
 
-In diesem Projekt wird eine \ac{CPFSK} Demodulation von Wetterdaten 
+In diesem Projekt wird eine \ac{CPFSK} Demodulation und Dekodierung eines Wetterberichtes über Kurzwelle 
 (Seewetterbericht des  Senders  Pinneberg  auf  Kurzwelle)  in  Echtzeit  durchgeführt. 
 Diese  \ac{CPFSK} Demodulation  wird  in  Form  eines  \textit{Software  Radios}  auf  einem  
 Digitalen Signalprozessor (DSP) implementiert. 
 
-Die \ac{CPFSK}-kodierten Wetterdaten werden mit einer Draht-Antenne im Frequenzbereich
-$10.1Mhz$ bis $11.1MHz$ empfangen und verstärkt. Bei dem so empfangenem Signal handelt es sich um 
-\ac{CPFSK}-Modulierte Seewetterdaten. Ziel das Projektes ist es, zunächst in \textit{MATLAB} ein Modell zu erstellen, welches
-in der Lage ist, die \ac{CPFSK} modulierten Seewetterdaten zu dekodieren und diese auszugeben. 
-Für das \textit{MATLAB} Modell wird hierfür zunächst ein \ac{CPFSK}-Signal in \textit{MATLAB} erzeugt um die ersten 
-Schritte durchzuführen. Später in der Simulation kann hier auf ein zeitbegrenztes Signal 
-als Grundlage für das \textit{MATLAB} Modell genutzt zurückgegriffen werden. 
+Das \ac{CPFSK}-modulierte Kurzwellensignal wird mit einer Draht-Antenne im Frequenzbereich
+$10.1Mhz$ bis $11.1MHz$ empfangen und verstärkt. Die Daten werden hierbei mithilfe des Baudot-Codes kodiert. Ziel das Projektes ist es, zunächst in \textit{MATLAB} ein Modell zu erstellen, welches
+in der Lage ist, die \ac{CPFSK} modulierten Seewetterdaten zu demodulieren und dekodieren sowie das Ergebnis in Form eines $string$ auszugeben. 
+Für das \textit{MATLAB} Modell wird hierfür zunächst ein \ac{CPFSK}-moduliertes Signal in \textit{MATLAB} erzeugt um die ersten 
+Schritte durchzuführen. Zur Überprüfung der Anwendbarkeit wird im Folgenden auf ein aufgenommenes Signal zurückgegriffen.
 Sobald das \textit{MATLAB} Modell steht, wird die Simulation in C-Code überführt und anschließend 
-auf einem DSP implementiert.
+auf einem DSP implementiert. Geschuldet der aktuellen Situation im Bezug auf den Ausbruch von COVID-19 konnte ein realer Test auf dem DSP nicht durchgeführt werden. 
 
 \section{Vorbereitung}
-Um ein grundlegendes Verständnis für das Projekt zu bekommen, werden zunächst einige Ansätze in MA\textit{MATLAB}TLAB simuliert.
-Hierfür wird zuächst eine Rechteckfolge mit dem Wertebereich $D = \{0,1\}$ generiert. Diese wird genutzt um zunächst ein 
+Um ein grundlegendes Verständnis für das Projekt zu bekommen, werden zunächst einige Ansätze in \textit{MATLAB} simuliert.
+Hierfür wird zuächst eine Rechteckfolge mit dem Wertebereich $D = \{-1,1\}$ generiert. Diese wird genutzt um zunächst ein 
 \ac{CPFSK} moduliertes Testsignal zu erzeugen.
 
 \subsection{Rechteckimpuls $d(i)$}\label{sec:rechteck}
@@ -188,7 +186,7 @@ Zur bestimmung des Spektrums des Signals, wird in \textit{MATLAB} die FFT verwen
 Bei einem $\varDelta F = 225Hz$ wird hier eine Bandbreite von ca. $B > 450Hz = 2\cdot \varDelta F $ erwartet.
 
 Zur Bandbreitenbestimmung wird das Parsevalsche Theorem genutzt, die Bandbreite des \ac{CPFSK} Signals ist derjenige Bereich,
-in den 99\% der Signalenergie von $0...\frac{f_A}{2}$ Fallen. Es ergibt sich hierbei eine Bandbreite von $742Hz$
+in den 99\% der Signalenergie von $0...\frac{f_A}{2}$ Fallen. Es ergibt sich hierbei eine Bandbreite von $704Hz$
 
 $$
 \sum_{n = 0}^{N - 1}\left\lvert x(n)^2\right\rvert =  \frac{1}{N} \sum_{k = 1}^{N-1}  \left\lvert X(k)^2\right\rvert 
@@ -227,9 +225,9 @@ nur eine Veränderung im Maximum der Amplitude ergeben, die repräsentierenden F
 
 \section{Signalfluss Empfänger}
 
-Abb.~\ref{fig:signal} zeigt den Aufbau des Softwareradios. Der durch ein analoges Bandpassfilter extrahierte, zwischen $10.8Mhz$ und $11.1Mhz$ befindliche Kanal wird empfangen, und durch Unterabtastung mithilfe des ADCs in das auf das Band bezogene Basisband verschoben.
-Hierbei wird das Band auf $1.0096Mhz$ Nyquistbandbreite geschmälert. Ein Dezimator mit Bandpass als Anti-Aliasingfilter, Kapitel~\ref{sec:FIR}, reduziert die Abtastfrequenz auf $3831,49Hz$. Der Durchlassbereich des Bandpasses wird hierbei jeweils auf den zu empfangenden Kanal angepasst. Die beiden Frequenzen für 1/Mark und -1/Space befinden sich nun im Basisband. Zur Symbolrückgewinnung durch Demodulation können unterschiedliche Methoden der Vorverarbeitung angewandt werden, in dieser Arbeit wurde zunächst ein Ansatz über einen Hilberttransformator, Kapitel~\ref{sec:hilbert}, verfolgt. Später hat sich jedoch die Verwendung eines komplexen Kammfilters
-als sinnvollere Alternative herausgestellt. Das Kammfilter in Kapitel~\ref{sec:comb} sorgt dafür, dass die Frequenzen deutlich von einander zu differenzieren sind. Sobald das Signal durch das Kammfilter
+Abb.~\ref{fig:signal} zeigt den Aufbau des Softwareradios. Das durch ein analoges Bandpassfilter extrahierte, zwischen $10.1Mhz$ und $11.1Mhz$ befindliche Band wird empfangen, und durch Unterabtastung mithilfe des ADCs in das auf das Band bezogene Basisband verschoben.
+Hierbei wird das Band auf $1.0096Mhz$ Nyquistbandbreite geschmälert. Ein Dezimator mit Bandpass als Anti-Aliasingfilter (Kapitel~\ref{sec:FIR}) reduziert die Abtastfrequenz auf $3831,49Hz$. Der Durchlassbereich des Bandpasses wird hierbei jeweils auf den zu empfangenden Kanal angepasst. Die beiden Frequenzen für Mark (-1) und Space (-1) befinden sich im Basisband. Zur Symbolrückgewinnung durch Demodulation können unterschiedliche Methoden der Vorverarbeitung angewandt werden, in dieser Arbeit wurde zunächst ein Ansatz über einen Hilberttransformator, Kapitel~\ref{sec:hilbert} verfolgt. Im laufe des Projektes hat sich jedoch die Verwendung eines komplexen Kammfilters
+als stabilere Alternative herausgestellt. Das Kammfilter in Kapitel~\ref{sec:comb} sorgt dafür, dass die Frequenzen deutlich von einander zu differenzieren sind. Sobald das Signal durch das Kammfilter
 aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungsdemodulator \ref{sec:fm-demod} mit anschließender Dekodierung erfolgen.
 
 
@@ -243,19 +241,17 @@ aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungsdemodulator \
     \label{fig:signal}
 \end{figure}
 
-\section{Dezimator mit Kanalselektion}%\label{sec:FIR}
+\section{Dezimator mit Kanalselektion}\label{sec:FIR}
 Der Wetterdatensender sendet auf mehreren Kanälen in dem genannten Band. Nun muss der jeweils ein Kanal mithilfe eines Bandpasses selektiert werden. Der so ausgewählte Kanal wird nun mithilfe einer Unterabtastung in den Tiefpassbereich verschoben um eine Demodulation durchführen zu können. Zur Steigerung der Recheneffizienz wird eine Dezimationsstufe realisiert, die im Unterabtaster direkt mit den Polyphasen des Bandpasses filtert. So werden pro empfangenen Sample nur sehr wenige Multiplikationen durchgeführt. Das Filter wird in \textit{MATLAB} ausgelegt und dann in Polyphasen zerlegt exportiert. Die exportierte Datei kann direkt als Feld in C verwendet werden.
 
 \subsection{Theorie}
-Der bei 10100.8 kHz befindliche, 5KHz breite Kanal wird durch die Unterabtastung in den Bereich von 4800Hz +/- 2500Hz verschoben. Da sich im schlechtesten Fall direkt daneben der nächste Kanal anschließt, muss vor einer Unterabtastung gefiltert werden um Aliasing zu vermeiden. Der Filter muss nun einen Durchlassbereich von mindestens der 99\% Bandbreite bzw. $742Hz$ aufweisen, maximal jedoch einen Durchlassbereich von $5Khz$ weniger zwei mal dem Übergangsbereich, um zuverlässig danebenliegende Bänder zu dämpfen. Die Grenzen des Durchlassbereiches werden somit auf $f_u = 3800Hz$ und $f_o = 4800Hz$ festgelegt. Zudem wird der Bandpass als FIR-Filter realisiert. Der nachfolgende Unterabtaster wird mit dem Faktor 527 betrieben, woraus sich eine Abtastfrequenz von $f_{s_{neu}} = 3831,499Hz$ ergibt. Somit verteilen sich die 2056 Koeffizienten des Filters auf 527 Polyphasen mit jeweils vier Koeffizienten.
+Der bei 10100.8 kHz befindliche, 5KHz breite Kanal wird durch die Unterabtastung in den Bereich von 4800Hz +/- 2500Hz verschoben. Da sich im schlechtesten Fall direkt daneben der nächste Kanal anschließt, muss vor einer Unterabtastung gefiltert werden um Aliasing zu vermeiden. Der Filter muss nun einen Durchlassbereich von mindestens der 99\% Bandbreite bzw. $704Hz$ aufweisen, maximal jedoch einen Durchlassbereich von $5Khz$ weniger zwei mal dem Übergangsbereich, um zuverlässig danebenliegende Bänder zu dämpfen. Die Grenzen des Durchlassbereiches werden somit auf $f_u = 3800Hz$ und $f_o = 4800Hz$ festgelegt, der Übergangsbereich auf jeweils 1500 Hz um die Anzahl der Koeffizienten gering zu halten. Zudem wird der Bandpass als FIR-Filter realisiert. Der nachfolgende Unterabtaster wird mit dem Faktor 527 betrieben, woraus sich eine Abtastfrequenz von $f_{s_{neu}} = 3831,499Hz$ ergibt. Somit verteilen sich die 2056 Koeffizienten des Filters auf 527 Polyphasen mit jeweils vier Koeffizienten. Da nicht jede der Polyphasen vier Koeffizienten aufweisen kann, werden Nullen eingefügt.
 
 \subsection{MATLAB}
 Zu Auslegung des FIR Filters in \textit{MATLAB} listing~\ref{codeM:FIRBP}, müssen zunächst die Grenz- und Stopfrequenzen Festgelegt werden.
 Es ergeben sich $f_u = 3800Hz$ und $f_o = 4800Hz$, die Stopfrequenzen $f_{uStop} = f_u - 1500$ und $f_{oStop} = f_o + 1500$.
-Bei den Stopfrequenzen gilt es Abzuwägen, umso steiler das Filter, desto mehr Koeffizienten, desto mehr Rechenzeit wird später in C
-benötigt.
-Der Amplitudengang des Filters, siehe Abb.~\ref{fig:fir_ampli}, zeigt das gewünschte Verhalten. Es werden $2056$ Koeffizienten benötigt.
-
+Bei den Stopfrequenzen gilt es Abzuwägen: Umso steiler das Filter, desto mehr Koeffizienten, desto mehr Rechenzeit wird später in C
+benötigt. Der Amplitudengang des Filters, siehe Abb.~\ref{fig:fir_ampli}, zeigt das gewünschte Verhalten. Es werden $2056$ Koeffizienten benötigt.
 
 \begin{figure}[!h]
     \label{fig:fir_ampli}
@@ -290,12 +286,10 @@ end
     \end{minted}
 \end{listing}
 \subsection{ANSI C}
-In der C-Implementierung wird in der endgültigen Version mit dem Datentyp \textit{short} gearbeitet. 
-Dies trägt zu einer besseren Performance auf dem DSP bei.
-Die Koeffizienten des FIR-Filters werden in $527$ \textit{const short} Arrays der Größe 4 aufgeteilt, siehe \ref{codeC:dezimation},
-und in den FIR Filter übergeben. Es wird Sample für Sample eingelesen, dezimiert und durch die Filterroutine verarbeitet lst.~\ref{codeC:FIR}.
+Der Dezimator wird als Zähler realisiert (vgl. \ref{codeC:dezimation}), der bei Überlauf die Summe aller gefilterten Polyphasen berechnet und diese zur weiteren Verarbeitung zwischenspeichert. Die Filterkoeffizienten werden aus Effizienzgründen als \textit{const short} ausgeführt. Festkommaarithmetik sowie Zugriffe auf im ROM angelegte Variablen des Typs \textit{const} sind hierbei entscheidende Optimierungen.
+Die Datenstruktur enthält hierbei 527 Felder mit jeweils vier Werten, also jeweils 64Bit. Dieser werden per Referenz der Filterroutine übergeben. Es wird Abtastwert für Abtastwert eingelesen, dezimiert und durch die Filterroutine verarbeitet lst.~\ref{codeC:FIR}.
 \begin{listing}\label{codeC:dezimation}
-    \caption{Beisphafte Polyphase in C, die Koeffizienten sind im Datentyp \textit{short} abgelegt.}
+    \caption{Beispielhafte Polyphase in C, die Koeffizienten sind im Datentyp \textit{short} abgelegt.}
     \begin{minted}[linenos, bgcolor=bg]{c}
 const short FIR_BANDPASS_1[4] = {1304, 22, 186, -8,};
     \end{minted}
@@ -323,17 +317,17 @@ short FIR_filter_sc(short FIR_delays[], const short FIR_coe[], short int N_delay
     \end{minted}
 \end{listing}
 
-\section{Hilbert Transformator}\label{sec:hilbert}
-Der Hibert Transformator wandelt ein reelles Zeitsignal $x(t)$ in ein analytisches Signal $x_+(t)$ um.
-Dies wird benötigt um das Signal anschließend mit dem FM-Verzögerungsdemodulator, beschrieben in Kapitel \ref{sec:fm-demod}, zu demodulieren.
-Mit $\mathcal{H}(x(t))$, der Hilberttransformierten ergibt sich dies wie folgt:
+\section{Hilberttransformator}\label{sec:hilbert}
+Der Hilberttransformator wandelt ein reelles Zeitsignal $x(t)$ in ein analytisches Signal $x_+(t)$ um.
+Aus dem nun komplexwertigen Signal kann dann mithilfe eines komplexen Demodulators die Signalfrequenz $\omega_0$ zurückgewonnen werden (vgl.Kapitel \ref{sec:fm-demod})
+Mit $\mathcal{H}(x(t))$, der Hilberttransformators ergibt sich dies wie folgt:
 
 $$ 
 x_+(t) = x(t) + j \mathcal{H}(x(t))
 $$
 
 Wobei $y(t) = \mathcal{H}(x(t))$ sich mit mit $Y(f) = X(f) \cdot -j sign(f)$ berechnen lässt.
-Wird dieses analytische Signal jedoch dem FM-Verzögerungsdemodulator übergeben, ist aufgrund des 
+Wird dieses analytische Signal jedoch dem Verzögerungsdemodulator übergeben, ist aufgrund des 
 geringen Frequenzhubs $\varDelta f$ eine eindeutige Demodulation jedoch nicht möglich. Der Abstand zwischen beiden Signalen ist so gering, dass sich die 
 Frequenzanteile von $w_{mark}$ und $w_{space}$ teilweise überlappen. Daher wird
 dieser Ansatz auch nicht weiter verfolgt.
@@ -530,7 +524,7 @@ $$
 $$
 y(n) = \{sin^2(\omega_0 n) + cos^2(\omega_0 n)\}sin(\omega_0) = sin(\omega_0)
 $$
-Der reele Verzögerungsdemodulator entspricht also dem komplexen Verzögerungsdemodulator. Ein einsetzen in die Funktion ergibt für beide Fälle folgendes Ergebnis:
+Der reelle Verzögerungsdemodulator entspricht also dem komplexen Verzögerungsdemodulator. Ein einsetzen in die Funktion ergibt für beide Fälle folgendes Ergebnis:
 $$
 y(n)\arrowvert_{\omega_{mark}} = sin(\cfrac{\pi}{2}+\cfrac{2 \pi \Delta f}{f_s})
 $$
