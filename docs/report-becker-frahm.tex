@@ -134,7 +134,7 @@ $f_A > 100Hz$
     \centering
     \def\svgscale{0.3}
     \def\svgwidth{\columnwidth}
-  %  \input{img/rechteck.pdf_tex}
+    \input{img/rechteck.pdf_tex}
     \caption{Rechteckimpuls zur \ac{CPFSK} Simulation in \textit{MATLAB}}
 \end{figure}
 
@@ -150,7 +150,7 @@ da die Integration einer Aufsummierung diskreter Flächenelemte unter der Kurve 
 \begin{figure}[!h]
     \centering
     \def\svgscale{0.3}
-   % \includegraphics{img/sig_IIR.png}
+    \includegraphics{img/sig_IIR.png}
     \caption{Signalflussdiagramm des Integrators 1.Ordnung}
 \end{figure}
 
@@ -165,7 +165,7 @@ somit die Nachbarkanäle stören würde.
     \centering
 
     \def\svgwidth{0.6\columnwidth}
- %   \input{img/fsk.pdf_tex}
+    \input{img/fsk.pdf_tex}
     \caption{Beispielhaftes \ac{CPFSK} moduliertes Trägersignal einer binären 
     Information. Die Phasenübergänge sind ohne Sprung. }%´Quelle:~\cite{wiki:fsk}}
     \label{fsk}
@@ -181,7 +181,7 @@ Zur bestimmung des Spektrums des Signals, wird in \textit{MATLAB} die FFT verwen
     \centering
     \def\svgscale{0.3}
     \def\svgwidth{\columnwidth}
-%    \input{img/spektrum.pdf_tex}
+    \input{img/spektrum.pdf_tex}
     \caption{Betragspektrum des \ac{CPFSK}-Modulierten Rechteckimpulses.}
 \end{figure}
 Bei einem $\varDelta F = 225Hz$ wird hier eine Bandbreite von ca. $B > 450Hz = 2\cdot \varDelta F $ erwartet.
@@ -289,7 +289,7 @@ Dafür wurde zunächst das in Abb.~\ref{fig:cpfsk} gezeigte CPFSK Signal in \tex
 
 Um das reele Signal dem FM-Demodulator übergeben zu können, wird es durch einen Hilbert-Transformator gefiltert.
 Dies ist in der \textit{MATLAB} Simulation in listing.~\ref{codeM:hilbert} gezeigt. Die  Abb.~\ref{fig:hilbert_vor} und Abb.~\ref{fig:hilbert_nach} zeigen das Signal vor und nach 
-der Anwendung des Hilbert Filters. Das reele Signal wird zu einem koplexen Signal. 
+der Anwendung des Hilbert Filters. Das reele Signal wird zu einem koplexen Signal.
 
 \begin{figure}[!h]
     \centering
@@ -319,15 +319,7 @@ fT = fA/4;
 fHub = 225;
 fSpace = fT - fHub;
 fMark = fT + fHub;
-
-
 sqre = out;
-stem(t, sqre)
-xlim([0, 0.08])
-title('Rechteckfolge')
-xlabel(['t [s]'])
-ylabel(['Amplitude'])
-
 phi_0 = pi;
 num_integrator = [0, 1];
 den_integrator = [1, -1];
@@ -357,7 +349,6 @@ Phi_iT0 = filter(num_integrator, den_integrator, sqre(83:162)) + phi_0;
 cpfsk_sig0 = v_max * sin(2 * pi * fT * n(83:162)/fA + 2 * fHub * pi * Phi_iT0/fA + phi_0);
 y0 = hilbert(cpfsk_sig0);
 
-% Plot
 fn0 = (-length(n(1:82))/2:(length(n(1:82))-1)/2) * fA/length(n(1:82));
 plot(fn0, abs(fftshift(fft(y1))/length(n(1:82))))
 hold on;
@@ -367,13 +358,8 @@ plot(fn1, abs(fftshift(fft(y0))/length(n(83:162))))
 title('CPFSK Spektren (nach Hilbert Transformation)')
 xlabel(['Frequenz [Hz]'])
 ylabel(['Amplitude'])
-
-grid on
-hold off;
     \end{minted}
 \end{listing}
-
-
 
 
 \section{Signalfluss Empfänger}
@@ -388,7 +374,7 @@ aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungsdemodulator \
     \centering
     \def\svgscale{0.5}
     \def\svgwidth{\columnwidth}
-   % \input{img/signal.pdf_tex}
+    \input{img/signal.pdf_tex}
     \caption{Durch den ADC findet direkt beim Empfang eine Unterabtastung statt. Durch eine weitere Unterabtastung im Bandpass, wird das Signal in das Basisband verschoben.
     Anschließen durch das Kammfilter für die Demodulation mit anschließender Dekodierung aufbereitet und auf dem Hyperterminal angezeigt.}
     \label{fig:signal}
@@ -398,7 +384,8 @@ aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungsdemodulator \
 Der Wetterdatensender sendet auf mehreren Kanälen in dem genannten Band. Nun muss der jeweils ein Kanal mithilfe eines Bandpasses selektiert werden. Der so ausgewählte Kanal wird nun mithilfe einer Unterabtastung in den Tiefpassbereich verschoben um eine Demodulation durchführen zu können. Zur Steigerung der Recheneffizienz wird eine Dezimationsstufe realisiert, die im Unterabtaster direkt mit den Polyphasen des Bandpasses filtert. So werden pro empfangenen Sample nur sehr wenige Multiplikationen durchgeführt. Das Filter wird in \textit{MATLAB} ausgelegt und dann in Polyphasen zerlegt exportiert. Die exportierte Datei kann direkt als Feld in C verwendet werden.
 
 \subsection{Theorie}
-Der bei 10100.8 kHz befindliche, 5KHz breite Kanal wird durch die Unterabtastung in den Bereich von 4800Hz +/- 2500Hz verschoben. 
+Der bei 10100.8 kHz befindliche, 5KHz breite Kanal wird durch die Unterabtastung in den 
+Bereich von 4800Hz +/- 2500Hz verschoben. 
 Da sich im schlechtesten Fall direkt daneben der nächste Kanal anschließt, muss vor einer Unterabtastung gefiltert werden um Aliasing zu vermeiden. 
 Der Filter muss nun einen Durchlassbereich von mindestens der 99\% Bandbreite bzw. $704Hz$ aufweisen, maximal 
 jedoch einen Durchlassbereich von $5Khz$ weniger zwei mal dem Übergangsbereich, um zuverlässig danebenliegende Bänder zu dämpfen. 
@@ -419,7 +406,7 @@ benötigt. Der Amplitudengang des Filters, siehe Abb.~\ref{fig:fir_ampli}, zeigt
     \centering
     \def\svgscale{0.3}
     \def\svgwidth{\columnwidth}
-   % \input{img/FIR_BP.pdf_tex}
+    \input{img/FIR_BP.pdf_tex}
     \caption{FIR-Bandpassfilter Amplitudengang. Das FIR Filter benötigt 2056 Koeffizienten.}
 \end{figure}
 \begin{listing}\label{codeM:FIRBP}
@@ -481,7 +468,7 @@ short FIR_filter_sc(short FIR_delays[], const short FIR_coe[], short int N_delay
 \section{Hilberttransformator}\label{sec:hilbert}
 Der Hilberttransformator wandelt ein reelles Zeitsignal $x(t)$ in ein analytisches Signal $x_+(t)$ um.
 Aus dem nun komplexwertigen Signal kann dann mithilfe eines komplexen Demodulators die Signalfrequenz $\omega_0$ zurückgewonnen werden (vgl.Kapitel \ref{sec:fm-demod})
-Mit $\mathcal{H}(x(t))$, der Hilberttransformators ergibt sich dies wie folgt:
+Der Hilbert Transformator $\mathcal{H}(x(t))$ ergibt sich dies wie folgt:
 
 $$ 
 x_+(t) = x(t) + j \mathcal{H}(x(t))
@@ -600,7 +587,7 @@ plot(freq*fA_green, abs(hz))
     \centering
  
     \def\svgwidth{1.2\columnwidth}
-  %  \input{img/comb_5n.pdf_tex}
+    \input{img/comb_5n.pdf_tex}
     \caption{Kammfilter mit den beiden Frequenzen $\omega_{mark}$ und $\omega_{space}$, das Kammfilter lässt jeweils eine der beiden Frequenzen passieren.}
 \end{figure}
 \subsection{ANSI C}
@@ -707,6 +694,17 @@ $$
 sin(-\omega_{mark}) = -sin(\omega_{mark}) = -sin(\omega_{space}) \Longleftrightarrow sin(\omega_{space})
 $$
 \subsection{MATLAB}
+In der \textit{MATLAB} Simulation wird der Verzögerungsdemodulator wie in listing ~\ref{codeM:fm-demod} zu sehen berechnet.
+Hier wurde das Signalflussdiaramm aus Abb.~\ref{fig:fm-verz} aus Kapitel \ref{sec:fm-demod} implementiert.
+Zunächst wird das Eingangssignal um ein Sample verzögert und Konjugiert, anschließend mit dem nicht verzögertem Signal 
+multipliziert.
+\begin{listing}\label{codeM:fm-demod}
+    \caption{Der in \textit{MATLAB} implementierte Demodulator, hier wird der Zusammenhang zwischen $y_CPFSK$ und $y(n)$ abgebildet.}
+    \begin{minted}[linenos, bgcolor=bg, breaklines]{matlab}
+        y_delayed = [0, yh(1:length(yh)-1)]; % Verzögerung des Signals
+        y_CPFSK = 1/0.5 * asin(-(imag(y_delayed) .* real(yh)) + real(y_delayed) .* imag(yh));
+    \end{minted}
+\end{listing}
 
 \subsection{ANSI C}
 Es wird der reelle Verzögerungsdemodulator implementiert der jedoch aus Effizienzgründen auf die Bildung des invertierten Sinus verzichtet, da dieser letztlich einen nichtlinearen Verstärker darstellt, welcher beim Überschreiten des Wertebereichs von $[-\frac{\pi}{2};\frac{\pi}{2}]$ nicht definiert ist. In den durchgeführten Simulationen reichte das SNR stets aus, um das Signal verlässlich zu dekodieren.
@@ -821,6 +819,30 @@ void decode(unsigned short bit) {
 }
     \end{minted}
 \end{listing}
+
+\section{Ergebnis und Fazit}
+In diesem Projekt wurde ein Softwareradio zum Empfangen von Wetterdaten erstellt. Hierfür wurde zunächst 
+ein Teil in Matlab Simuliert, anschließend wurde die Echtzeitfähigkeit der Simulation überprüft und ggf. 
+abgeändert. Vor allem die idealen Filterfunktionen aus \textit{MATLAB} sind in der realität so nicht echtzeitfähig.
+Die Implementierung in ANSI-C erfolgte zunächst mit dem Datentyp \textit{float}, anschließend wurde aus effizienzgründen auf \textit{short}
+gewechselt. Aufgrund der aktuellen COVID-19 Lage war es leider nicht möglich ausgiebig auf der eigentlichen Hardware zu testen.
+Es konnten hier nur zwei Tests druchgeführt werden, diese waren jedoch nicht erfolgreich. 
+Die Ergebnisse der ANSI-C Simulation entsprachen hier jedoch den Erwartungen und hat mit dem verfügbaren Testsignal gut 
+Ergebnisse geliefert. Wie in Abbildung \ref{fig:result} wird das Signal gut Demoduliert und es konnte anschließend
+reproduzierbar Decodiert werden.
+
+\begin{figure}[!h]
+    \label{fig:result}
+    \centering
+    \def\svgscale{0.3}
+    \def\svgwidth{\columnwidth}
+    \input{img/result.pdf_tex}
+    \caption{Zu sehen sind die jeweiligen Ausgänge der einzelenen Elemente des Softwareradios. Zunächst das Zeitsignal und dessen 
+    Spektrum der Dezimationsstufe des Polyphasen FIR Bandpassfilters. Anschließend das komplexe Kammfilter sowie das Demodulierte 
+    und Binarisierte Signal. Der Ausgang des binarisierten Signals kann dann anschließend Decodiert werden.}
+\end{figure}
+
+
 
 --------------------------------------------------------------------------------------------------
 

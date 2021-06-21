@@ -38,7 +38,7 @@
   \newcommand*\fsize{\dimexpr\f@size pt\relax}%
   \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{404.17238032bp}%
+    \setlength{\unitlength}{408.75bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -50,40 +50,9 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.47757593)%
+  \begin{picture}(1,0.47889908)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{signal.pdf}}%
-    \put(0.53813672,0.02526645){\color[rgb]{0.2,0.2,0.2}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}-1\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=2]{signal.pdf}}%
-    \put(0.47318919,0.28505659){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}ADC\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=3]{signal.pdf}}%
-    \put(0.22267726,0.4335081){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}10,8MHz .... 11MHz\end{tabular}}}}%
-    \put(0.41751988,0.1922744){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}Subsampling durch ADC\end{tabular}}}}%
-    \put(0.38968521,0.15516152){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}fA = 2019200\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=4]{signal.pdf}}%
-    \put(0.50473513,0.46134276){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}FIR-Polyphasen Bandpass...\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=5]{signal.pdf}}%
-    \put(0.88143084,0.39639522){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}komplexes Kammfilter...\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=6]{signal.pdf}}%
-    \put(0.80534944,0.03454467){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}T\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=7]{signal.pdf}}%
-    \put(0.80534944,0.1458833){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}T\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=8]{signal.pdf}}%
-    \put(0.67731001,0.1458833){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}X\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=9]{signal.pdf}}%
-    \put(0.67731001,0.03454467){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}X\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=10]{signal.pdf}}%
-    \put(0.55669316,0.09021398){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}+\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=11]{signal.pdf}}%
-    \put(0.41751987,0.09021398){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}atan()\end{tabular}}}}%
-    \put(0.88143084,0.24794371){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}vi[n]\end{tabular}}}}%
-    \put(0.88143084,0.32216947){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}vq[n]\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=12]{signal.pdf}}%
-    \put(0.94127535,0.18160444){\color[rgb]{0,0,0}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}1/v\end{tabular}}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=13]{signal.pdf}}%
-    \put(0.2412337,0.09021398){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}decodierung\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=14]{signal.pdf}}%
-    \put(0.06680318,0.00485436){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}Hyperter...\end{tabular}}}}%
   \end{picture}%
 \endgroup%
