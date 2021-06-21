@@ -134,7 +134,7 @@ $f_A > 100Hz$
     \centering
     \def\svgscale{0.3}
     \def\svgwidth{\columnwidth}
-  %  \input{img/rechteck.pdf_tex}
+    %\input{rechteck.pdf_tex}
     \caption{Rechteckimpuls zur \ac{CPFSK} Simulation in \textit{MATLAB}}
 \end{figure}
 
@@ -228,12 +228,12 @@ nur eine Veränderung im Maximum der Amplitude ergeben, die repräsentierenden F
     \centering
     \def\svgscale{0.5}
     \def\svgwidth{\columnwidth}
-    \input{img/ws02_fluss.pdf_tex}
+%    \input{img/ws02_fluss.pdf_tex}
     \caption{FM Basisband-Verzögerungsdemodulator. Quelle: Worksheet02}
     \label{fig:fm-verz}
 \end{figure}
 
-Zur demodulation des Signals soll ein FM Verzögerungsdemodulator zum Einsatz kommen. Dieser ist für die Symbolrückgewinnung zuständig. 
+Zur Demodulation des Signals soll ein FM Verzögerungsdemodulator zum Einsatz kommen. Dieser ist für die Symbolrückgewinnung zuständig. 
 Das Eingangssignal des Signalflussdiagramm in Abb.~\ref{fig:fm-verz} wird in dem Worksheet wie folgt beschrieben:
 
 $$
@@ -282,20 +282,20 @@ Dafür wurde zunächst das in Abb.~\ref{fig:cpfsk} gezeigte CPFSK Signal in \tex
     \centering
     \def\svgscale{0.5}
     \def\svgwidth{0.8\columnwidth}
-    \input{img/cpfsk.pdf_tex}
+%    \input{img/cpfsk.pdf_tex}
     \caption{CPFSK Signal: Man erkennt deutlich die Wechsel der Mark/Space Frequenzen.}
     \label{fig:cpfsk}
 \end{figure}
 
-Um das reele Signal dem FM-Demodulator übergeben zu können, wird es durch einen Hilbert-Transformator gefiltert.
+Um das reelle Signal dem FM-Demodulator übergeben zu können, wird es durch einen Hilbert-Transformator gefiltert.
 Dies ist in der \textit{MATLAB} Simulation in listing.~\ref{codeM:hilbert} gezeigt. Die  Abb.~\ref{fig:hilbert_vor} und Abb.~\ref{fig:hilbert_nach} zeigen das Signal vor und nach 
-der Anwendung des Hilbert Filters. Das reele Signal wird zu einem koplexen Signal. 
+der Anwendung des Hilbertfilters. Das reelle Signal wird zu einem komplexen Signal. 
 
 \begin{figure}[!h]
     \centering
     \def\svgscale{0.5}
     \def\svgwidth{0.8\columnwidth}
-    \input{img/hil_vor.pdf_tex}
+%    \input{img/hil_vor.pdf_tex}
     \caption{Amplitudengang des reelen Signals}
     \label{fig:hilbert_vor}
 \end{figure}
@@ -304,7 +304,7 @@ der Anwendung des Hilbert Filters. Das reele Signal wird zu einem koplexen Signa
     \centering
     \def\svgscale{0.5}
     \def\svgwidth{0.8\columnwidth}
-    \input{img/hil_nach.pdf_tex}
+%    \input{img/hil_nach.pdf_tex}
     \caption{Amplitudengang des komplexen Signals}
     \label{fig:hilbert_nach}
 \end{figure}
@@ -379,7 +379,7 @@ hold off;
 \section{Signalfluss Empfänger}
 
 Abb.~\ref{fig:signal} zeigt den Aufbau des Softwareradios. Das durch ein analoges Bandpassfilter extrahierte, zwischen $10.1Mhz$ und $11.1Mhz$ befindliche Band wird empfangen, und durch Unterabtastung mithilfe des ADCs in das auf das Band bezogene Basisband verschoben.
-Hierbei wird das Band auf $1.0096Mhz$ Nyquistbandbreite geschmälert. Ein Dezimator mit Bandpass als Anti-Aliasingfilter (Kapitel~\ref{sec:FIR}) reduziert die Abtastfrequenz auf $3831,49Hz$. Der Durchlassbereich des Bandpasses wird hierbei jeweils auf den zu empfangenden Kanal angepasst. Die beiden Frequenzen für Mark (-1) und Space (-1) befinden sich im Basisband. Zur Symbolrückgewinnung durch Demodulation können unterschiedliche Methoden der Vorverarbeitung angewandt werden, in dieser Arbeit wurde zunächst ein Ansatz über einen Hilberttransformator, Kapitel~\ref{sec:hilbert} verfolgt. Im laufe des Projektes hat sich jedoch die Verwendung eines komplexen Kammfilters
+Hierbei wird das Band auf $1.0096Mhz$ Nyquistbandbreite geschmälert. Ein Dezimator mit Bandpass als Anti-Aliasingfilter (Kapitel~\ref{sec:FIR}) reduziert die Abtastfrequenz auf $3831,49Hz$. Der Durchlassbereich des Bandpasses wird jeweils auf den zu empfangenden Kanal angepasst. Die beiden Frequenzen für Mark (-1) und Space (-1) befinden sich im Basisband. Zur Symbolrückgewinnung durch Demodulation können unterschiedliche Methoden der Vorverarbeitung angewandt werden, in dieser Arbeit wurde zunächst ein Ansatz über einen Hilberttransformator, Kapitel~\ref{sec:hilbert} verfolgt. Im laufe des Projektes hat sich jedoch die Verwendung eines komplexen Kammfilters
 als stabilere Alternative herausgestellt. Das Kammfilter in Kapitel~\ref{sec:comb} sorgt dafür, dass die Frequenzen deutlich von einander zu differenzieren sind. Sobald das Signal durch das Kammfilter
 aufbereitet ist, kann die Demodulation durch einen FM-Verzögerungsdemodulator \ref{sec:fm-demod} mit anschließender Dekodierung erfolgen.
 
@@ -448,7 +448,7 @@ end
 \end{listing}
 \subsection{ANSI C}
 Der Dezimator wird als Zähler realisiert (vgl. \ref{codeC:dezimation}), der bei Überlauf die Summe aller gefilterten Polyphasen berechnet und diese zur weiteren Verarbeitung zwischenspeichert. Die Filterkoeffizienten werden aus Effizienzgründen als \textit{const short} ausgeführt. Festkommaarithmetik sowie Zugriffe auf im ROM angelegte Variablen des Typs \textit{const} sind hierbei entscheidende Optimierungen.
-Die Datenstruktur enthält hierbei 527 Felder mit jeweils vier Werten, also jeweils 64Bit. Dieser werden per Referenz der Filterroutine übergeben. Es wird Abtastwert für Abtastwert eingelesen, dezimiert und durch die Filterroutine verarbeitet lst.~\ref{codeC:FIR}.
+Die Datenstruktur enthält 527 Felder mit jeweils vier Werten, also jeweils 64Bit. Dieser werden per Referenz der Filterroutine übergeben. Es wird Abtastwert für Abtastwert eingelesen, dezimiert und durch die Filterroutine verarbeitet lst.~\ref{codeC:FIR}.
 \begin{listing}\label{codeC:dezimation}
     \caption{Beispielhafte Polyphase in C, die Koeffizienten sind im Datentyp \textit{short} abgelegt.}
     \begin{minted}[linenos, bgcolor=bg]{c}
@@ -488,11 +488,8 @@ x_+(t) = x(t) + j \mathcal{H}(x(t))
 $$
 
 Wobei $y(t) = \mathcal{H}(x(t))$ sich mit mit $Y(f) = X(f) \cdot -j sign(f)$ berechnen lässt.
-Wird dieses analytische Signal jedoch dem Verzögerungsdemodulator übergeben, ist aufgrund des 
-geringen Frequenzhubs $\varDelta f$ eine eindeutige Demodulation jedoch nicht möglich. Der Abstand zwischen beiden Signalen ist so gering, dass sich die 
-Frequenzanteile von $w_{mark}$ und $w_{space}$ teilweise überlappen. Daher wird
+Wird dieses analytische Signal jedoch dem Verzögerungsdemodulator übergeben, ist aufgrund der Symmetrie des Sinus um $\frac{fs}{4}$ bzw. $\frac{\pi}{2}$ ein Erfolg der Demodulation von der Abweichung dieser Symmetrieachse abhängig. Die Abweichung mit einer Dezimation um den Faktor 527 ist jedoch so gering, dass eine saubere Demodulation nicht möglich ist. Daher wird
 dieser Ansatz auch nicht weiter verfolgt.
-
 
 \section{Komplexes Kammfilter}\label{sec:comb}
 Eine Alternative zu dem in Kapitel~\ref{sec:hilbert} beschriebenen Hilberttransformator ist ein Kammfilter.
@@ -640,7 +637,7 @@ static void output_sample() {
 \end{listing}
 
 \section{Verzögerungsdemodulator} \label{sec:fm-demod}
-Der FM-Verzögerungsdemodulator wird im Worksheet 2 des Projekts Behandelt.
+Der FM-Verzögerungsdemodulator wird im Worksheet 2 des Projekts behandelt.
 Der FM-Verzögerungsdemodulator soll das \ac{CPFSK}-modulierte Signal demodulieren und eine Rechteckfolge ausgeben.\\
 Um auf die Verwendung von komplexer Signalverarbeitung zu verzichten, wird der im Worksheet als "Verzögerungsdemodulator mit 
 reeller Signalverarbeitung" referenzierte Aufbau verwenden. Das komplexe Signal $e^{jn\omega_0}$ 
@@ -710,7 +707,7 @@ $$
 
 \subsection{ANSI C}
 Es wird der reelle Verzögerungsdemodulator implementiert der jedoch aus Effizienzgründen auf die Bildung des invertierten Sinus verzichtet, da dieser letztlich einen nichtlinearen Verstärker darstellt, welcher beim Überschreiten des Wertebereichs von $[-\frac{\pi}{2};\frac{\pi}{2}]$ nicht definiert ist. In den durchgeführten Simulationen reichte das SNR stets aus, um das Signal verlässlich zu dekodieren.
-\section{Decodierung}
+\section{Dekodierung}
 
 Der Dekodierer liest die Ausgangswerte des Demodulators binarisiert als $D = \{0,1\}$ bitweise ein und schreibt diese in eine Puffer. 
 Die Symbolfrequenz von $50Hz$ bestimmt die Abtastrate des Dekodierers. Da bei dem Start/Stop-Bit um das
@@ -725,7 +722,7 @@ f_{decode} = 3831,499Hz * \frac{1}{50Hz\cdot 2} = 38,31
 $$
 So wird durch einen Taktteiler die Abtastfrequenz erneut gesenkt. Der Dekodierer detektiert nun die Start/Stop folge und synchronisiert sich so auf den Datenstrom. Wird die Datenfolge $0x001F$ empfangen, werden die davor liegenden 10 Bits invertiert und um den Faktor zwei unterabgetastet. Der so entstehende Bitvektor wird unter Zuhilfenahme einer Lookuptable dann in Buchstaben oder Zahlen übersetzt. Das Umschalten zwischen zwei Tabellen geschieht bei den jeweiligen Zeichenfolgen.
 \subsection{MATLAB}
-In listing~\ref{codeM:decode}, der MATALB Implementierung des Dekodierers wird die durch den Verzögerungsdemodulator binarisierte Ausgabe
+In listing~\ref{codeM:decode}, der MATLAB Implementierung des Dekodierers wird die durch den Verzögerungsdemodulator binarisierte Ausgabe
 Blockweise aus dem Puffer \textit{binarized} ausgelesen. Sobald die Start/Stop Bit-Sequenz $[1 1 1 0 0]$ erkannt wird, werden die Bits aus dem Buffer
 in der Reihenfolge umgedreht, da hier das MSB zuerst gesendet wird. Die Bits werden in den Datentyp String umgewandelt und anschließend
 als Dezimalzahl interpretiert. Die so ermittelte Zahl entspricht dem Index des Buchstaben der Lookuptable. 
@@ -771,8 +768,8 @@ Der Dekodierer selbst verschiebt den bisher eingetroffenen Datenstrom nach links
 das neu erhalten Bit mit dem Puffer. Eine 16Bit Variable stellt hierbei den FIFO Puffer dar. 
 Die 5 letzten Bits werden mit der Start/Stop Datenfolge verglichen. Wird diese erfolgreich 
 detektiert, so wird der Puffer kopiert und die fünf Start/Stop Bits nach rechts aus dem 
-Buffer geschoben. Um die Datenfolge zurückzugewinnen, werden die letzten 10 Bits des neuen 
-Puffers maskiert, invertiert und unterabgetastet, sodass sich die fünf Symbolbits ergeben.
+Puffer geschoben. Um die Datenfolge zurückzugewinnen, werden die letzten 10 Bits des neuen 
+Puffers maskiert, invertiert und untertastet, sodass sich die fünf Symbolbits ergeben.
 Diese Werden dann als short-Typ als Feldindex für die Lookuptable verwendet.
 Mit der implementierten Prozedur wird jedoch das Symbol $xxxx111100$ ebenfalls als 
 Start/Stop-Folge interpretiert, weswegen ein weiterer Zähler den Abstand zur letzten detektierten Start/Stop-Folge prüft. Dies führt zu möglichen Synchronisierungsfehlern bis die erste Symbolfolge auftritt, die keine Start/Stop-Sequenz enthält. 
@@ -822,6 +819,7 @@ void decode(unsigned short bit) {
     \end{minted}
 \end{listing}
 
+\section{Fazit}
 --------------------------------------------------------------------------------------------------
 
 
