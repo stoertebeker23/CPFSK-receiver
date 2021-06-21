@@ -83,21 +83,21 @@ University: & University of Applied Science
 \section{Projektbeschreibung und Ziel des Projektes}
 
 In diesem Projekt wird eine \ac{CPFSK} Demodulation und Dekodierung eines Wetterberichtes über Kurzwelle 
-(Seewetterbericht des  Senders  Pinneberg  auf  Kurzwelle)  in  Echtzeit  durchgeführt. 
+(Seewetterbericht des  Senders  Pinneberg)  in  Echtzeit  durchgeführt. 
 Diese  \ac{CPFSK} Demodulation  wird  in  Form  eines  \textit{Software  Radios}  auf  einem  
 Digitalen Signalprozessor (DSP) implementiert. 
 
 Das \ac{CPFSK}-modulierte Kurzwellensignal wird mit einer Draht-Antenne im Frequenzbereich
-$10.1Mhz$ bis $11.1MHz$ empfangen und verstärkt. Die Daten werden hierbei mithilfe des Baudot-Codes kodiert. Ziel das Projektes ist es, zunächst in \textit{MATLAB} ein Modell zu erstellen, welches
+$10.1Mhz$ bis $11.1MHz$ empfangen und verstärkt. Die Daten sind senderseitig mithilfe des Baudot-Codes kodiert. Ziel des Projektes ist es, zunächst in \textit{MATLAB} ein Modell zu erstellen, welches
 in der Lage ist, die \ac{CPFSK} modulierten Seewetterdaten zu demodulieren und dekodieren sowie das Ergebnis in Form eines $string$ auszugeben. 
 Für das \textit{MATLAB} Modell wird hierfür zunächst ein \ac{CPFSK}-moduliertes Signal in \textit{MATLAB} erzeugt um die ersten 
-Schritte durchzuführen. Zur Überprüfung der Anwendbarkeit wird im Folgenden auf ein aufgenommenes Signal zurückgegriffen.
+Schritte durchzuführen. Zur Überprüfung der Anwendbarkeit auf die realen Bedingungen wird im Folgenden auf ein aufgenommenes Signal zurückgegriffen.
 Sobald das \textit{MATLAB} Modell steht, wird die Simulation in C-Code überführt und anschließend 
-auf einem DSP implementiert. Geschuldet der aktuellen Situation im Bezug auf den Ausbruch von COVID-19 konnte ein realer Test auf dem DSP nicht durchgeführt werden. 
+auf einem DSP implementiert. 
 
 \section{Vorbereitung}
 Um ein grundlegendes Verständnis für das Projekt zu bekommen, werden zunächst einige Ansätze in \textit{MATLAB} simuliert.
-Hierfür wird zuächst eine Rechteckfolge mit dem Wertebereich $D = \{-1,1\}$ generiert. Anschließend wird die Anfangsphase für das CPFSK Signal bestimmt. Diese wird genutzt um zunächst ein 
+Hierfür wird zuächst eine Rechteckfolge mit dem Wertebereich $D = \{-1,1\}$ generiert. Anschließend wird die Anfangsphase für das CPFSK Signal bestimmt. Diese wird genutzt um ein 
 \ac{CPFSK} moduliertes Testsignal zu erzeugen. Mit dem so erzeugtem CPFSK Signal, kann eine erste Bandbreitenabschätzung durchgeführt werden.
 
 
@@ -249,11 +249,11 @@ $$
 weiterhin ergibt sich für $y_{CPFSK}(n)$ und $v(n)$:
 
 $$
-y_{CPFSK}(n) = \Im(v(n) v^\ast(n-1)) = \Im( v^2 e^{j w_0}) = \Im(v^2 (sin(w_0) + j cos(w_0)))
+y_{CPFSK}(n) = \Im(v(n) v^\ast(n-1)) = \Im( \hat{v}^2 e^{j w_0}) = \Im(v^2 (sin(w_0) + j cos(w_0)))
 $$
 
 $$
-y_{CPFSK}(n) = v^2 \cdot sin(w_0)
+y_{CPFSK}(n) = \hat{v}^2 \cdot sin(w_0)
 $$
 
 Um die Frequenz am Ausgang zu bestimmen, muss nach $w_0$ umgestellt werden und der $arcsin()$ angewand werden:
