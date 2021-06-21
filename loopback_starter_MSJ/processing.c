@@ -15,12 +15,12 @@
 
 #ifdef USE_MSVC_ANSI_C_SIM
 
-#define COMBF "results/combfilter.csv"
+#define COMBF "results/combfilter1.csv"
 #define DEMOD "results/demodulator.csv"
 #define DECBP "results/dec_bandpass.csv"
 #define EXEC_DATA "results/times.csv"
-#define TESTSIGNAL //
-//#define REALSIGNAL
+//#define TESTSIGNAL //
+#define REALSIGNAL
 struct timespec start, end;
 int exec_times[527];
 int exec_times_max[527];
@@ -158,7 +158,7 @@ void debug_init() {
 #endif
 static void process_comb_and_demod() {
 
-	I_sig = dec_out_short+ 175 * delayed_sample;
+	I_sig = 1000 * dec_out_short + 175 * delayed_sample;
 	Q_sig = 984 * delayed_sample;
 
 	output_y = (-(del_Q_sig * I_sig) + del_I_sig * Q_sig) >> 8;
@@ -189,7 +189,7 @@ static void write_results() {
 	// Multiple debug infos
 	fprintf(fid_OUT, "%ld %ldj\n", I_sig, Q_sig);
 	fprintf(fid_OUT1, "%ld\n", output_y);
-	fprintf(fid_OUT3, "%d\n", dec_out);
+	fprintf(fid_OUT3, "%d\n", dec_out_short);
 
 #endif	
 }
@@ -205,8 +205,9 @@ void process_sample(short value) {
 		output_sample();
 #ifdef USE_MSVC_ANSI_C_SIM
 		clock_gettime(CLOCK_MONOTONIC, &end);
-#endif
 		write_results();
+#endif
+		
 		dec_out = 0;
 		runs += 1;
 	} else if (cntr == 250){
