@@ -19,8 +19,8 @@
 #define DEMOD "results/demodulator.csv"
 #define DECBP "results/dec_bandpass.csv"
 #define EXEC_DATA "results/times.csv"
-//#define TESTSIGNAL //
-#define REALSIGNAL
+#define TESTSIGNAL //
+//#define REALSIGNAL
 struct timespec start, end;
 int exec_times[527];
 int exec_times_max[527];

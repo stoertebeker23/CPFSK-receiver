@@ -6,7 +6,7 @@ figure(100)
 plot(lol1)
 data0 = readmatrix('../results/dec_bandpass.csv');
 data3 = readmatrix('../results/demodulator.csv');
-data = readmatrix('../results/combfilter.csv');
+data = readmatrix('../results/combfilter1.csv');
 
 data_time = readmatrix('../results/times.csv');
 
@@ -14,7 +14,7 @@ data2 = complex(data(:,1),imag(data(:,2)));
 
 y0 = fftshift(fft(data2)); 
 n = length(data2);
-power0 = abs(y0).^2/n;  
+power0 = y0;%abs(y0).^2/n;  
 f0 = (-n/2:n/2-1)*(3832/n);
 
 y2 = fftshift(fft(data0)); 
