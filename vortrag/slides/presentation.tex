@@ -127,9 +127,79 @@
   \end{columns}
 }
 
+\frame{
+  \frametitle{FIR-Polyphasen Bandpass in ANSI-C}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item Die Dezimationsstufen werden in einem Array gespeichert
+        \includegraphics[width=0.9\textwidth]{images/bp_filter.png}
+        \item Die einzelnen Stufen, werden nach und nach dem FIR übergeben.
+        \includegraphics[width=0.9\textwidth]{images/FIR_call.png}
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      Bild Ausgang Bandpass
+    \end{column}
+  \end{columns}
+}
+
 
 \section{Hilbert Transformator}
+
+\frame{
+  \frametitle{Hilbert Transformator}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      Bild Ausgang Bandpass
+    \end{column}
+  \end{columns}
+}
+
 \section{Komplexes Kammfilter}
+\frame{
+  \frametitle{Komplexes Kammfilter}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      Auslegung
+      \begin{itemize}
+        \item festlegen des Abstandes von HP zu Nullstelle
+        \item Anzahl der Verzögerer bestimmen.
+        \item Nullstelle auf $w_{mark/space}$ verschieben
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item $H(jwu) = 1 + e^{jwu}$ mit $w =  \frac{\varDelta f}{fA}$
+        \item $ u = \lfloor \frac{\pi}{2 \pi \frac{\varDelta f}{fA}} \rfloor = 4$
+        \item $ h(k) \cdot e^{-j\omega_{space}\cdot k}$
+        \item $h(k) = \{ 1, 0, 0, 0, 0.175 + i0.985\}$
+       \end{itemize}
+      \end{column}
+  \end{columns}
+}
+
+\frame{
+  \frametitle{Komplexes Kammfilter}
+  \begin{columns}
+    \begin{column}{0.3\textwidth}
+      
+      \begin{itemize}
+        \item jeweils eine Frequenz wird gedämpft
+        \item Nullstellen sind verschoben
+        \item es ensteht ein komplexes Signal
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.7\textwidth}
+      Amplitudengang
+      \includegraphics[width=\textwidth]{images/comb.png}
+      \end{column}
+  \end{columns}
+}
+
 \section{FM-Verzögerungsdemodulator}
 \section{Decodierer}
 
