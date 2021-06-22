@@ -1,0 +1,10 @@
+1 Softwareradio
+2 Woraus besteht der Empfänger?
+3 BP - Polyphasen
+
+4.1 Hilberto - 
+4.2 Kammfilter - vllt auch gut
+
+5 FM Demod
+6 Decode - gudes Ding
+7 Fazit
