@@ -201,8 +201,50 @@
 }
 
 \section{FM-Verzögerungsdemodulator}
-\section{Decodierer}
+\frame{
+  \frametitle{FM-Verzögerungsdemodulator}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      TBD
+    \end{column}
+    \begin{column}{0.5\textwidth}
 
+      \end{column}
+  \end{columns}
+}
+
+\section{Decodierer}
+\frame{
+  \frametitle{Decodierer}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item Demodulierte Rechtecksignal als Bitstream
+        \item Lookuptable
+        \item Wechsel zwischen Nummern und Buchstaben durch austauschen der Lookuptable
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{itemize}
+          \item Weiteres mal Unterabtasten ca.$38Hz$
+          \item Pointerarithmetik
+          \item Aus Bitstream wird direkt ein Index erreichnet
+          \item keine Schleifen
+        \end{itemize}
+      \end{column}
+  \end{columns}
+
+  \frame{
+  \frametitle{Decodierer Matlab}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+      \end{column}
+  \end{columns}
+}
 \nocite{*} % Include everything in the .bib file.
 
 \bibliographystyle{plainnat}
