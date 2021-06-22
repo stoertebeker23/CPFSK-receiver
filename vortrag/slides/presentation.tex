@@ -1,6 +1,7 @@
 \documentclass{beamer}
 \usepackage{graphicx}
-\usetheme{Boadilla}
+\usetheme{Rochester}
+
 \usepackage[absolute,overlay]{textpos}
 \newenvironment{reference}[2]{%
   \begin{textblock*}{\textwidth}(#1,#2)
@@ -8,9 +9,9 @@
 
 \setbeamertemplate{navigation symbols}{}
 
-\title{Cool Stuff We Found in Dunwich}
-\author{Dr.~Francis Morgan}
-\institute[MU]{Dept.~of Archeology\\Miskatonic University}
+\title{CPFSK Softwareradio}
+\author{Luckas Becker, Tobias Frahm}
+\institute[HAW]{Dept. Informations- und Elektrotechnik\\HAW Hamburg}
 \date{\today}
 
 \begin{document}
@@ -21,27 +22,40 @@
 
 \frame{\tableofcontents}
 
-\section{Introduction}
-\subsection{Mostly Horrors}
+\section{Softwareradio}
 
 \frame{
-  \frametitle{Properties of the horrors include:}
-
+  \frametitle{Softwareradio}
   \begin{itemize}
-  \item<1-> Ancient.
-  \item<2-> Non-Euclidean.
-  \item<3-> Incomprehensibly powerful.
+  \item<1-> Was ist der Unterschied zu einem normalen Empfänger?
   \end{itemize}
 }
 
+\section{Signalfluss Empfänger}
 \frame{
-  \begin{figure}[h]
-    \centering
-    \includegraphics[scale=0.25]{images/pop3.png}
-    \caption{Ancient horrors manifesting through the POP3 protocol.}
-    \label{fig:how_pop3_works}
-  \end{figure}
+  \frametitle{Signalfluss Empfänger}
+  \begin{columns}
+    \begin{column}{0.3\textwidth}
+       \begin{itemize}
+         \item 1. FIR-Polyphasen Bandpass
+         \item 2. komplexes Kammfilter
+         \item 3. FM-Verzögerungsdemodulator
+         \item 4. Decodierer
+       \end{itemize}
+    \end{column}
+    \begin{column}{0.8\textwidth}
+        \begin{center}
+         \includegraphics[width=0.6\textwidth]{images/signalfluss.png}
+         \end{center}
+    \end{column}
+  \end{columns}
 }
+
+\section{FIR-Polyphasen Bandpass}
+\section{Hilbert Transformator}
+\section{Komplexes Kammfilter}
+\section{FM-Verzögerungsdemodulator}
+\section{Decodierer}
 
 \nocite{*} % Include everything in the .bib file.
 
