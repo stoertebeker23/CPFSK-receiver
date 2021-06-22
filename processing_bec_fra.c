@@ -5,6 +5,7 @@
 #include <math.h>	// for sin/cos
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #include <time.h>
 
@@ -15,7 +16,7 @@
 
 #ifdef USE_MSVC_ANSI_C_SIM
 
-#define COMBF "results/combfilter1.csv"
+#define COMBF "results/combfilter.csv"
 #define DEMOD "results/demodulator.csv"
 #define DECBP "results/dec_bandpass.csv"
 #define EXEC_DATA "results/times.csv"
@@ -39,12 +40,12 @@ short correction = 0;
 short cnt = 0;
 short subcnt = 0;
 
-long int Q_sig = 0;
-long int I_sig = 0;
-long int del_Q_sig = 0;
-long int del_I_sig = 0;
+uint64_t Q_sig = 0;
+uint64_t I_sig = 0;
+uint64_t del_Q_sig = 0;
+uint64_t del_I_sig = 0;
 
-long int output_y = 0;
+short output_y = 0;
 const short * bp_filter[] = {
 	FIR_BANDPASS_1, FIR_BANDPASS_2, FIR_BANDPASS_3, FIR_BANDPASS_4, FIR_BANDPASS_5, FIR_BANDPASS_6, 
 	FIR_BANDPASS_7, FIR_BANDPASS_8, FIR_BANDPASS_9, FIR_BANDPASS_10, FIR_BANDPASS_11, FIR_BANDPASS_12, 
@@ -158,11 +159,10 @@ void debug_init() {
 #endif
 static void process_comb_and_demod() {
 
-	I_sig = 1000 * dec_out_short + 175 * delayed_sample;
-	Q_sig = 984 * delayed_sample;
+	I_sig = 100 * (dec_out_short >> 4) + 17 * (delayed_sample >> 4);
+	Q_sig = 98 * (delayed_sample >> 4);
 
-	output_y = (-(del_Q_sig * I_sig) + del_I_sig * Q_sig) >> 8;
-
+	output_y = (-(del_Q_sig >> 2)  * (I_sig >> 2) + (del_I_sig >> 2) * (Q_sig >> 2)) >> 16;
 	del_Q_sig = Q_sig;
 	del_I_sig = I_sig;
 }
@@ -188,8 +188,8 @@ static void write_results() {
 #ifdef USE_MSVC_ANSI_C_SIM
 	// Multiple debug infos
 	fprintf(fid_OUT, "%ld %ldj\n", I_sig, Q_sig);
-	fprintf(fid_OUT1, "%ld\n", output_y);
-	fprintf(fid_OUT3, "%d\n", dec_out_short);
+	fprintf(fid_OUT1, "%d\n", output_y);
+	fprintf(fid_OUT3, "%d\n", dec_out);
 
 #endif	
 }
@@ -205,9 +205,8 @@ void process_sample(short value) {
 		output_sample();
 #ifdef USE_MSVC_ANSI_C_SIM
 		clock_gettime(CLOCK_MONOTONIC, &end);
-		write_results();
 #endif
-		
+		write_results();
 		dec_out = 0;
 		runs += 1;
 	} else if (cntr == 250){
@@ -220,7 +219,7 @@ void process_sample(short value) {
 		// error every 66.6 seconds -> shit goes sideways after 41 Minutes for fixed window length
 		// this means, that a normal bit will be interpreted as half a bit. This will mess up the start stop detection for at least one symbol
 		if (cnt > 37 + correction){
-
+#ifdef USE_MSVC_ANSI_C_SIM
 			#ifdef TESTSIGNAL
 	        	decode(output_y > 0);
 	        #endif
@@ -228,6 +227,10 @@ void process_sample(short value) {
 	        #ifdef REALSIGNAL
 	        	decode(output_y < 0);
 	        #endif
+#endif
+#ifdef USE_HARDWARE_ADDA8M12_C6747
+	        decode(output_y < 0);
+#endif
 	        // Correction as the symbol frequency is 38,31 hz
 	        if ( subcnt == 2 ) {
 	        	correction = 1;

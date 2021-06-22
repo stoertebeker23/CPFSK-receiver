@@ -6,7 +6,7 @@ figure(100)
 plot(lol1)
 data0 = readmatrix('../results/dec_bandpass.csv');
 data3 = readmatrix('../results/demodulator.csv');
-data = readmatrix('../results/combfilter.csv');
+data = readmatrix('../results/combfilter1.csv');
 
 data_time = readmatrix('../results/times.csv');
 
@@ -14,7 +14,7 @@ data2 = complex(data(:,1),imag(data(:,2)));
 
 y0 = fftshift(fft(data2)); 
 n = length(data2);
-power0 = abs(y0).^2/n;  
+power0 = y0;%abs(y0).^2/n;  
 f0 = (-n/2:n/2-1)*(3832/n);
 
 y2 = fftshift(fft(data0)); 
@@ -36,17 +36,17 @@ subplot(3,2,2)
 plot(f2, db(power2))
 title("Spectrum Dezimationsstufe")
 
-subplot(4,2,5)
+subplot(3,2,3)
 plot(data2)
 title("Ausgang Kammfilter")
-subplot(4,2,6)
+subplot(3,2,4)
 plot(f0, db(power0))
 title("Spektrum komplexes Kammfilter")
 
-subplot(4,2,7)
+subplot(3,2,5)
 plot(data3)
 title("Ausgang Demodulator")
-subplot(4,2,8)
+subplot(3,2,6)
 binarized = data3 > 0;
 plot(binarized)
 title("Ausgang Demodulator binarisiert")
@@ -67,9 +67,6 @@ plot(data3)
 subplot(2,2,2)
 plot(lol)
 
-
-subplot(2,2,3)
-plot(data1)
 subplot(2,2,4)
 b = lol < 0;
 plot(b)
