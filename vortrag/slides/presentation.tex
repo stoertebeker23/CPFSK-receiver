@@ -1,5 +1,11 @@
 \documentclass{beamer}
+
+
 \usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{lmodern}
+
 \usetheme{Rochester}
 \usepackage{minted}
 \definecolor{bg}{rgb}{0.95,0.95,0.95}
@@ -17,6 +23,19 @@
 \author{Luckas Becker, Tobias Frahm}
 \institute[HAW]{Dept. Informations- und Elektrotechnik\\HAW Hamburg}
 \date{\today}
+
+
+%\frame{
+%  \frametitle{FIR-Polyphasen Bandpass}
+%  \begin{columns}
+%    \begin{column}{0.5\textwidth}
+%
+%    \end{column}
+%    \begin{column}{0.5\textwidth}
+%
+%    \end{column}
+%  \end{columns}
+%}
 
 \begin{document}
 
@@ -47,23 +66,143 @@
          \item 4. Decodierer
        \end{itemize}
     \end{column}
-    \begin{column}{0.8\textwidth}
+    \begin{column}{0.7\textwidth}
         \begin{center}
          \includegraphics[width=0.6\textwidth]{images/signalfluss.png}
          \end{center}
     \end{column}
   \end{columns}
 }
-
 \section{FIR-Polyphasen Bandpass}
-\frame{
-	\frametitle{Softwareradio}
-	\begin{itemize}
-		\item<1-> Was ist der Unterschied zu einem normalen Empfänger?
-	\end{itemize}
+
+  \frametitle{FIR-Polyphasen Bandpass}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item in MATLAB Bandpass als FIR-Filter ausgelegt
+        \item Dezimationsfaktor bestimmt
+        \item Mit Pyhton einen C-Headerfile mit den Polyphasen erzeugt.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{itemize}
+          \item performanter ANSI-C Code durch Pointerarithmetik
+          \item und vermeidung von Schleifen
+        \end{itemize}
+    \end{column}
+  \end{columns}
 }
+
+\subsection{FIR Bandpass in MATLAB}
+\frame{
+  \frametitle{FIR Bandpass in MATLAB}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      Iteratives Vorgehen bis die Koeffizientenanzahl 
+      annehmbar war.
+      \begin{itemize}
+        \item Festlegung der Grenzfrequenzen $f_u = 3800Hz$ und $f_o = 4500Hz$
+        \item Abschätzen der Start-/Stopfrequenzen $f_{start/stop} = f_{u/o} \pm 1500Hz$.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      Bei dem hier gezeigten Amplitudengang werden 2056 Koeffizienten benötigt.
+      \includegraphics[width=\textwidth]{images/FIR_BP.png}
+    \end{column}
+  \end{columns}
+}
+
+\subsection{FIR-Polyphasen Bandpass in ANSI-C}
+\frame{
+  \frametitle{FIR-Polyphasen Bandpass in ANSI-C}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      Zunächst werden die Koeffizienten des FIR-Bandpass exportiert.
+      Anschließend mithilfe eines Pythonscripts in $527$ Polyphasen
+      aufgeteilt, ggf. mit nullen aufgefüllt, und als \textit{const char}-Arrays
+      in ein C-File exportiert.
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item \textit{const char} für effiziente Speichernutzung
+        \item effizienter Zugriff nur durch Pointerreferenz
+      \end{itemize}
+    \end{column}
+  \end{columns}
+}
+
+\frame{
+  \frametitle{FIR-Polyphasen Bandpass in ANSI-C}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item Die Dezimationsstufen werden in einem Array gespeichert
+        \includegraphics[width=0.9\textwidth]{images/bp_filter.png}
+        \item Die einzelnen Stufen, werden nach und nach dem FIR übergeben.
+        \includegraphics[width=0.9\textwidth]{images/FIR_call.png}
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      Bild Ausgang Bandpass
+    \end{column}
+  \end{columns}
+}
+
 \section{Hilbert Transformator}
+
+\frame{
+  \frametitle{Hilbert Transformator}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      Bild Ausgang Bandpass
+    \end{column}
+  \end{columns}
+}
+
 \section{Komplexes Kammfilter}
+\frame{
+  \frametitle{Komplexes Kammfilter}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      Auslegung
+      \begin{itemize}
+        \item festlegen des Abstandes von HP zu Nullstelle
+        \item Anzahl der Verzögerer bestimmen.
+        \item Nullstelle auf $w_{mark/space}$ verschieben
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item $H(jwu) = 1 + e^{jwu}$ mit $w =  \frac{\varDelta f}{fA}$
+        \item $ u = \lfloor \frac{\pi}{2 \pi \frac{\varDelta f}{fA}} \rfloor = 4$
+        \item $ h(k) \cdot e^{-j\omega_{space}\cdot k}$
+        \item $h(k) = \{ 1, 0, 0, 0, 0.175 + i0.985\}$
+       \end{itemize}
+      \end{column}
+  \end{columns}
+}
+
+\frame{
+  \frametitle{Komplexes Kammfilter}
+  \begin{columns}
+    \begin{column}{0.3\textwidth}
+      
+      \begin{itemize}
+        \item jeweils eine Frequenz wird gedämpft
+        \item Nullstellen sind verschoben
+        \item es ensteht ein komplexes Signal
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.7\textwidth}
+      Amplitudengang
+      \includegraphics[width=\textwidth]{images/comb.png}
+      \end{column}
+  \end{columns}
+}
+
 \section{FM-Verzögerungsdemodulator}
 \section{Dekodierer}
 \frame{
