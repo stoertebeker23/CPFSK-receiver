@@ -1,16 +1,43 @@
 \documentclass{beamer}
 
 
-\usepackage{graphicx}
+\usepackage{graphicx, xcolor}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{lmodern}
+\usepackage{listings}
 
 \usetheme{Rochester}
 \usepackage{minted}
 \definecolor{bg}{rgb}{0.95,0.95,0.95}
 \usepackage{graphics}
 \usepackage{trfsigns}
+
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.82}
+\definecolor{backgroundColour}{rgb}{0.92,0.92,0.92}
+
+
+\lstdefinestyle{CStyle}{
+	backgroundcolor=\color{backgroundColour},   
+	commentstyle=\color{mGreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{mGray},
+	stringstyle=\color{mPurple},
+	basicstyle=\fontsize{8}{7}\selectfont\ttfamily,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2,
+	language=C
+}
 
 \usepackage[absolute,overlay]{textpos}
 \newenvironment{reference}[2]{%
@@ -19,8 +46,10 @@
 
 \setbeamertemplate{navigation symbols}{}
 
+
+
 \title{CPFSK Softwareradio}
-\author{Luckas Becker, Tobias Frahm}
+\author{Lukas Becker, Tobias Frahm}
 \institute[HAW]{Dept. Informations- und Elektrotechnik\\HAW Hamburg}
 \date{\today}
 
@@ -236,61 +265,45 @@
 	
 	\begin{figure}
 		\centering
-		%\includegraphics[width=0.7\linewidth]{images/rect833}
+		\includegraphics[width=0.7\linewidth]{images/rect833}
 		\caption{}
 		\label{fig:rect833}
 	\end{figure}
 	
 }
 
-\frame{
+
+\begin{frame}[fragile]
 	\frametitle{Implementierung Dekodierer}
 	
-%	\begin{listing}
-%	\begin{minted}[linenos, bgcolor=bg, breaklines]{c}
-%		void decode(unsigned short bit) {
-%			
-%			if (!current_lut) 
-%			current_lut = lookup_char;
-%			
-%			buffer = buffer << 1;
-%			buffer = buffer | bit;
-%			startstop = buffer & 0x001F;
-%			
-%			if (startstop_holdoff > 0) // Underflow protection
-%			startstop_holdoff -= 1;
-%			
-%			if (startstop == STOP_SEQUENCE && startstop_holdoff == 0) {
-%				startstop_holdoff = 11;
-%				// Shift over the start and stop section
-%				// and mask the 10 message bits
-%				index_pre = (buffer >> 5) & 0x03FF; 
-%				// Compress bit stream to half its size
-%				// Turn this 1 1 1 1 0 0 1 1 0 0 into 1 1 0 1 1
-%				real_index = (((index_pre >> 0) & 0x0001) << 4) 
-%				| (((index_pre >> 2) & 0x0001) << 3) 
-%				| (((index_pre >> 4) & 0x0001) << 2) 
-%				| (((index_pre >> 6) & 0x0001) << 1) 
-%				| (((index_pre >> 8) & 0x0001) << 0);
-				
-%				if (real_index == SWITCH_TO_CHAR) {
-%					// Change to characters
-%					current_lut = lookup_char;
-%				} else if (real_index == SWITCH_TO_NUM) {
-%					// Change to numbers
-%					current_lut = lookup_num;
-%				} else {
-%					#ifdef USE_MSVC_ANSI_C_SIM
-%					// Everything else is a valid character
-%					printf(" >> %c <<\n",current_lut[real_index-1]); 
-%					#endif
-%				}
-%			}
-%		}
-%	\end{minted}
-%\end{listing}
-Hallo
+	\begin{lstlisting}[basicstyle=\tiny,style=CStyle]			
+buffer = buffer << 1; // Shift FIFO left
+buffer = buffer | bit; // Enter bit
+startstop = buffer & 0x001F; // Mask size of start/stop
+
+if (startstop_holdoff > 0) // Underflow protection
+	startstop_holdoff -= 1;
+
+if (startstop == STOP_SEQUENCE && startstop_holdoff == 0) {
+	startstop_holdoff = 11;
+	index_pre = (buffer >> 5) & 0x03FF; 
+	real_index =  (((index_pre >> 0) & 0x0001) << 4) 
+		   		   	| (((index_pre >> 2) & 0x0001) << 3) 
+							| (((index_pre >> 4) & 0x0001) << 2) 
+							| (((index_pre >> 6) & 0x0001) << 1) 
+							| (((index_pre >> 8) & 0x0001) << 0);
+
+	if (real_index == SWITCH_TO_CHAR) {
+		current_lut = lookup_char;
+	} else if (real_index == SWITCH_TO_NUM) {
+		current_lut = lookup_num;
+	} else {
+		printf(" >> %c <<\n",current_lut[real_index-1]); 
+	}
 }
+
+\end{lstlisting}
+\end{frame}
 
 \nocite{*} % Include everything in the .bib file.
 
