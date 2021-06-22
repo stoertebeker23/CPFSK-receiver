@@ -53,9 +53,17 @@ figure(1)
 subplot(3,2,1)
 plot(t,f, t, 0.2* bb)
 yline(-0.5);
+
+xlabel('2*pi*f in pi') 
+ylabel('x(n) & y(n)') 
+title('Antwort auf Frequenzsweep')
+
 subplot(3,2,2)
 plot(bb_f_vec, db(abs(fft(bb))))
 ylim([0,40]);
+xlabel('2*pi*f in pi') 
+ylabel('x(n) & y(n)') 
+title('Antwort auf Frequenzsweep')
 
 subplot(3,2,3)
 plot(t,f_h, t, 0.2* high)

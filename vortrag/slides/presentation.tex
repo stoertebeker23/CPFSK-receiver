@@ -233,9 +233,37 @@
 }
 
 \section{FM-Verzögerungsdemodulator}
+
+\begin{frame}
+	\frametitle{Verzögerungsdemodulator}
+	\begin{figure}
+		\centering
+		\includegraphics[height=0.4\textheight]{images/fm_demod_no_asin}
+		\label{fig:fmdemodnoasin}
+	\end{figure}
+
+	\begin{columns}
+		\begin{column}{0.5\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=0.8\linewidth]{images/asin}
+				\label{fig:asin}
+			\end{figure}
+			
+		\end{column}
+		\begin{column}{0.5\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=0.8\linewidth]{images/fm_demod_sweep}
+				\label{fig:fmdemodsweep}
+			\end{figure}
+			
+		\end{column}
+	\end{columns}
+\end{frame}
 \section{Dekodierer}
 \frame{
-  \frametitle{Decodierer}
+  \frametitle{Dekodierer}
   \begin{columns}
     \begin{column}{0.5\textwidth}
       \begin{itemize}
@@ -248,14 +276,14 @@
         \begin{itemize}
           \item Weiteres mal Unterabtasten ca.$38Hz$
           \item Pointerarithmetik
-          \item Aus Bitstream wird direkt ein Index erreichnet
+          \item Aus Bitstream wird direkt ein Index errechnet
           \item keine Schleifen
         \end{itemize}
       \end{column}
   \end{columns}
 }
 \frame{
-  \frametitle{Decodierer - Matlab}
+  \frametitle{Dekodierer - Matlab}
   \includegraphics[width=0.9\textwidth]{images/matlab-lookup.png}
 }
 
@@ -265,8 +293,7 @@
 	
 	\begin{figure}
 		\centering
-		\includegraphics[width=0.7\linewidth]{images/rect833}
-		\caption{}
+		\includegraphics[width=0.6\linewidth]{images/rect833}
 		\label{fig:rect833}
 	\end{figure}
 	
