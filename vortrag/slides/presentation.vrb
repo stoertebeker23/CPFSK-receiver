@@ -1,0 +1,29 @@
+\frametitle{Implementierung Dekodierer}
+	
+	\begin{lstlisting}[basicstyle=\tiny,style=CStyle]			
+buffer = buffer << 1; // Shift FIFO left
+buffer = buffer | bit; // Enter bit
+startstop = buffer & 0x001F; // Mask size of start/stop
+
+if (startstop_holdoff > 0) // Underflow protection
+	startstop_holdoff -= 1;
+
+if (startstop == STOP_SEQUENCE && startstop_holdoff == 0) {
+	startstop_holdoff = 11;
+	index_pre = (buffer >> 5) & 0x03FF;
+	real_index =  (((index_pre >> 0) & 0x0001) << 4)
+		   		   	| (((index_pre >> 2) & 0x0001) << 3)
+							| (((index_pre >> 4) & 0x0001) << 2)
+							| (((index_pre >> 6) & 0x0001) << 1)
+							| (((index_pre >> 8) & 0x0001) << 0);
+
+	if (real_index == SWITCH_TO_CHAR) {
+		current_lut = lookup_char;
+	} else if (real_index == SWITCH_TO_NUM) {
+		current_lut = lookup_num;
+	} else {
+		printf(" >> %c <<\n",current_lut[real_index-1]);
+	}
+}
+
+\end{lstlisting}

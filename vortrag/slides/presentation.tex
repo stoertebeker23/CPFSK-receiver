@@ -80,7 +80,7 @@
   \frametitle{Softwareradio}
   \begin{itemize}
   \item Es wird nicht auf Zwischenfrequenzen gemischt
-  \item Wesentlicher Frequenzbereich liegt zwischen 10.1MHz...11.1MHz
+  \item Kurzwellenband liegt zwischen 10.1MHz...11.1MHz
   \item Direktes Unterabtasten durch ADC am Empfänger
   \end{itemize}
 }
@@ -91,7 +91,7 @@
   \begin{columns}
     \begin{column}{0.3\textwidth}
        \begin{itemize}
-         \item 1. FIR-Polyphasen Bandpass
+         \item 1. Dezimationsstufe
          \item 2. Komplexes Kammfilter
          \item 3. FM-Verzögerungsdemodulator
          \item 4. Dekodierer
@@ -108,7 +108,7 @@
 
 \section{Bestimmung der Abtastfrequenzen}
 \begin{frame}
-  Die benötigte Bandbreite $B = 704Hz$ wurde ausgehend von $fT$ bestimmt, dass Nutzsignal fällt in den Breich
+  Die benötigte Bandbreite $B = 704Hz$ wurde ausgehend von $fT$ bestimmt, dass Nutzsignal fällt in den Bereich
   in dem $99\%$ der Signalenergie liegen.
   \frametitle{Bestimmung der Abtastfrequenzen}
   \begin{columns}
@@ -123,9 +123,9 @@
 
 \end{frame}
 
-\section{FIR-Polyphasen Bandpass}
+\section{Dezimationsstufe}
 \frame{
-  \frametitle{FIR-Polyphasen Bandpass}
+  \frametitle{Dezimationsstufe}
   \begin{columns}
     \begin{column}{0.5\textwidth}
       \begin{itemize}
@@ -143,9 +143,9 @@
   \end{columns}
 }
 
-\subsection{FIR Bandpass in MATLAB}
+\subsection{Dezimationsstufe in MATLAB}
 \frame{
-  \frametitle{FIR Bandpass in MATLAB}
+  \frametitle{Dezimationsstufe in MATLAB}
   \begin{columns}
     \begin{column}{0.5\textwidth}
       Iteratives Vorgehen bis die Koeffizientenanzahl 
@@ -162,19 +162,19 @@
   \end{columns}
 }
 
-\subsection{FIR-Polyphasen Bandpass in ANSI-C}
+\subsection{Dezimationsstufe in ANSI-C}
 \frame{
-  \frametitle{FIR-Polyphasen Bandpass in ANSI-C}
+  \frametitle{Dezimationsstufe in ANSI-C}
   \begin{columns}
     \begin{column}{0.5\textwidth}
       Zunächst wurden die Koeffizienten des FIR-Bandpass exportiert.
       Anschließend mithilfe eines Pythonscripts in $527$ Polyphasen
-      aufgeteilt, ggf. mit nullen aufgefüllt, und als \textit{const char}-Arrays
+      aufgeteilt, ggf. mit nullen aufgefüllt, und als \textit{const short}-Arrays
       in ein C-File exportiert.
     \end{column}
     \begin{column}{0.5\textwidth}
       \begin{itemize}
-        \item \textit{const char} für effiziente Speichernutzung
+        \item \textit{const short} für effiziente Speichernutzung
         \item effizienter Zugriff nur durch Pointerreferenz
       \end{itemize}
     \end{column}
@@ -182,13 +182,13 @@
 }
 
 \frame{
-  \frametitle{FIR-Polyphasen Bandpass in ANSI-C}
+  \frametitle{Dezimationsstufe in ANSI-C}
   \begin{columns}
     \begin{column}{0.5\textwidth}
       \begin{itemize}
-        \item Die Dezimationsstufen werden in einem Array gespeichert
+        \item Die Filterpolyphasen werden in einem Array gespeichert
         \includegraphics[width=0.9\textwidth]{images/bp_filter.png}
-        \item Die einzelnen Stufen, werden nach und nach dem FIR übergeben.
+        \item Die einzelnen Polyphasen, werden nach und nach dem FIR übergeben.
         \includegraphics[width=0.9\textwidth]{images/FIR_call.png}
       \end{itemize}
     \end{column}
@@ -209,47 +209,6 @@
     \begin{column}{0.5\textwidth}
       Bild Ausgang Bandpass
     \end{column}
-  \end{columns}
-}
-
-\section{Komplexes Kammfilter}
-\frame{
-  \frametitle{Komplexes Kammfilter}
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-      Auslegung
-      \begin{itemize}
-        \item festlegen des Abstandes von HP zu Nullstelle
-        \item Anzahl der Verzögerer bestimmen.
-        \item Nullstelle auf $w_{mark/space}$ verschieben
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.5\textwidth}
-      \begin{itemize}
-        \item $H(jwu) = 1 + e^{jwu}$ mit $w =  \frac{\varDelta f}{fA}$
-        \item $ u = \lfloor \frac{\pi}{2 \pi \frac{\varDelta f}{fA}} \rfloor = 4$
-        \item $ h(k) \cdot e^{-j\omega_{space}\cdot k}$
-        \item $h(k) = \{ 1, 0, 0, 0, 0.175 + i0.985\}$
-       \end{itemize}
-      \end{column}
-  \end{columns}
-}
-
-\frame{
-  \frametitle{Komplexes Kammfilter}
-  \begin{columns}
-    \begin{column}{0.3\textwidth}
-      
-      \begin{itemize}
-        \item jeweils eine Frequenz wird gedämpft
-        \item Nullstellen sind verschoben
-        \item Es ensteht ein komplexes Signal
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.7\textwidth}
-      Amplitudengang
-      \includegraphics[width=\textwidth]{images/comb.png}
-      \end{column}
   \end{columns}
 }
 
@@ -282,31 +241,87 @@
 		\end{column}
 	\end{columns}
 \end{frame}
+
+
+\section{Komplexes Kammfilter}
+\frame{
+	\frametitle{Komplexes Kammfilter}
+	\begin{columns}
+		\begin{column}{0.5\textwidth}
+			Auslegung
+			\begin{itemize}
+				\item Festlegen des Abstandes von Maximum zu Nullstelle
+				\item Anzahl der Verzögerer bestimmen.
+				\item Maximum auf mit DFT Verschiebungstheorem $\omega_{mark}$ verschieben
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.5\textwidth}
+			\begin{itemize}
+				\item $H(e^{j\omega}) = 1 + e^{j\omega u}$ mit $H(e^{j\omega})\arrowvert_{\omega = \frac{\varDelta f}{fA} \cdot 2\pi} = 0$
+				\item $ u = \lfloor \frac{\pi}{2 \pi \frac{\varDelta f}{fA}} \rfloor = 4$
+				\item $X(n+l) \Longleftrightarrow x(n) \cdot W^{kl}_N$
+				\item $ W^{kl}_N = e^{\cfrac{-j2\pi kl}{N}}$
+				\item $ h(k) \cdot e^{-j\omega_{mark}\cdot k}$
+				\item $h(k) = \{ 1, 0, 0, 0, 0.175 - i0.985\}$
+			\end{itemize}
+		\end{column}
+	\end{columns}
+}
+
+\begin{frame}
+	\frametitle{Komplexes Kammfilter}
+	\begin{columns}
+		\begin{column}{0.3\textwidth}
+			
+			\begin{itemize}
+				\item jeweils eine Frequenz wird gedämpft
+				\item Nullstellen sind verschoben
+				\item Es entsteht ein komplexes Signal
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.7\textwidth}
+			Amplitudengang
+			\includegraphics[width=\textwidth]{images/comb.png}
+		\end{column}
+	\end{columns} 
+	  -\\
+	Verzögerungsdemodulator ist für eine Frequenz invertiert.
+	$sin(-\omega_{mark}) = -sin(\omega_{mark}) = -sin(\omega_{space}) \Longleftrightarrow sin(\omega_{space})$
+\end{frame}
+
+\frame{
+	\frametitle{Ergebnis}
+	\begin{columns}
+		\begin{column}{0.3\textwidth}
+			
+			\begin{itemize}
+				\item Ergebnisse entsprachen in der C-Simulation den Erwartungen
+				\item Signal wurde korrekt demoduliert.
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.7\textwidth}
+			Ausgänge und Spektren der Filterstufen 
+			\includegraphics[width=1.1\textwidth]{images/result.jpg}
+		\end{column}
+	\end{columns}
+}
+
 \section{Dekodierer}
 \frame{
   \frametitle{Dekodierer}
   \begin{columns}
     \begin{column}{0.5\textwidth}
       \begin{itemize}
-        \item Demodulierte Rechtecksignal als Bitstream
-        \item Lookuptable
-        \item Wechsel zwischen Nummern und Buchstaben durch austauschen der Lookuptable
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.5\textwidth}
-        \begin{itemize}
-          \item Weiteres mal Unterabtasten ca.$38Hz$
-          \item Zugriff via Pointer
-          \item Aus Bitstream wird direkt ein Index errechnet
-          \item Keine Schleifen
+        \item Demoduliertes Rechtecksignal wird nochmal untertastet um Faktor 38.31
+        \item Dekodierte Symbole als Index für Lookuptable
         \end{itemize}
       \end{column}
   \end{columns}
 }
-\frame{
-  \frametitle{Dekodierer - Matlab}
-  \includegraphics[width=0.9\textwidth]{images/matlab-lookup.png}
-}
+%\frame{
+%  \frametitle{Dekodierer - Matlab}
+%  \includegraphics[width=0.9\textwidth]{images/matlab-lookup.png}
+%}
 
 
 \frame{
@@ -354,22 +369,7 @@ if (startstop == STOP_SEQUENCE && startstop_holdoff == 0) {
 \end{frame}
 
 \section{Ergebnis}
-\frame{
-  \frametitle{Ergebnis}
-  \begin{columns}
-    \begin{column}{0.3\textwidth}
-      
-      \begin{itemize}
-        \item Ergebnisse entsprachen in der C-Simulation den Erwartungen
-        \item Signal wurde korrekt Demoduliert
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.7\textwidth}
-      Ausgänge und Spektren der Filterstufen 
-      \includegraphics[width=\textwidth]{images/result.jpg}
-      \end{column}
-  \end{columns}
-}
+
 
 
 \section{Fazit}
