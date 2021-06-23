@@ -79,7 +79,9 @@
 \frame{
   \frametitle{Softwareradio}
   \begin{itemize}
-  \item<1-> Was ist der Unterschied zu einem normalen Empfänger?
+  \item Es wird nicht auf Zwischenfrequenzen gemischt
+  \item Wesentlicher Frequenzbereich liegt zwischen 10.1MHz...11.1MHz
+  \item Direktes Unterabtasten durch ADC am Empfänger
   \end{itemize}
 }
 
@@ -90,9 +92,9 @@
     \begin{column}{0.3\textwidth}
        \begin{itemize}
          \item 1. FIR-Polyphasen Bandpass
-         \item 2. komplexes Kammfilter
+         \item 2. Komplexes Kammfilter
          \item 3. FM-Verzögerungsdemodulator
-         \item 4. Decodierer
+         \item 4. Dekodierer
        \end{itemize}
     \end{column}
     \begin{column}{0.7\textwidth}
@@ -102,20 +104,37 @@
     \end{column}
   \end{columns}
 }
+
+
+\section{Bestimmung der Abtastfrequenzen}
+\begin{frame}
+  \frametitle{Bestimmung der Abtastfrequenzen}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \includegraphics[width=\textwidth]{images/fAred.jpg}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \includegraphics[width=\textwidth]{images/fAgreen.jpg}
+    \end{column}
+  \end{columns}
+  
+
+\end{frame}
+
 \section{FIR-Polyphasen Bandpass}
 \frame{
   \frametitle{FIR-Polyphasen Bandpass}
   \begin{columns}
     \begin{column}{0.5\textwidth}
       \begin{itemize}
-        \item in MATLAB Bandpass als FIR-Filter ausgelegt
-        \item Dezimationsfaktor bestimmt
-        \item Mit Pyhton einen C-Headerfile mit den Polyphasen erzeugt.
+        \item In MATLAB Bandpass als FIR-Filter ausgelegt
+        \item Dezimationsfaktor bestimmt: $\frac{fA_{red}}{fA_{green}} \approx 527$
+        \item Mit Python einen C-Headerfile mit den Polyphasen erzeugt.
       \end{itemize}
     \end{column}
     \begin{column}{0.5\textwidth}
         \begin{itemize}
-          \item performanter ANSI-C Code durch Pointer
+          \item Performanter ANSI-C Code durch Pointer
           \item und vermeidung von Schleifen
         \end{itemize}
     \end{column}
@@ -222,7 +241,7 @@
       \begin{itemize}
         \item jeweils eine Frequenz wird gedämpft
         \item Nullstellen sind verschoben
-        \item es ensteht ein komplexes Signal
+        \item Es ensteht ein komplexes Signal
       \end{itemize}
     \end{column}
     \begin{column}{0.7\textwidth}
@@ -275,9 +294,9 @@
     \begin{column}{0.5\textwidth}
         \begin{itemize}
           \item Weiteres mal Unterabtasten ca.$38Hz$
-          \item Pointerarithmetik
+          \item Zugriff via Pointer
           \item Aus Bitstream wird direkt ein Index errechnet
-          \item keine Schleifen
+          \item Keine Schleifen
         \end{itemize}
       \end{column}
   \end{columns}
@@ -358,9 +377,9 @@ if (startstop == STOP_SEQUENCE && startstop_holdoff == 0) {
     \begin{column}{0.6\textwidth}
       
       \begin{itemize}
-        \item interessantes und herausforderndes Projekt
-        \item schade um die Hardware
-        \item optimal Filter
+        \item Interessantes und herausforderndes Projekt
+        \item Schade um die Hardware
+        \item Optimal Filter
       \end{itemize}
     \end{column}
     \begin{column}{0.4\textwidth}
