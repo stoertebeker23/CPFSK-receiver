@@ -79,8 +79,9 @@
 \frame{
   \frametitle{Softwareradio}
   \begin{itemize}
-  \item Es wird nicht auf Zwischenfrequenzen gemischt
+  \item CPFSK modulierte Wetterdaten demodulieren
   \item Kurzwellenband liegt zwischen 10.1MHz...11.1MHz
+  \item Es wird nicht auf Zwischenfrequenzen gemischt
   \item Direktes Unterabtasten durch ADC am Empfänger
   \end{itemize}
 }
@@ -88,18 +89,20 @@
 \section{Signalfluss Empfänger}
 \frame{
   \frametitle{Signalfluss Empfänger}
+  \includegraphics[width=\textwidth]{images/signalfluss.png}
   \begin{columns}
-    \begin{column}{0.3\textwidth}
+    \begin{column}{0.5\textwidth}
        \begin{itemize}
          \item 1. Dezimationsstufe
          \item 2. Komplexes Kammfilter
-         \item 3. FM-Verzögerungsdemodulator
-         \item 4. Dekodierer
        \end{itemize}
     \end{column}
-    \begin{column}{0.7\textwidth}
+    \begin{column}{0.5\textwidth}
         \begin{center}
-         \includegraphics[width=0.6\textwidth]{images/signalfluss.png}
+         \begin{itemize}
+          \item 3. FM-Verzögerungsdemodulator
+          \item 4. Dekodierer
+         \end{itemize}
          \end{center}
     \end{column}
   \end{columns}
@@ -108,7 +111,8 @@
 
 \section{Bestimmung der Abtastfrequenzen}
 \begin{frame}
-  Die benötigte Bandbreite $B = 704Hz$ wurde ausgehend von $fT$ bestimmt, dass Nutzsignal fällt in den Bereich
+  Die benötigte Bandbreite $B = 704Hz / 1MHz$ wurde ausgehend von $fT$ bestimmt, 
+  dass Nutzsignal fällt in den Bereich
   in dem $99\%$ der Signalenergie liegen.
   \frametitle{Bestimmung der Abtastfrequenzen}
   \begin{columns}
@@ -119,8 +123,6 @@
       \includegraphics[width=\textwidth, height=0.7\textheight]{images/fAgreen.jpg}
     \end{column}
   \end{columns}
-  
-
 \end{frame}
 
 \section{Dezimationsstufe}
@@ -128,10 +130,12 @@
   \frametitle{Dezimationsstufe}
   \begin{columns}
     \begin{column}{0.5\textwidth}
+      Vorgehen
       \begin{itemize}
-        \item In MATLAB Bandpass als FIR-Filter ausgelegt
-        \item Dezimationsfaktor bestimmt: $\frac{fA_{red}}{fA_{green}} \approx 527$
-        \item Mit Python einen C-Headerfile mit den Polyphasen erzeugt.
+        \item 1. In MATLAB Bandpass als FIR-Filter ausgelegt
+        \item 2. Dezimationsfaktor bestimmt: $\frac{fA_{red}}{fA_{green}} \approx 527$
+        \item 3. Polyphasen als \textit{const short} exportieren
+        \item 4. ANSI-C Implementierung
       \end{itemize}
     \end{column}
     \begin{column}{0.5\textwidth}
@@ -143,7 +147,6 @@
   \end{columns}
 }
 
-\subsection{Dezimationsstufe in MATLAB}
 \frame{
   \frametitle{Dezimationsstufe in MATLAB}
   \begin{columns}
@@ -162,41 +165,24 @@
   \end{columns}
 }
 
-\subsection{Dezimationsstufe in ANSI-C}
-\frame{
+\begin{frame}[fragile]
   \frametitle{Dezimationsstufe in ANSI-C}
   \begin{columns}
-    \begin{column}{0.5\textwidth}
-      Zunächst wurden die Koeffizienten des FIR-Bandpass exportiert.
-      Anschließend mithilfe eines Pythonscripts in $527$ Polyphasen
-      aufgeteilt, ggf. mit nullen aufgefüllt, und als \textit{const short}-Arrays
-      in ein C-File exportiert.
-    \end{column}
-    \begin{column}{0.5\textwidth}
-      \begin{itemize}
-        \item \textit{const short} für effiziente Speichernutzung
-        \item effizienter Zugriff nur durch Pointerreferenz
-      \end{itemize}
-    \end{column}
-  \end{columns}
-}
-
-\frame{
-  \frametitle{Dezimationsstufe in ANSI-C}
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
+    \begin{column}{0.7\textwidth}
       \begin{itemize}
         \item Die Filterpolyphasen werden in einem Array gespeichert
-        \includegraphics[width=0.9\textwidth]{images/bp_filter.png}
-        \item Die einzelnen Polyphasen, werden nach und nach dem FIR übergeben.
-        \includegraphics[width=0.9\textwidth]{images/FIR_call.png}
+        \item Die einzelnen Polyphasen, werden nach und nach dem FIR übergeben
+        \item Gefiltert und dezimiert
+        \item Durch das dezimieren wird das Signal ein weiteres mal unterabgetastet ($fA_{green} = 3832Hz$)
+        \item Das eigentliche Nutzsignal wird in das Basisband gemischt
       \end{itemize}
     \end{column}
-    \begin{column}{0.5\textwidth}
-      Bild Ausgang Bandpass
+    \begin{column}{0.7\textwidth}
+
     \end{column}
   \end{columns}
-}
+  
+\end{frame}
 
 \section{Hilbert Transformator}
 
@@ -212,8 +198,8 @@
       \end{itemize}
     \end{column}
     \begin{column}{0.5\textwidth}
-      \includegraphics[height=0.4\textheight]{images/sin.jpg}
       \includegraphics[height=0.4\textheight]{images/hilberto.png}
+      \includegraphics[height=0.6\textheight]{images/hilber_vgl.jpg}
     \end{column}
   \end{columns}
 }
@@ -247,6 +233,22 @@
 		\end{column}
 	\end{columns}
 \end{frame}
+
+\frame{
+	\frametitle{Verzögerungsdemodulator nach Hilbert}
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+      \includegraphics[height=0.3\textheight]{images/sin.jpg}
+   \end{column}    
+   \begin{column}{0.6\textwidth}
+     \includegraphics[height=0.6\textheight]{images/rect_demod.jpg}
+     \begin{itemize}
+       \item Bei ungeeigneter Trägerfrequenz, ist das Signal nicht mehr demodulierbar
+     \end{itemize}
+   \end{column}
+  \end{columns}
+}
+
 
 
 \section{Komplexes Kammfilter}
