@@ -81,8 +81,9 @@
   \begin{itemize}
   \item CPFSK modulierte Wetterdaten demodulieren
   \item Kurzwellenband liegt zwischen 10.1MHz...11.1MHz
-  \item Es wird nicht auf Zwischenfrequenzen gemischt
-  \item Direktes Unterabtasten durch ADC am Empfänger
+  \item es wird nicht auf Zwischenfrequenzen gemischt
+  \item direktes Unterabtasten durch ADC am Empfänger
+  \item nahezu vollständig in Software lösbar
   \end{itemize}
 }
 
@@ -92,28 +93,37 @@
   \includegraphics[width=\textwidth]{images/signalfluss.png}
   \begin{columns}
     \begin{column}{0.5\textwidth}
-       \begin{itemize}
-         \item 1. Dezimationsstufe
-         \item 2. Komplexes Kammfilter
-       \end{itemize}
+       \begin{enumerate}
+         \item Dezimationsstufe
+         \item komplexes Kammfilter
+       \end{enumerate}
     \end{column}
     \begin{column}{0.5\textwidth}
         \begin{center}
-         \begin{itemize}
-          \item 3. FM-Verzögerungsdemodulator
-          \item 4. Dekodierer
-         \end{itemize}
+         \begin{enumerate}
+          \item FM-Verzögerungsdemodulator
+          \item Dekodierer
+         \end{enumerate}
          \end{center}
     \end{column}
   \end{columns}
 }
 
-
 \section{Bestimmung der Abtastfrequenzen}
+\frame{
+  \frametitle{Bandbreitenbestimmung}
+  \begin{columns}
+    \begin{column}{0.3\textwidth}
+      Die Bandbreite $B = 704Hz $ wurde ausgehend von $fT$ bestimmt, 
+      dass Nutzsignal fällt in den Bereich in dem $99\%$ der Signalenergie liegen.
+    \end{column}
+    \begin{column}{0.7\textwidth}
+      \includegraphics[width=\textwidth, height=0.7\textheight]{images/bandbreiten.jpg}
+    \end{column}
+  \end{columns}
+}
 \begin{frame}
-  Die benötigte Bandbreite $B = 704Hz / 1MHz$ wurde ausgehend von $fT$ bestimmt, 
-  dass Nutzsignal fällt in den Bereich
-  in dem $99\%$ der Signalenergie liegen.
+.
   \frametitle{Bestimmung der Abtastfrequenzen}
   \begin{columns}
     \begin{column}{0.5\textwidth}
@@ -131,17 +141,17 @@
   \begin{columns}
     \begin{column}{0.5\textwidth}
       Vorgehen
-      \begin{itemize}
-        \item 1. In MATLAB Bandpass als FIR-Filter ausgelegt
-        \item 2. Dezimationsfaktor bestimmt: $\frac{fA_{red}}{fA_{green}} \approx 527$
-        \item 3. Polyphasen als \textit{const short} exportieren
-        \item 4. ANSI-C Implementierung
-      \end{itemize}
+      \begin{enumerate}
+        \item In MATLAB Bandpass als FIR-Filter ausgelegt
+        \item Dezimationsfaktor bestimmt: $\frac{fA_{red}}{fA_{green}} \approx 527$
+        \item Polyphasen als \textit{const short} exportieren
+        \item ANSI-C Implementierung
+      \end{enumerate}
     \end{column}
     \begin{column}{0.5\textwidth}
         \begin{itemize}
-          \item Performanter ANSI-C Code durch Pointer
-          \item und vermeidung von Schleifen
+          \item performanter ANSI-C Code durch Pointer
+          \item Vermeidung von Schleifen
         \end{itemize}
     \end{column}
   \end{columns}
@@ -152,10 +162,10 @@
   \begin{columns}
     \begin{column}{0.5\textwidth}
       Iteratives Vorgehen bis die Koeffizientenanzahl 
-      annehmbar war.
+      annehmbar ist.
       \begin{itemize}
         \item Festlegung der Grenzfrequenzen $f_u = 3800Hz$ und $f_o = 4500Hz$
-        \item Abschätzen der Start-/Stopfrequenzen $f_{start/stop} = f_{u/o} \pm 1500Hz$.
+        \item Abschätzen der Start-/Stopfrequenzen $f_{start/stop} = f_{u/o} \pm 1500Hz$
       \end{itemize}
     \end{column}
     \begin{column}{0.5\textwidth}
@@ -170,11 +180,10 @@
   \begin{columns}
     \begin{column}{0.7\textwidth}
       \begin{itemize}
-        \item Die Filterpolyphasen werden in einem Array gespeichert
-        \item Die einzelnen Polyphasen, werden nach und nach dem FIR übergeben
-        \item Gefiltert und dezimiert
-        \item Durch das dezimieren wird das Signal ein weiteres mal unterabgetastet ($fA_{green} = 3832Hz$)
-        \item Das eigentliche Nutzsignal wird in das Basisband gemischt
+        \item Die Filterpolyphasen werden in einem Array gespeichert.
+        \item Die einzelnen Polyphasen, werden nach und nach dem FIR übergeben, gefiltert und dezimiert. 
+        \item Durch das Dezimieren wird das Signal ein weiteres mal unterabgetastet ($fA_{green} = 3832Hz$).
+        \item Das eigentliche Nutzsignal wird in das Basisband gemischt.
       \end{itemize}
     \end{column}
     \begin{column}{0.7\textwidth}
@@ -193,8 +202,8 @@
       \begin{itemize}
         \item $x(t)_+ = x(t) \cdot \mathcal{H}\{x(t)\} $
         \item $Y(f) = -j sign(f) \cdot X(f)$
-        \item Als erster Ansatz zum wandel in ein komplexes Signal
-        \item Nicht tauglich aufgrund der Symmetrie des Sinus
+        \item als erster Ansatz zum Wandel in ein komplexes Signal
+        \item nicht tauglich aufgrund der Symmetrie des Sinus
       \end{itemize}
     \end{column}
     \begin{column}{0.5\textwidth}
@@ -243,7 +252,7 @@
    \begin{column}{0.6\textwidth}
      \includegraphics[height=0.6\textheight]{images/rect_demod.jpg}
      \begin{itemize}
-       \item Bei ungeeigneter Trägerfrequenz, ist das Signal nicht mehr demodulierbar
+       \item Bei ungeeigneter Trägerfrequenz, ist das Signal nicht mehr demodulierbar.
      \end{itemize}
    \end{column}
   \end{columns}
@@ -259,7 +268,7 @@
 			Auslegung
 			\begin{itemize}
 				\item Festlegen des Abstandes von Maximum zu Nullstelle
-				\item Anzahl der Verzögerer bestimmen.
+				\item Anzahl der Verzögerer bestimmen
 				\item Maximum auf mit DFT Verschiebungstheorem $\omega_{mark}$ verschieben
 			\end{itemize}
 		\end{column}
@@ -299,17 +308,21 @@
 
 \frame{
 	\frametitle{Ergebnis}
+  Ausgänge und Spektren der Filterstufen 
+  \includegraphics[width=1\textwidth]{images/result.jpg}
 	\begin{columns}
-		\begin{column}{0.3\textwidth}
+		\begin{column}{0.5\textwidth}
 			
 			\begin{itemize}
-				\item Ergebnisse entsprachen in der C-Simulation den Erwartungen
-				\item Signal wurde korrekt demoduliert.
+				\item Ergebnisse entsprachen in der C-Simulation den Erwartungen.
+
 			\end{itemize}
 		\end{column}
-		\begin{column}{0.7\textwidth}
-			Ausgänge und Spektren der Filterstufen 
-			\includegraphics[width=1.1\textwidth]{images/result.jpg}
+		\begin{column}{0.5\textwidth}
+			\begin{itemize}
+
+				\item Signal wurde korrekt demoduliert.
+			\end{itemize}
 		\end{column}
 	\end{columns}
 }
@@ -320,17 +333,12 @@
   \begin{columns}
     \begin{column}{0.5\textwidth}
       \begin{itemize}
-        \item Demoduliertes Rechtecksignal wird nochmal untertastet um Faktor 38.31
-        \item Dekodierte Symbole als Index für Lookuptable
+        \item demoduliertes Rechtecksignal wird nochmal untertastet um Faktor 38.31
+        \item dekodierte Symbole als Index für Lookuptable
         \end{itemize}
       \end{column}
   \end{columns}
 }
-%\frame{
-%  \frametitle{Dekodierer - Matlab}
-%  \includegraphics[width=0.9\textwidth]{images/matlab-lookup.png}
-%}
-
 
 \frame{
 	\frametitle{Dekodierer - ANSI C}
@@ -383,23 +391,18 @@ if (startstop == STOP_SEQUENCE && startstop_holdoff == 0) {
     \begin{column}{0.6\textwidth}
       
       \begin{itemize}
-        \item Interessantes und herausforderndes Projekt
-        \item Weitere Optionen: Optimalfilter zu SNR Verbesserung, Demodulation mit Komperator
+        \item interessantes und herausforderndes Projekt
+        \item weitere Optionen: Optimalfilter zu SNR Verbesserung, Demodulation mit Komperator
         \item Umstände mit Corona sehr schade
        
       \end{itemize}
     \end{column}
     \begin{column}{0.4\textwidth}
       Dekodiertes Testsignal
-      \includegraphics[width=0.6\textwidth]{images/term_small.png}
+      \includegraphics[width=0.6\textwidth]{images/term.png}
       \end{column}
   \end{columns}
 }
-
-\nocite{*} % Include everything in the .bib file.
-
-\bibliographystyle{plainnat}
-\bibliography{presentation}
 
 % that's all, folks
 \end{document}
