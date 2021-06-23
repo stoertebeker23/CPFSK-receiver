@@ -115,7 +115,7 @@
     \end{column}
     \begin{column}{0.5\textwidth}
         \begin{itemize}
-          \item performanter ANSI-C Code durch Pointerarithmetik
+          \item performanter ANSI-C Code durch Pointer
           \item und vermeidung von Schleifen
         \end{itemize}
     \end{column}
@@ -146,7 +146,7 @@
   \frametitle{FIR-Polyphasen Bandpass in ANSI-C}
   \begin{columns}
     \begin{column}{0.5\textwidth}
-      Zunächst werden die Koeffizienten des FIR-Bandpass exportiert.
+      Zunächst wurden die Koeffizienten des FIR-Bandpass exportiert.
       Anschließend mithilfe eines Pythonscripts in $527$ Polyphasen
       aufgeteilt, ggf. mit nullen aufgefüllt, und als \textit{const char}-Arrays
       in ein C-File exportiert.
@@ -289,7 +289,7 @@
 
 
 \frame{
-	\frametitle{Theorie Dekodierer}
+	\frametitle{Dekodierer - ANSI C}
 	
 	\begin{figure}
 		\centering
@@ -331,6 +331,44 @@ if (startstop == STOP_SEQUENCE && startstop_holdoff == 0) {
 
 \end{lstlisting}
 \end{frame}
+
+\section{Ergebnis}
+\frame{
+  \frametitle{Ergebnis}
+  \begin{columns}
+    \begin{column}{0.3\textwidth}
+      
+      \begin{itemize}
+        \item Ergebnisse entsprachen in der C-Simulation den Erwartungen
+        \item Signal wurde korrekt Demoduliert
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.7\textwidth}
+      Ausgänge und Spektren der Filterstufen 
+      \includegraphics[width=\textwidth]{images/result.jpg}
+      \end{column}
+  \end{columns}
+}
+
+
+\section{Fazit}
+\frame{
+  \frametitle{Fazit}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      
+      \begin{itemize}
+        \item interessantes und herausforderndes Projekt
+        \item schade um die Hardware
+        \item optimal Filter
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      Dekodiertes Testsignal
+      \includegraphics[width=0.6\textwidth]{images/term_small.png}
+      \end{column}
+  \end{columns}
+}
 
 \nocite{*} % Include everything in the .bib file.
 
