@@ -181,7 +181,8 @@
     \begin{column}{0.7\textwidth}
       \begin{itemize}
         \item Die Filterpolyphasen werden in einem Array gespeichert.
-        \item Die einzelnen Polyphasen, werden nach und nach dem FIR übergeben, gefiltert und dezimiert. 
+        \item Der Dezimator filtert je Sample mit
+        $\frac{1}{527}$telder Filterkoeffizienten.
         \item Durch das Dezimieren wird das Signal ein weiteres mal unterabgetastet ($fA_{green} = 3832Hz$).
         \item Das eigentliche Nutzsignal wird in das Basisband gemischt.
       \end{itemize}
@@ -217,12 +218,18 @@
 
 \begin{frame}
 	\frametitle{Verzögerungsdemodulator}
+	\begin{columns}
+		\begin{column}{0.7\textwidth}
 	\begin{figure}
 		\centering
 		\includegraphics[height=0.4\textheight]{images/fm_demod_no_asin}
 		\label{fig:fmdemodnoasin}
 	\end{figure}
-
+	\end{column}
+\begin{column}{0.3\textwidth}
+	$y_{cpfsk}[n] = sin(\omega_0)$
+		\end{column}
+	\end{columns}
 	\begin{columns}
 		\begin{column}{0.5\textwidth}
 			\begin{figure}
@@ -303,7 +310,7 @@
 	\end{columns} 
 	  -\\
 	Verzögerungsdemodulator ist für eine Frequenz invertiert.
-	$sin(-\omega_{mark}) = -sin(\omega_{mark}) = -sin(\omega_{space}) \Longleftrightarrow sin(\omega_{space})$
+	$sin(-\omega_{space}) = -sin(\omega_{space}) \Longleftrightarrow sin(\omega_{mark})$
 \end{frame}
 
 \frame{
